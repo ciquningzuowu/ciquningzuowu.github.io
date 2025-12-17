@@ -6,7 +6,7 @@
         UserAvatar: '/image/sidebar/avatar.jpg',
         WebsiteStartDate: '2020-01-01',
         Home: 'javascript:;',
-        WebsiteTitleBlur: '(◍´꒳`◍) Hi, Live For Code',
+        WebsiteTitleBlur: '(◍´꒳`◍) Hi, 作吾!',
         WebsiteTitleBlurTimeOut: 500,
         WebsiteTitleFocus: '(*´∇｀*) 欢迎回来!',
         WebsiteTitleFocusTimeOut: 1000,
