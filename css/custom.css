@@ -1,0 +1,50 @@
+    /* ==============================================================
+    自定义分类页卡片样式
+    ============================================================== */
+
+    /* 重置主题可能自带的列表样式，并设置为网格布局 */
+    .categories-content ul {
+      list-style: none; /* 去掉列表前的点 */
+      padding: 0;
+      margin: 0;
+      display: grid; /* 使用网格布局 */
+      /* 自动填充列，每列最小宽度为280px，间距为20px */
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    /* 每个分类项的卡片样式 */
+    .categories-content .category-item {
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 25px;
+      text-align: center;
+      background-color: #fafafa;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    /* 鼠标悬停在卡片上的效果 */
+    .categories-content .category-item:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    }
+
+    /* 分类名称链接的样式 */
+    .categories-content .category-item a {
+      text-decoration: none;
+      font-size: 1.2em;
+      font-weight: bold;
+      color: #333; /* 你可以根据你的博客主题色调整这个颜色 */
+    }
+
+    /* 分类文章数量的样式 */
+    .categories-content .category-item .category-count {
+      display: block; /* 让数量单独占一行 */
+      margin-top: 10px;
+      color: #777;
+      font-size: 0.9em;
+    }
+    .categories-content ul ul {
+    display: none; 
+    }
