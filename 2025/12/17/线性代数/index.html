@@ -85,26 +85,11 @@
 <li><img src="/ce1e8422-fa44-48b3-9354-188e56834b20.png" alt="alt text"><br>拉普拉斯定理:</li>
 <li><img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/3cf1dc97-c9f1-466f-9559-46da54f0770a.png"></li>
 </ul>
-<h2 id="行列式展开"><a href="#行列式展开" class="headerlink" title="行列式展开"></a>行列式展开</h2><ul>
-<li>余子式 $M_{ij}$:去掉$a_{ij}$所在行列，其余元素组成的行列式</li>
-<li>代数余子式:$A_{ij}:A_{ij}&#x3D;(-1)^{i+j}M_{ij}$</li>
-<li>行列式展开定理 每一个数乘以自己的代数余子式，某一行或某一列的结果之和等于行列式</li>
-</ul>
-<h1 id="2-矩阵"><a href="#2-矩阵" class="headerlink" title="2.矩阵"></a>2.矩阵</h1><h2 id="矩阵运算"><a href="#矩阵运算" class="headerlink" title="矩阵运算"></a>矩阵运算</h2><ul>
-<li>加减、数乘：直接对应位置逐位运算就行（只有同型矩阵才能进行），加减满足结合、交换等，数乘不满足交换律</li>
-<li>矩阵乘法:$$A_{m×n}.B_{n×p}&#x3D;C_{m×p}$$<br>易错:A(B+C)D&#x3D;ABD+ACD</li>
-</ul>
-<h2 id="多种矩阵"><a href="#多种矩阵" class="headerlink" title="多种矩阵"></a>多种矩阵</h2><ul>
-<li>转置矩阵</li>
-<li>伴随矩阵$A^<em>$(将每一个位置替换为该位置的<a href="##%E8%A1%8C%E5%88%97%E5%BC%8F%E5%B1%95%E5%BC%80">代数余子式</a>)(只有方阵具有)<br>伴随矩阵$A^</em>$满足$A^<em>&#x3D;\begin{bmatrix}A_{11}&amp;A_{12}&amp;A_{13}\A_{21}&amp;A_{22}&amp;A_{23}\A_{31}&amp;A_{32}&amp;A_{33}\end{bmatrix}^T$<br>推导得到：$$AA^</em>&#x3D;\begin{bmatrix}|A|&amp;0&amp;0\0&amp;|A|&amp;0\0&amp;0&amp;|A|\end{bmatrix}&#x3D;|A|E$$</li>
-<li>逆矩阵:$AA^{-1}&#x3D;A{-1}A&#x3D;E$,$A\frac{A^<em>}{|A|}&#x3D;E -&gt;A^{-1}&#x3D;\frac{A^</em>}{|A|}$</li>
-<li>矩阵的行列式满足:$|KA|&#x3D;K^n|A|(每行提取一个k，一共n行)，|AB|&#x3D;|A|.|B|$</li>
-</ul>
-<h1 id="向量组与方程组"><a href="#向量组与方程组" class="headerlink" title="向量组与方程组"></a>向量组与方程组</h1><h2 id="线性相关、线性无关"><a href="#线性相关、线性无关" class="headerlink" title="线性相关、线性无关"></a>线性相关、线性无关</h2><p>对于向量组 A: $a_1,a_2,……a_n$,</p>
-<ul>
-<li>线性无关的情况为$k__1a_1+k_2a_2+……K_na_n&#x3D;0$仅有0解（秩代表线性无关的变量的个数，向量组满秩说明全部线性无关，且行列式不为0）</li>
-<li>线性相关的情况为有非零解（秩小于n，行列式等于0）<br><img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/9cd73c24-0650-4282-a300-b1f77b8fb876.png"></li>
-</ul>
+<h2 id="行列式展开"><a href="#行列式展开" class="headerlink" title="行列式展开"></a>行列式展开</h2><p>1.余子式 $M_{ij}$:去掉$a_{ij}$所在行列，其余元素组成的行列式<br>2.代数余子式:$A_{ij}:A_{ij}&#x3D;(-1)^{i+j}M_{ij}$<br>3.行列式展开定理 每一个数乘以自己的代数余子式，某一行或某一列的结果之和等于行列式</p>
+<h1 id="2-矩阵"><a href="#2-矩阵" class="headerlink" title="2.矩阵"></a>2.矩阵</h1><h2 id="矩阵运算"><a href="#矩阵运算" class="headerlink" title="矩阵运算"></a>矩阵运算</h2><p>1.加减、数乘：直接对应位置逐位运算就行（只有同型矩阵才能进行），加减满足结合、交换等，数乘不满足交换律<br>2.矩阵乘法:$$A_{m×n}.B_{n×p}&#x3D;C_{m×p}$$<br>易错:A(B+C)D&#x3D;ABD+ACD</p>
+<h2 id="多种矩阵"><a href="#多种矩阵" class="headerlink" title="多种矩阵"></a>多种矩阵</h2><p>1.转置矩阵<br>2.伴随矩阵$A^<em>$(将每一个位置替换为该位置的<a href="##%E8%A1%8C%E5%88%97%E5%BC%8F%E5%B1%95%E5%BC%80">代数余子式</a>)(只有方阵具有)<br>伴随矩阵$A^</em>$满足$A^<em>&#x3D;\begin{bmatrix}A_{11}&amp;A_{12}&amp;A_{13}\A_{21}&amp;A_{22}&amp;A_{23}\A_{31}&amp;A_{32}&amp;A_{33}\end{bmatrix}^T$<br>推导得到：$$AA^</em>&#x3D;\begin{bmatrix}|A|&amp;0&amp;0\0&amp;|A|&amp;0\0&amp;0&amp;|A|\end{bmatrix}&#x3D;|A|E$$<br>3.逆矩阵:$AA^{-1}&#x3D;A{-1}A&#x3D;E$,$A\frac{A^<em>}{|A|}&#x3D;E -&gt;A^{-1}&#x3D;\frac{A^</em>}{|A|}$<br>4.矩阵的行列式满足:$|KA|&#x3D;K^n|A|(每行提取一个k，一共n行)，|AB|&#x3D;|A|.|B|$</p>
+<h1 id="向量组与方程组"><a href="#向量组与方程组" class="headerlink" title="向量组与方程组"></a>向量组与方程组</h1><h2 id="线性相关、线性无关"><a href="#线性相关、线性无关" class="headerlink" title="线性相关、线性无关"></a>线性相关、线性无关</h2><p>对于向量组 A: $a_1,a_2,……a_n$,<br>1.线性无关的情况为$k_1a_1+k_2a_2+……K_na_n&#x3D;0$仅有0解（秩代表线性无关的变量的个数，向量组满秩说明全部线性无关，且行列式不为0）<br>2.线性相关的情况为有非零解（秩小于n，行列式等于0）<br><img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/9cd73c24-0650-4282-a300-b1f77b8fb876.png"></p>
+<h2 id="极大线性无关组"><a href="#极大线性无关组" class="headerlink" title="极大线性无关组"></a>极大线性无关组</h2><p><img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/b64e1b70-8a49-47ad-931d-8ab5813e8bbe.png"></p>
 
                 
                 <p class="end">__END__</p>
