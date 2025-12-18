@@ -74,22 +74,52 @@
         <div id="article">
             <div class="toc"></div>
             <div class="article-body">
-                <h1 id="1-行列式"><a href="#1-行列式" class="headerlink" title="1.行列式"></a>1.行列式</h1><h2 id="行列式性质"><a href="#行列式性质" class="headerlink" title="行列式性质"></a>行列式性质</h2><p>物理意义:<br>    二阶行列式物理含义为两个向量为边的平行四边形的面积<br>    三阶为平行六面体的体积</p>
-<p>变形:</p>
-<ul>
-<li>行或列交换时换号</li>
-<li>行和列乘K倍，行列式变为k倍</li>
-<li>拆分某一行成两个行列式，结果不变</li>
-<li>某行（或列）的k倍加到另一行（列），行列式不变（可以从结合的那行拆分成两个行列式，其中一个为原行列式，另一个为带有K倍的加数行，因为成比例，所以其为零）<br>特殊题型：:</li>
-<li><img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/0687d495-b340-4cd4-b950-60ab8481794d.png"></li>
-<li><img src="/ce1e8422-fa44-48b3-9354-188e56834b20.png" alt="alt text"><br>拉普拉斯定理:</li>
-<li><img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/3cf1dc97-c9f1-466f-9559-46da54f0770a.png"></li>
-</ul>
-<h2 id="行列式展开"><a href="#行列式展开" class="headerlink" title="行列式展开"></a>行列式展开</h2><p>1.余子式 $M_{ij}$:去掉$a_{ij}$所在行列，其余元素组成的行列式<br>2.代数余子式:$A_{ij}:A_{ij}&#x3D;(-1)^{i+j}M_{ij}$<br>3.行列式展开定理 每一个数乘以自己的代数余子式，某一行或某一列的结果之和等于行列式</p>
-<h1 id="2-矩阵"><a href="#2-矩阵" class="headerlink" title="2.矩阵"></a>2.矩阵</h1><h2 id="矩阵运算"><a href="#矩阵运算" class="headerlink" title="矩阵运算"></a>矩阵运算</h2><p>1.加减、数乘：直接对应位置逐位运算就行（只有同型矩阵才能进行），加减满足结合、交换等，数乘不满足交换律<br>2.矩阵乘法:$$A_{m×n}.B_{n×p}&#x3D;C_{m×p}$$<br>易错:A(B+C)D&#x3D;ABD+ACD</p>
-<h2 id="多种矩阵"><a href="#多种矩阵" class="headerlink" title="多种矩阵"></a>多种矩阵</h2><p>1.转置矩阵<br>2.伴随矩阵$A^<em>$(将每一个位置替换为该位置的<a href="##%E8%A1%8C%E5%88%97%E5%BC%8F%E5%B1%95%E5%BC%80">代数余子式</a>)(只有方阵具有)<br>伴随矩阵$A^</em>$满足$A^<em>&#x3D;\begin{bmatrix}A_{11}&amp;A_{12}&amp;A_{13}\A_{21}&amp;A_{22}&amp;A_{23}\A_{31}&amp;A_{32}&amp;A_{33}\end{bmatrix}^T$<br>推导得到：$$AA^</em>&#x3D;\begin{bmatrix}|A|&amp;0&amp;0\0&amp;|A|&amp;0\0&amp;0&amp;|A|\end{bmatrix}&#x3D;|A|E$$<br>3.逆矩阵:$AA^{-1}&#x3D;A{-1}A&#x3D;E$,$A\frac{A^<em>}{|A|}&#x3D;E -&gt;A^{-1}&#x3D;\frac{A^</em>}{|A|}$<br>4.矩阵的行列式满足:$|KA|&#x3D;K^n|A|(每行提取一个k，一共n行)，|AB|&#x3D;|A|.|B|$</p>
-<h1 id="向量组与方程组"><a href="#向量组与方程组" class="headerlink" title="向量组与方程组"></a>向量组与方程组</h1><h2 id="线性相关、线性无关"><a href="#线性相关、线性无关" class="headerlink" title="线性相关、线性无关"></a>线性相关、线性无关</h2><p>对于向量组 A: $a_1,a_2,……a_n$,<br>1.线性无关的情况为$k_1a_1+k_2a_2+……K_na_n&#x3D;0$仅有0解（秩代表线性无关的变量的个数，向量组满秩说明全部线性无关，且行列式不为0）<br>2.线性相关的情况为有非零解（秩小于n，行列式等于0）<br><img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/9cd73c24-0650-4282-a300-b1f77b8fb876.png"></p>
-<h2 id="极大线性无关组"><a href="#极大线性无关组" class="headerlink" title="极大线性无关组"></a>极大线性无关组</h2><p><img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/b64e1b70-8a49-47ad-931d-8ab5813e8bbe.png"></p>
+                <h1 id="行列式">1.行列式</h1>
+<h2 id="行列式性质">行列式性质</h2>
+<p>物理意义: 二阶行列式物理含义为两个向量为边的平行四边形的面积
+三阶为平行六面体的体积</p>
+<p>变形: - 行或列交换时换号 - 行和列乘K倍，行列式变为k倍 -
+拆分某一行成两个行列式，结果不变 -
+某行（或列）的k倍加到另一行（列），行列式不变（可以从结合的那行拆分成两个行列式，其中一个为原行列式，另一个为带有K倍的加数行，因为成比例，所以其为零）
+特殊题型：: - <img
+src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/0687d495-b340-4cd4-b950-60ab8481794d.png" /></p>
+<p>拉普拉斯定理: - <img
+src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/3cf1dc97-c9f1-466f-9559-46da54f0770a.png" /></p>
+<h2 id="行列式展开">行列式展开</h2>
+<p>1.余子式$ M_{ij} <span
+class="math inline"> : <em>去</em><em>掉</em></span>a_{ij}<span
+class="math inline"><em>所</em><em>在</em><em>行</em><em>列</em>，<em>其</em><em>余</em><em>元</em><em>素</em><em>组</em><em>成</em><em>的</em><em>行</em><em>列</em><em>式</em>2.<em>代</em><em>数</em><em>余</em><em>子</em><em>式</em>:</span>A_{ij}:A_{ij}=(-1)^{i+j}M_{ij}$
+3.行列式展开定理
+每一个数乘以自己的代数余子式，某一行或某一列的结果之和等于行列式</p>
+<h1 id="矩阵">2.矩阵</h1>
+<h2 id="矩阵运算">矩阵运算</h2>
+<p>1.加减、数乘：直接对应位置逐位运算就行（只有同型矩阵才能进行），加减满足结合、交换等，数乘不满足交换律
+2.矩阵乘法:<span
+class="math display"><em>A</em><sub><em>m</em> × <em>n</em></sub>.<em>B</em><sub><em>n</em> × <em>p</em></sub> = <em>C</em><sub><em>m</em> × <em>p</em></sub></span>
+易错:A(B+C)D=ABD+ACD</p>
+<h2 id="多种矩阵">多种矩阵</h2>
+<p>1.转置矩阵 2.伴随矩阵<span
+class="math inline"><em>A</em><sup>*</sup></span>(将每一个位置替换为该位置的<a
+href="##行列式展开">代数余子式</a>)(只有方阵具有) 伴随矩阵<span
+class="math inline"><em>A</em><sup>*</sup></span>满足<span
+class="math inline">$A^*=\begin{bmatrix}A_{11}&amp;A_{12}&amp;A_{13}\\A_{21}&amp;A_{22}&amp;A_{23}\\A_{31}&amp;A_{32}&amp;A_{33}\end{bmatrix}^T$</span>
+推导得到：<span
+class="math display">$$AA^*=\begin{bmatrix}|A|&amp;0&amp;0\\0&amp;|A|&amp;0\\0&amp;0&amp;|A|\end{bmatrix}=|A|E$$</span>
+3.逆矩阵:<span
+class="math inline"><em>A</em><em>A</em><sup>−1</sup> = <em>A</em>−1<em>A</em> = <em>E</em></span>,<span
+class="math inline">$A\frac{A^*}{|A|}=E
+-&gt;A^{-1}=\frac{A^*}{|A|}$</span> 4.矩阵的行列式满足:<span
+class="math inline">|<em>K</em><em>A</em>| = <em>K</em><sup><em>n</em></sup>|<em>A</em>|(<em>每</em><em>行</em><em>提</em><em>取</em><em>一</em><em>个</em><em>k</em>，<em>一</em><em>共</em><em>n</em><em>行</em>)，|<em>A</em><em>B</em>| = |<em>A</em>|.|<em>B</em>|</span></p>
+<h1 id="向量组与方程组">向量组与方程组</h1>
+<h2 id="线性相关线性无关">线性相关、线性无关</h2>
+<p>对于向量组 A: <span
+class="math inline"><em>a</em><sub>1</sub>, <em>a</em><sub>2</sub>, ……<em>a</em><sub><em>n</em></sub></span>,
+1.线性无关的情况为<span
+class="math inline"><em>k</em><sub>1</sub><em>a</em><sub>1</sub> + <em>k</em><sub>2</sub><em>a</em><sub>2</sub> + ……<em>K</em><sub><em>n</em></sub><em>a</em><sub><em>n</em></sub> = 0</span>仅有0解（秩代表线性无关的变量的个数，向量组满秩说明全部线性无关，且行列式不为0）
+2.线性相关的情况为有非零解（秩小于n，行列式等于0） <img
+src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/9cd73c24-0650-4282-a300-b1f77b8fb876.png" />
+## 极大线性无关组 <img
+src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/b64e1b70-8a49-47ad-931d-8ab5813e8bbe.png" /></p>
 
                 
                 <p class="end">__END__</p>
