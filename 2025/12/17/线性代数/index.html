@@ -309,6 +309,7 @@ A^{-1}&amp; &amp; \\ &amp;B^{-1}&amp; \\ &amp; &amp;C^{-1}
 <p>求特征矩阵步骤: 根据特征方程公式求<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>λ</mi></mrow><annotation encoding="application/x-tex">\lambda</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.69444em;"></span><span class="strut bottom" style="height:0.69444em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit">λ</span></span></span></span>，将其带入得到特征矩阵后化简，得到未知量表达式，假设约束变量，得到特征向量(齐次线性方程组的非零解)</p>
 <h2 id="特征值与特征向量的性质">特征值与特征向量的性质</h2>
 <ul>
+<li>上下三角矩阵特征值即为对角线上各个元素</li>
 <li>矩阵的所有特征值的和等于主对角线之和(当秩为1时，即为唯一的特征值)</li>
 <li>所有特征值相乘等于矩阵的行列式(当秩为1时，即为唯一的特征值)</li>
 <li>方阵可逆的充要条件为所有特征值都不为0
@@ -363,6 +364,46 @@ A^{-1}&amp; &amp; \\ &amp;B^{-1}&amp; \\ &amp; &amp;C^{-1}
 <li>具有反身性、对称性、传递性</li>
 <li>相似矩阵秩、迹、特征值(可使用特征值与迹和秩的计算关系关联记忆)、可逆性相等，具有相同的特征行列式，从而具有相同的特征值</li>
 <li>相似矩阵的转置矩阵、逆矩阵、伴随矩阵也各自相似</li>
+</ul>
+<h2 id="矩阵的对角化">矩阵的对角化</h2>
+<p>补充:对角矩阵为除对角线外全为0的矩阵</p>
+<ul>
+<li>n阶矩阵A可对角化<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>i</mi><mi>f</mi><mi>f</mi></mrow><annotation encoding="application/x-tex">iff</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.69444em;"></span><span class="strut bottom" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="base textstyle uncramped"><span class="mord mathit">i</span><span class="mord mathit" style="margin-right:0.10764em;">f</span><span class="mord mathit" style="margin-right:0.10764em;">f</span></span></span></span>A有n个线性无关的特征向量(其实就是可以化为n阶梯简化矩阵)</li>
+<li>有n个互异特征值的n阶矩阵可对角化</li>
+<li>对于某个k重特征值，将其特征值代入特征矩阵后，若特征矩阵的自由变量等于k，则原矩阵可对角化</li>
+<li>该部分得题目知只是相较求基础解系多了验证重根是否对应与重数相等的特征向量，最后的对角变换矩阵就是由特征向量拼接而成的矩阵，可变换为的对角矩阵就是与对角变换矩阵同顺序将特征值依次放进对角线上</li>
+</ul>
+<h2 id="内积与正交">内积与正交</h2>
+<ul>
+<li>两个向量的内积等于对应向量相乘的和</li>
+<li>向量的长度等于与自己的内积的开根，等于每一位的平方和的根</li>
+<li>向量的单位化为用向量除以自己的长度得到的向量(保持方向不变的前提下将长度化为1)</li>
+<li>内积为零则正交，正交的几何意义为垂直。零向量与所有向量正交。</li>
+<li>正交向量必线性无关。正交向量组必定线性无关，线性无关的向量组不一定是正交向量组。</li>
+<li>施密特正交化法可以将线性无关的向量组构造成一个与之等价的正交向量组。
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/d25f7312-71ef-4a17-b77a-4349f8983dc3.png" alt=""></li>
+</ul>
+<p>正交矩阵:</p>
+<ul>
+<li>满足<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>A</mi><msup><mi>A</mi><mi>T</mi></msup></mrow><annotation encoding="application/x-tex">AA^T</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.8413309999999999em;"></span><span class="strut bottom" style="height:0.8413309999999999em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit">A</span><span class="mord"><span class="mord mathit">A</span><span class="vlist"><span style="top:-0.363em;margin-right:0.05em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle uncramped"><span class="mord mathit" style="margin-right:0.13889em;">T</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span></span></span></span>的n阶矩阵称为正交矩阵</li>
+<li>正交矩阵行列式为正负1</li>
+<li>正交矩阵的逆矩阵是自己的转置矩阵</li>
+<li>正交矩阵的转置、逆、伴随矩阵也是正交矩阵</li>
+<li>与正交矩阵相乘不改变向量的内积和长度</li>
+<li>正交矩阵的行向量和列向量都是单位正交向量组</li>
+</ul>
+<h2 id="实对称矩阵的概念和性质">实对称矩阵的概念和性质</h2>
+<p>设存在A、B两个方阵，若存在一个正交矩阵Q，使得<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msup><mi>Q</mi><mrow><mo>−</mo><mn>1</mn></mrow></msup><mi>A</mi><mi>Q</mi><mo>=</mo><mi>B</mi></mrow><annotation encoding="application/x-tex">Q^{-1}AQ=B</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.8141079999999999em;"></span><span class="strut bottom" style="height:1.008548em;vertical-align:-0.19444em;"></span><span class="base textstyle uncramped"><span class="mord"><span class="mord mathit">Q</span><span class="vlist"><span style="top:-0.363em;margin-right:0.05em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle uncramped"><span class="mord scriptstyle uncramped"><span class="mord">−</span><span class="mord mathrm">1</span></span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mord mathit">A</span><span class="mord mathit">Q</span><span class="mrel">=</span><span class="mord mathit" style="margin-right:0.05017em;">B</span></span></span></span>
+则称A与B正交相似</p>
+<h3 id="实对称矩阵">实对称矩阵</h3>
+<ul>
+<li>特征值均为实数，特征向量均为实向量</li>
+<li>其对应于不同特征值的特征向量正交</li>
+<li>一定有n个线性无关的特征向量</li>
+<li>实对称矩阵一定可以对角化</li>
+<li>n重特征一定由对应的n个特征向量</li>
+<li>实对称矩阵一定可以化为对角矩阵，且对角线上的值即为各个特征值</li>
+<li>实对称矩阵与对角形矩阵正交相似</li>
 </ul>
 <h1>二次型</h1>
 
