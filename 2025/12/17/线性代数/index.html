@@ -432,10 +432,11 @@ x=Cy
 </annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.68333em;"></span><span class="strut bottom" style="height:0.8777699999999999em;vertical-align:-0.19444em;"></span><span class="base textstyle uncramped"><span class="mord mathit">x</span><span class="mrel">=</span><span class="mord mathit" style="margin-right:0.07153em;">C</span><span class="mord mathit" style="margin-right:0.03588em;">y</span></span></span></span></p>
 <p>上述表达式为线性替换，若C可逆则称上式为可逆线性变换；若C为正交矩阵则称为正交线性变化</p>
 <h3 id="合同矩阵">合同矩阵</h3>
-<p>可通过可逆矩阵相互转化的矩阵合同
+<p>两个实对称矩阵可通过可逆矩阵相互转化的矩阵合同
 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msup><mi>C</mi><mi>T</mi></msup><mi>A</mi><mi>C</mi><mo>=</mo><mi>B</mi></mrow><annotation encoding="application/x-tex">
 C^TAC=B
-</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.8413309999999999em;"></span><span class="strut bottom" style="height:0.8413309999999999em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord"><span class="mord mathit" style="margin-right:0.07153em;">C</span><span class="vlist"><span style="top:-0.363em;margin-right:0.05em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle uncramped"><span class="mord mathit" style="margin-right:0.13889em;">T</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mord mathit">A</span><span class="mord mathit" style="margin-right:0.07153em;">C</span><span class="mrel">=</span><span class="mord mathit" style="margin-right:0.05017em;">B</span></span></span></span></p>
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.8413309999999999em;"></span><span class="strut bottom" style="height:0.8413309999999999em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord"><span class="mord mathit" style="margin-right:0.07153em;">C</span><span class="vlist"><span style="top:-0.363em;margin-right:0.05em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle uncramped"><span class="mord mathit" style="margin-right:0.13889em;">T</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mord mathit">A</span><span class="mord mathit" style="margin-right:0.07153em;">C</span><span class="mrel">=</span><span class="mord mathit" style="margin-right:0.05017em;">B</span></span></span></span>
+两个实对称矩阵合同的充要条件为具有相同的秩和相同的正惯性指数</p>
 <h3 id="二次型转化为标准形">二次型转化为标准形</h3>
 <p>核心思想:通过可逆线性变换消除交叉项，使二次项只包含平方项。</p>
 <p>1.配方法
@@ -445,6 +446,16 @@ C^TAC=B
 <p>（1）求特征值和特征向量
 （2）将特征向量转换为单位矩阵后构成矩阵
 （3）用特征值拼接，以特征值作为标准形的系数</p>
+<h3 id="二次型与对称逆矩阵的有定性">二次型与对称逆矩阵的有定性</h3>
+<p>若n元二次型对于任意非零列向量x都满足<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msup><mi>X</mi><mi>T</mi></msup><mi>A</mi><mi>x</mi><mo>&gt;</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">X^TAx&gt;0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.8413309999999999em;"></span><span class="strut bottom" style="height:0.880431em;vertical-align:-0.0391em;"></span><span class="base textstyle uncramped"><span class="mord"><span class="mord mathit" style="margin-right:0.07847em;">X</span><span class="vlist"><span style="top:-0.363em;margin-right:0.05em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle uncramped"><span class="mord mathit" style="margin-right:0.13889em;">T</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mord mathit">A</span><span class="mord mathit">x</span><span class="mrel">&gt;</span><span class="mord mathrm">0</span></span></span></span>,则称为正定二次型称对称矩阵为正定矩阵，反之为负定矩阵</p>
+<ul>
+<li>正定的充要条件为每个二次项的系数都大于0</li>
+<li>正定的充分条件为与单位矩阵合同</li>
+<li>正定的充分条件为存在可逆矩阵C,使得A=<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msup><mi>C</mi><mi>T</mi></msup><mi>C</mi></mrow><annotation encoding="application/x-tex">C^TC</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.8413309999999999em;"></span><span class="strut bottom" style="height:0.8413309999999999em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord"><span class="mord mathit" style="margin-right:0.07153em;">C</span><span class="vlist"><span style="top:-0.363em;margin-right:0.05em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle uncramped"><span class="mord mathit" style="margin-right:0.13889em;">T</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mord mathit" style="margin-right:0.07153em;">C</span></span></span></span></li>
+<li>正定矩阵的特征根都大于0</li>
+<li>正定的一个充要条件为各阶顺序主子式大于0</li>
+<li>正定矩阵必为对称矩阵(充要条件)且对角线上元素都大于0</li>
+</ul>
 <h2 id="矩阵的多种关系总结">矩阵的多种关系总结</h2>
 <table>
 <thead>
