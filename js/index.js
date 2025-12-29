@@ -134,7 +134,7 @@
             appId: '',
             appKey: '',
             serverURLs: '',
-            placeholder: '你是我一生只会遇见一次的惊喜...',
+            placeholder: '留下一丝足迹...',
             notify: false,
             verify: false,
             avatar: 'mm',
