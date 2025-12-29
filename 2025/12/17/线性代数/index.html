@@ -385,7 +385,7 @@ A^{-1}&amp; &amp; \\ &amp;B^{-1}&amp; \\ &amp; &amp;C^{-1}
 </ul>
 <p>正交矩阵:</p>
 <ul>
-<li>满足<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>A</mi><msup><mi>A</mi><mi>T</mi></msup></mrow><annotation encoding="application/x-tex">AA^T</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.8413309999999999em;"></span><span class="strut bottom" style="height:0.8413309999999999em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit">A</span><span class="mord"><span class="mord mathit">A</span><span class="vlist"><span style="top:-0.363em;margin-right:0.05em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle uncramped"><span class="mord mathit" style="margin-right:0.13889em;">T</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span></span></span></span>的n阶矩阵称为正交矩阵</li>
+<li>满足<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>A</mi><msup><mi>A</mi><mi>T</mi></msup><mo>=</mo><mi>E</mi></mrow><annotation encoding="application/x-tex">AA^T=E</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.8413309999999999em;"></span><span class="strut bottom" style="height:0.8413309999999999em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit">A</span><span class="mord"><span class="mord mathit">A</span><span class="vlist"><span style="top:-0.363em;margin-right:0.05em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle uncramped"><span class="mord mathit" style="margin-right:0.13889em;">T</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mrel">=</span><span class="mord mathit" style="margin-right:0.05764em;">E</span></span></span></span>的n阶矩阵称为正交矩阵</li>
 <li>正交矩阵行列式为正负1</li>
 <li>正交矩阵的逆矩阵是自己的转置矩阵</li>
 <li>正交矩阵的转置、逆、伴随矩阵也是正交矩阵</li>
@@ -405,7 +405,61 @@ A^{-1}&amp; &amp; \\ &amp;B^{-1}&amp; \\ &amp; &amp;C^{-1}
 <li>实对称矩阵一定可以化为对角矩阵，且对角线上的值即为各个特征值</li>
 <li>实对称矩阵与对角形矩阵正交相似</li>
 </ul>
+<h2 id="正交矩阵的使用">正交矩阵的使用</h2>
+<p>将重特征的多个特征向量进行正交化(不同特征根对应的特征向量已经正交，但同一特征值对应的特征向量不是正交的)</p>
+<p>1.求特征值
+2.求每个特征值对应的特征向量
+3.将重根对应的多个特征向量进行正交化
+4.将每个特征向量变为单位向量(除以长度)
+5.拼接单位特征向量作为正交矩阵
+6.按特征向量拼接顺序拼接特征值到对角线上作为对角形矩阵</p>
 <h1>二次型</h1>
+<p>定义:包含n个变量的二次形式的多项式(标准形为所有项均是2次的二次型。规范形为系数只能是1，-1，0并规定为这个顺序，且变量下标顺序从小到大的标准形)</p>
+<p>二次型的矩阵表达式为</p>
+f(x_1,x_2,x_3……x_n)=X^TAX
+$$(A必须为实对称矩阵)
+
+将二次型表达式转化成矩阵步骤
+1.将二次项变量的系数放在对角线上
+2.交叉项系数除以2放到对应的两个位置上(例:$x_1x_2$的系数除以2后放在$x_1和x_2$各自所在行列的交点上)
+
+### 二次型的惯性指数与符号差
+标准形中正系数平方项的个数称为二次型的正惯性指数，负系数平方项的个数称为二次型的负惯性指数；两者之差称为二次型的符号差
+
+
+### 二次型的线性变换:
+若一组向量中的任一向量可用另一组同数量向量中的所有向量加权表示，那么从x到y的一个线性变换的矩阵形式为x组的列向量=x对于y的加权系数矩阵C乘以y组的列向量
+
+
+<p>x=Cy</p>
+
+上述表达式为线性替换，若C可逆则称上式为可逆线性变换；若C为正交矩阵则称为正交线性变化
+
+### 合同矩阵
+可通过可逆矩阵相互转化的矩阵合同
+
+<p>C^TAC=B</p>
+
+## 二次型转化为标准形
+核心思想:通过可逆线性变换消除交叉项，使二次项只包含平方项。
+
+1.配方法
+通过数学公式变换得到变换矩阵，若原始方程不存在二次项，需要经过两次变换，求两个变换矩阵
+
+2.正交变换法
+本质上就是通过是对称矩阵的正交相似对角化
+
+（1）求特征值和特征向量
+（2）将特征向量转换为单位矩阵后构成矩阵
+（3）用特征值拼接，以特征值作为标准形的系数
+
+# 矩阵的多种关系总结
+| 关系类型 | 定义 | 核心特征 | 举例 | 共同性质 |
+| :--- | :--- | :--- | :--- | :--- |
+| **等价** | 同型A,B. ∃可逆P,Q, PAQ=B | 双边变换（行和列都可以变换） | 任何两个秩相同的矩阵都等价 | **秩 (Rank)** |
+| **相似** | n阶方阵A,B. ∃可逆P, P⁻¹AP=B | 相似变换（基变换） | 对角化：$A = PDP^{-1}$ | **特征值 (Eigenvalues)**, **行列式 (Determinant)**, **迹 (Trace)**, **秩 (Rank)** |
+| **正交相似** | n阶方阵A,B. ∃正交P, P⁻¹AP=B. PᵀAP=B. | 相似 + 保内积（旋转/反射） | 实对称矩阵的对角化：$A = Q\Lambda Q^T$ | **特征值 (Eigenvalues)**, **行列式 (Determinant)**, **迹 (Trace)**, **秩 (Rank)**, **正定性 (Positive Definiteness)** |
+| **合同** | n阶方阵A,B. ∃可逆P, PᵀAP=B. | 对称变换（保持对称性） | 二次型标准化：$x^T A x = y^T B y$ | **正惯性指数 (Positive Index of Inertia)**, **负惯性指数 (Negative Index of Inertia)**, **秩 (Rank)** |
 
                 
                 <p class="end">__END__</p>
