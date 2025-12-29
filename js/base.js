@@ -613,7 +613,7 @@ function Base() {
     /**
      * 设置主页标语
      */
-    this.setHitokoto = function() {
+     this.setHitokoto = function() {
 
         if (window.config.HomeBannerText !== '') {
             $('#hitokoto').text(window.config.HomeBannerText).css('display', '-webkit-box');
