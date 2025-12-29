@@ -9,7 +9,7 @@
     <meta http-equiv="Cache-Control" content="no-siteapp">
     <title>
         
-            mvsnet
+            English—roots-and-affixes
         
     </title>
     <link rel="shortcut icon" href="#"/>
@@ -39,33 +39,35 @@
     <div class="vertical">
         <div class="inner">
             
-                <h1 class="header-subtitle">mvsnet</h1>
+                <h1 class="header-subtitle">English—roots-and-affixes</h1>
                 <div class="header-subinfo">
                     <p class="article-info-text">
                         <span>
-                            <i class="iconfont icon-time"></i> 发表时间：2025-12-17
+                            <i class="iconfont icon-time"></i> 发表时间：2025-12-29
                         </span>
                         
                             
-                                <span id="/2025/12/17/mvsnet/" class="leancloud_visitors" data-flag-title="mvsnet">
+                                <span id="/2025/12/29/English—roots-and-affixes/" class="leancloud_visitors" data-flag-title="English—roots-and-affixes">
                                     <i class="iconfont icon-browse"></i> 阅读：<sapn class="leancloud-visitors-count"></span>
                                 </span>
                             
                             
                                 <span>
-                                    <i class="iconfont icon-interactive"></i> 评论：<span class="valine-comment-count" data-xid="/2025/12/17/mvsnet/"></span>
+                                    <i class="iconfont icon-interactive"></i> 评论：<span class="valine-comment-count" data-xid="/2025/12/29/English—roots-and-affixes/"></span>
                                 </span>
                               
                         
                     </p>
                     
                         
-                            <span class="category-color">三维重建</span>
+                            <span class="category-color">学习资料</span>
                         
                     
                     
                         
-                            <span class="tag-color">三维重建</span>
+                            <span class="tag-color">英语学习</span>
+                        
+                            <span class="tag-color">单词</span>
                         
                     
                 </div>
@@ -80,31 +82,99 @@
         <div id="article">
             <div class="toc"></div>
             <div class="article-body">
-                <h1>mvsnet</h1>
-<h2 id="简介">简介</h2>
-<p>MVS是一种从具有一定重叠度的多视图视角中恢复场景的稠密结构的技术。传统方法利用集合、光学与执行构造匹配代价，进行匹配代价积累，再估计深度值。虽然传统方法有较高的深度估计精度，但由于存在缺少纹理或者光照条件剧烈变化的场景中存在错误匹配。传统方法的深度估计完整度还有很大的提升空间。</p>
-<h2 id="框架">框架</h2>
-<p>Mvsnet是一种监督学习的方法，以一个参考影响和多张原始影响为输入，而得到参考影响深度图的一种端到端的深度学习框架。网络首先提取图像的深度特征，然后通过可微分单应变换构造3D的代价体，再通过1正则化输出一个3D的概率体，沿深度方向求取深度期望，获得参考影响的深度图。
-<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/20251206224649637.png" alt=""></p>
-<h2 id="基于深度学习的深度估计原理">基于深度学习的深度估计原理</h2>
-<p>按照框架，其估计步骤如下：深度特征提取，构造匹配代价，代价累计，深度估计，深度图估计</p>
-<h3 id="1-深度特征提取">1.深度特征提取</h3>
-<p>没什么好说的，cnn提取特征</p>
-<h3 id="2-构建代价匹配">2.构建代价匹配</h3>
-<ul>
-<li>首先确定一个参考图像，并在一个深度范围内均匀连续采样深度假设</li>
-<li>用一个共享权重的2d CNN提取所有图像的特征矩阵</li>
-<li>进行可微分单应变换，对每个源视图和每一个深度假设，根据相机内外参计算单应性矩阵<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>H</mi><mrow><mi>s</mi><mi>r</mi></mrow></msub><mo>(</mo><msub><mi>d</mi><mi>i</mi></msub><mo>)</mo></mrow><annotation encoding="application/x-tex">H_{sr}(d_i)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mord"><span class="mord mathit" style="margin-right:0.08125em;">H</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:-0.08125em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord scriptstyle cramped"><span class="mord mathit">s</span><span class="mord mathit" style="margin-right:0.02778em;">r</span></span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mopen">(</span><span class="mord"><span class="mord mathit">d</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:0em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathit">i</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mclose">)</span></span></span></span>并使用得到的矩阵对源特征图进行几何变换，得到M个变换后的源特征图</li>
-<li>在参考试图的每一个像素位置收集一组特征向量（参考图像的特征以及源特征图经过单应性变换后得到的在该像素点的特征），以该特征向量的方差作为该像素<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>p</mi><mi>r</mi></msub></mrow><annotation encoding="application/x-tex">p_r</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.43056em;"></span><span class="strut bottom" style="height:0.625em;vertical-align:-0.19444em;"></span><span class="base textstyle uncramped"><span class="mord"><span class="mord mathit">p</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:0em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathit" style="margin-right:0.02778em;">r</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span></span></span></span>在深度<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>d</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">d_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.69444em;"></span><span class="strut bottom" style="height:0.84444em;vertical-align:-0.15em;"></span><span class="base textstyle uncramped"><span class="mord"><span class="mord mathit">d</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:0em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathit">i</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span></span></span></span>的匹配代价。</li>
-<li>将统合的代价体进行平滑处理（3dCNN在深、高、宽三个维度聚合上下文，输出为经过正则化后更稠密和平滑的概率体）</li>
-<li>在参考图像的每一个像素位置对概率体进行soft Argmin（将代价值转换为概率权重，然后根据权重对深度假设进行加权平均）</li>
-</ul>
-<h3 id="3-后处理">3.后处理</h3>
-<ul>
-<li>上述为一张参考视图的流程，后续对对多张图作为参考视图输出多张深度图</li>
-<li>通过融合算法（滤波，加权平衡等），将多张深度图融合到一个统一的坐标系下，得到一个全局一致、精确的点云或深度图</li>
-<li>可通过泊松重建或德劳内三角化等算法</li>
-</ul>
+                <p><img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_89.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_90.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_91.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_92.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_93.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_01.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_02.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_03.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_04.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_05.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_06.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_07.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_08.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_09.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_10.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_11.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_12.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_13.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_14.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_15.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_16.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_17.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_18.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_19.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_20.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_21.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_22.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_23.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_24.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_25.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_26.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_27.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_28.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_29.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_30.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_31.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_32.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_33.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_34.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_35.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_36.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_37.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_38.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_39.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_40.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_41.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_42.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_43.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_44.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_45.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_46.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_47.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_48.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_49.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_50.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_51.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_52.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_53.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_54.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_55.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_56.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_57.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_58.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_59.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_60.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_61.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_62.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_63.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_64.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_65.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_66.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_67.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_68.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_69.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_70.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_71.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_72.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_73.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_74.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_75.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_76.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_77.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_78.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_79.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_80.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_81.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_82.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_83.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_84.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_85.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_86.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_87.png" alt="">
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/XDF%E8%AF%8D%E6%A0%B9%E8%AF%8D%E7%BC%80%E8%AE%B0%E5%BF%86%E5%A4%A7%E5%85%A8_88.png" alt=""></p>
 
                 
                 <p class="end">__END__</p>
@@ -117,7 +187,7 @@
     <div class="suffix-box-right">
         <span class="suffix-box-title">文章作者：</span>作吾
         <br>
-        <span class="suffix-box-title">文章出处：</span><a href="/2025/12/17/mvsnet/" target="_blank">mvsnet</a>
+        <span class="suffix-box-title">文章出处：</span><a href="/2025/12/29/English%E2%80%94roots-and-affixes/" target="_blank">English—roots-and-affixes</a>
         <br>
         <span class="suffix-box-title">作者签名：</span>死人一个，在试图活着
         <br>
@@ -132,7 +202,7 @@
                     <div class="category">
                         分类：
                         
-                            <a href="/categories/3d-reconstruction/">三维重建</a>
+                            <a href="/categories/%E5%AD%A6%E4%B9%A0%E8%B5%84%E6%96%99/">学习资料</a>
                         
                     </div>
                 
@@ -140,17 +210,16 @@
                     <div class="tag">
                         标签：
                         
-                            <a href="/tags/%E4%B8%89%E7%BB%B4%E9%87%8D%E5%BB%BA/">三维重建</a>
+                            <a href="/tags/%E8%8B%B1%E8%AF%AD%E5%AD%A6%E4%B9%A0/">英语学习</a>
+                        
+                            <a href="/tags/%E5%8D%95%E8%AF%8D/">单词</a>
                         
                     </div>
                 
                 <div class="article-prev-next">
                     
-                        <a href="/2025/12/17/%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0/" class="prev-prefix">« </a> 上一篇：    <a href="/2025/12/17/%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0/" title="发布于 2025-12-17 07:16">线性代数</a>
-                        <br>
                     
-                    
-                        <a href="/2025/12/17/%E4%B8%89%E7%BB%B4%E9%87%8D%E5%BB%BA/" class="next-prefix">» </a> 下一篇：    <a href="/2025/12/17/%E4%B8%89%E7%BB%B4%E9%87%8D%E5%BB%BA/" title="发布于 2025-12-17 05:25">三维重建</a>
+                        <a href="/2025/12/18/test/" class="next-prefix">» </a> 下一篇：    <a href="/2025/12/18/test/" title="发布于 2025-12-18 08:39">nerf</a>
                     
                 </div>
             </div>
