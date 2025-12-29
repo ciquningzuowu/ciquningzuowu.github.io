@@ -415,53 +415,78 @@ A^{-1}&amp; &amp; \\ &amp;B^{-1}&amp; \\ &amp; &amp;C^{-1}
 6.按特征向量拼接顺序拼接特征值到对角线上作为对角形矩阵</p>
 <h2 id="二次型">二次型</h2>
 <p>定义:包含n个变量的二次形式的多项式(标准形为所有项均是2次的二次型。规范形为系数只能是1，-1，0并规定为这个顺序，且变量下标顺序从小到大的标准形)</p>
-<p>二次型的矩阵表达式为</p>
+<p>二次型的矩阵表达式为
+
 f(x_1,x_2,x_3……x_n)=X^TAX
-$$(A必须为实对称矩阵)
 
-将二次型表达式转化成矩阵步骤
+(A必须为实对称矩阵)</p>
+<p>将二次型表达式转化成矩阵步骤
 1.将二次项变量的系数放在对角线上
-2.交叉项系数除以2放到对应的两个位置上(例:$x_1x_2$的系数除以2后放在$x_1和x_2$各自所在行列的交点上)
-
-### 二次型的惯性指数与符号差
-标准形中正系数平方项的个数称为二次型的正惯性指数，负系数平方项的个数称为二次型的负惯性指数；两者之差称为二次型的符号差
-
-
-### 二次型的线性变换:
-若一组向量中的任一向量可用另一组同数量向量中的所有向量加权表示，那么从x到y的一个线性变换的矩阵形式为x组的列向量=x对于y的加权系数矩阵C乘以y组的列向量
-
-
-<p>x=Cy</p>
-
-上述表达式为线性替换，若C可逆则称上式为可逆线性变换；若C为正交矩阵则称为正交线性变化
-
-### 合同矩阵
-可通过可逆矩阵相互转化的矩阵合同
-
-<p>C^TAC=B</p>
-
-### 二次型转化为标准形
-核心思想:通过可逆线性变换消除交叉项，使二次项只包含平方项。
-
-1.配方法
-通过数学公式变换得到变换矩阵，若原始方程不存在二次项，需要经过两次变换，求两个变换矩阵
-
-2.正交变换法
-本质上就是通过是对称矩阵的正交相似对角化
-
-（1）求特征值和特征向量
+2.交叉项系数除以2放到对应的两个位置上(例:<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>x</mi><mn>1</mn></msub><msub><mi>x</mi><mn>2</mn></msub></mrow><annotation encoding="application/x-tex">x_1x_2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.43056em;"></span><span class="strut bottom" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="base textstyle uncramped"><span class="mord"><span class="mord mathit">x</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:0em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathrm">1</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mord"><span class="mord mathit">x</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:0em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathrm">2</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span></span></span></span>的系数除以2后放在x_1和x_2各自所在行列的交点上)</p>
+<h3 id="二次型的惯性指数与符号差">二次型的惯性指数与符号差</h3>
+<p>标准形中正系数平方项的个数称为二次型的正惯性指数，负系数平方项的个数称为二次型的负惯性指数；两者之差称为二次型的符号差</p>
+<h3 id="二次型的线性变换">二次型的线性变换:</h3>
+<p>若一组向量中的任一向量可用另一组同数量向量中的所有向量加权表示，那么从x到y的一个线性变换的矩阵形式为x组的列向量=x对于y的加权系数矩阵C乘以y组的列向量</p>
+<p><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>x</mi><mo>=</mo><mi>C</mi><mi>y</mi></mrow><annotation encoding="application/x-tex">
+x=Cy
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.68333em;"></span><span class="strut bottom" style="height:0.8777699999999999em;vertical-align:-0.19444em;"></span><span class="base textstyle uncramped"><span class="mord mathit">x</span><span class="mrel">=</span><span class="mord mathit" style="margin-right:0.07153em;">C</span><span class="mord mathit" style="margin-right:0.03588em;">y</span></span></span></span></p>
+<p>上述表达式为线性替换，若C可逆则称上式为可逆线性变换；若C为正交矩阵则称为正交线性变化</p>
+<h3 id="合同矩阵">合同矩阵</h3>
+<p>可通过可逆矩阵相互转化的矩阵合同
+<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msup><mi>C</mi><mi>T</mi></msup><mi>A</mi><mi>C</mi><mo>=</mo><mi>B</mi></mrow><annotation encoding="application/x-tex">
+C^TAC=B
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.8413309999999999em;"></span><span class="strut bottom" style="height:0.8413309999999999em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord"><span class="mord mathit" style="margin-right:0.07153em;">C</span><span class="vlist"><span style="top:-0.363em;margin-right:0.05em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle uncramped"><span class="mord mathit" style="margin-right:0.13889em;">T</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mord mathit">A</span><span class="mord mathit" style="margin-right:0.07153em;">C</span><span class="mrel">=</span><span class="mord mathit" style="margin-right:0.05017em;">B</span></span></span></span></p>
+<h3 id="二次型转化为标准形">二次型转化为标准形</h3>
+<p>核心思想:通过可逆线性变换消除交叉项，使二次项只包含平方项。</p>
+<p>1.配方法
+通过数学公式变换得到变换矩阵，若原始方程不存在二次项，需要经过两次变换，求两个变换矩阵</p>
+<p>2.正交变换法
+本质上就是通过是对称矩阵的正交相似对角化</p>
+<p>（1）求特征值和特征向量
 （2）将特征向量转换为单位矩阵后构成矩阵
-（3）用特征值拼接，以特征值作为标准形的系数
-
-
-## 矩阵的多种关系总结
-
-| 关系类型 | 定义 | 核心特征 | 举例 | 共同性质 |
-| :--- | :--- | :--- | :--- | :--- |
-| **等价** | 同型A,B. ∃可逆P,Q, PAQ=B | 双边变换（行和列都可以变换） | 任何两个秩相同的矩阵都等价 | **秩 (Rank)** |
-| **相似** | n阶方阵A,B. ∃可逆P, P⁻¹AP=B | 相似变换（基变换） | 对角化：$A = PDP^{-1}$ | **特征值 (Eigenvalues)**, **行列式 (Determinant)**, **迹 (Trace)**, **秩 (Rank)** |
-| **正交相似** | n阶方阵A,B. ∃正交P, P⁻¹AP=B. PᵀAP=B. | 相似 + 保内积（旋转/反射） | 实对称矩阵的对角化：$A = Q\Lambda Q^T$ | **特征值 (Eigenvalues)**, **行列式 (Determinant)**, **迹 (Trace)**, **秩 (Rank)**, **正定性 (Positive Definiteness)** |
-| **合同** | n阶方阵A,B. ∃可逆P, PᵀAP=B. | 对称变换（保持对称性） | 二次型标准化：$x^T A x = y^T B y$ | **正惯性指数 (Positive Index of Inertia)**, **负惯性指数 (Negative Index of Inertia)**, **秩 (Rank)** |
+（3）用特征值拼接，以特征值作为标准形的系数</p>
+<h2 id="矩阵的多种关系总结">矩阵的多种关系总结</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">关系类型</th>
+<th style="text-align:left">定义</th>
+<th style="text-align:left">核心特征</th>
+<th style="text-align:left">举例</th>
+<th style="text-align:left">共同性质</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>等价</strong></td>
+<td style="text-align:left">同型A,B. ∃可逆P,Q, PAQ=B</td>
+<td style="text-align:left">双边变换（行和列都可以变换）</td>
+<td style="text-align:left">任何两个秩相同的矩阵都等价</td>
+<td style="text-align:left"><strong>秩 (Rank)</strong></td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>相似</strong></td>
+<td style="text-align:left">n阶方阵A,B. ∃可逆P, P⁻¹AP=B</td>
+<td style="text-align:left">相似变换（基变换）</td>
+<td style="text-align:left">对角化：<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>A</mi><mo>=</mo><mi>P</mi><mi>D</mi><msup><mi>P</mi><mrow><mo>−</mo><mn>1</mn></mrow></msup></mrow><annotation encoding="application/x-tex">A = PDP^{-1}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.8141079999999999em;"></span><span class="strut bottom" style="height:0.8141079999999999em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit">A</span><span class="mrel">=</span><span class="mord mathit" style="margin-right:0.13889em;">P</span><span class="mord mathit" style="margin-right:0.02778em;">D</span><span class="mord"><span class="mord mathit" style="margin-right:0.13889em;">P</span><span class="vlist"><span style="top:-0.363em;margin-right:0.05em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle uncramped"><span class="mord scriptstyle uncramped"><span class="mord">−</span><span class="mord mathrm">1</span></span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span></span></span></span></td>
+<td style="text-align:left"><strong>特征值 (Eigenvalues)</strong>, <strong>行列式 (Determinant)</strong>, <strong>迹 (Trace)</strong>, <strong>秩 (Rank)</strong></td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>正交相似</strong></td>
+<td style="text-align:left">n阶方阵A,B. ∃正交P, P⁻¹AP=B. PᵀAP=B.</td>
+<td style="text-align:left">相似 + 保内积（旋转/反射）</td>
+<td style="text-align:left">实对称矩阵的对角化：<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>A</mi><mo>=</mo><mi>Q</mi><mi mathvariant="normal">Λ</mi><msup><mi>Q</mi><mi>T</mi></msup></mrow><annotation encoding="application/x-tex">A = Q\Lambda Q^T</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.8413309999999999em;"></span><span class="strut bottom" style="height:1.035771em;vertical-align:-0.19444em;"></span><span class="base textstyle uncramped"><span class="mord mathit">A</span><span class="mrel">=</span><span class="mord mathit">Q</span><span class="mord mathrm">Λ</span><span class="mord"><span class="mord mathit">Q</span><span class="vlist"><span style="top:-0.363em;margin-right:0.05em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle uncramped"><span class="mord mathit" style="margin-right:0.13889em;">T</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span></span></span></span></td>
+<td style="text-align:left"><strong>特征值 (Eigenvalues)</strong>, <strong>行列式 (Determinant)</strong>, <strong>迹 (Trace)</strong>, <strong>秩 (Rank)</strong>, <strong>正定性 (Positive Definiteness)</strong></td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>合同</strong></td>
+<td style="text-align:left">n阶方阵A,B. ∃可逆P, PᵀAP=B.</td>
+<td style="text-align:left">对称变换（保持对称性）</td>
+<td style="text-align:left">二次型标准化：<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msup><mi>x</mi><mi>T</mi></msup><mi>A</mi><mi>x</mi><mo>=</mo><msup><mi>y</mi><mi>T</mi></msup><mi>B</mi><mi>y</mi></mrow><annotation encoding="application/x-tex">x^T A x = y^T B y</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.8413309999999999em;"></span><span class="strut bottom" style="height:1.035771em;vertical-align:-0.19444em;"></span><span class="base textstyle uncramped"><span class="mord"><span class="mord mathit">x</span><span class="vlist"><span style="top:-0.363em;margin-right:0.05em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle uncramped"><span class="mord mathit" style="margin-right:0.13889em;">T</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mord mathit">A</span><span class="mord mathit">x</span><span class="mrel">=</span><span class="mord"><span class="mord mathit" style="margin-right:0.03588em;">y</span><span class="vlist"><span style="top:-0.363em;margin-right:0.05em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle uncramped"><span class="mord mathit" style="margin-right:0.13889em;">T</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mord mathit" style="margin-right:0.05017em;">B</span><span class="mord mathit" style="margin-right:0.03588em;">y</span></span></span></span></td>
+<td style="text-align:left"><strong>正惯性指数 (Positive Index of Inertia)</strong>, <strong>负惯性指数 (Negative Index of Inertia)</strong>, <strong>秩 (Rank)</strong></td>
+</tr>
+</tbody>
+</table>
 
                 
                 <p class="end">__END__</p>
