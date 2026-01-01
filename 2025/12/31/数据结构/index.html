@@ -9,7 +9,7 @@
     <meta http-equiv="Cache-Control" content="no-siteapp">
     <title>
         
-            分类
+            数据结构
         
     </title>
     <link rel="shortcut icon" href="#"/>
@@ -34,15 +34,40 @@
 <meta name="generator" content="Hexo 8.1.1"></head>
 <body>
     <a id="cover"></a>
-    <link type="text/css" rel="stylesheet" href="/css/page.css">
+    <link type="text/css" rel="stylesheet" href="/css/post.css">
 <div id="header" class="header">
     <div class="vertical">
         <div class="inner">
             
-                <h1 class="header-subtitle">分类</h1>
+                <h1 class="header-subtitle">数据结构</h1>
                 <div class="header-subinfo">
-                    <p class="article-info-text Chinese"></p>
-                    <p class="article-info-text English"></p>                  
+                    <p class="article-info-text">
+                        <span>
+                            <i class="iconfont icon-time"></i> 发表时间：2025-12-31
+                        </span>
+                        
+                            
+                                <span id="/2025/12/31/数据结构/" class="leancloud_visitors" data-flag-title="数据结构">
+                                    <i class="iconfont icon-browse"></i> 阅读：<sapn class="leancloud-visitors-count"></span>
+                                </span>
+                            
+                            
+                                <span>
+                                    <i class="iconfont icon-interactive"></i> 评论：<span class="valine-comment-count" data-xid="/2025/12/31/数据结构/"></span>
+                                </span>
+                              
+                        
+                    </p>
+                    
+                        
+                            <span class="category-color">期末复习笔记</span>
+                        
+                    
+                    
+                        
+                            <span class="tag-color">计算机基础</span>
+                        
+                    
                 </div>
             
         </div>
@@ -51,17 +76,88 @@
 </div>
 <div id="container">
     
-        <!-- 独立页面 -->
-        
-            <div class="categories">
-                <div class="categories-title">
-                    目前共计 3 个分类
-                </div>
-                    <ul class="category-item-list"><li class="category-item-list-item"><a class="category-item-list-link" href="/categories/3d-reconstruction/">三维重建</a><span class="category-item-list-count">2</span></li><li class="category-item-list-item"><a class="category-item-list-link" href="/categories/%E5%AD%A6%E4%B9%A0%E8%B5%84%E6%96%99/">学习资料</a><span class="category-item-list-count">1</span></li><li class="category-item-list-item"><a class="category-item-list-link" href="/categories/final-review-notes/">期末复习笔记</a><span class="category-item-list-count">4</span></li></ul>
-                    <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/3d-reconstruction/">三维重建</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AD%A6%E4%B9%A0%E8%B5%84%E6%96%99/">学习资料</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/final-review-notes/">期末复习笔记</a><span class="category-list-count">4</span></li></ul>
+        <!-- 文章页面 -->
+        <div id="article">
+            <div class="toc"></div>
+            <div class="article-body">
+                <h1>数据结构</h1>
+<h2 id="基础定义">基础定义</h2>
+<p>数据:对客观事物的符号表示
+数据元素:数据的基本单位
+数据项:构成数据元素的不可分割的最小单位
+数据对象:聚友相同性质的数据元素的集合
+数据结构:相互之间存在一种或多种特定关系的数据元素的集合，包含逻辑结构、存储结构和数据的运算</p>
+<p>数据项\rightarrow 数据元素\rightarrow 数据对象\rightarrow 数据、数据结构</p>
+<p>逻辑结构\begin{cases}线性结构\quad线性表(一般线性表、栈、队列、串、数组)\\非线性结构\begin{cases}集合\\树形结构\\图形结构或网状结构\end{cases}\end{cases}
+存储结构\begin{cases}顺序存储\\链式存储\\索引存储\\散列存储\end{cases}</p>
+<p>优秀算法的三个特点:</p>
+<ul>
+<li>正确性</li>
+<li>可读性</li>
+<li>健壮性</li>
+</ul>
+<p>常见的渐近时间复杂度：
+<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>O</mi><mo>(</mo><mn>1</mn><mo>)</mo><mo>&lt;</mo><mi>O</mi><mo>(</mo><msub><mi>log</mi><mn>2</mn></msub><mrow><mi>n</mi></mrow><mo>)</mo><mo>&lt;</mo><mi>O</mi><mo>(</mo><mi>n</mi><mo>)</mo><mo>&lt;</mo><mi>O</mi><mo>(</mo><mi>n</mi><msub><mi>log</mi><mn>2</mn></msub><mrow><mi>n</mi></mrow><mo>&lt;</mo><mi>O</mi><mo>(</mo><msup><mi>n</mi><mn>2</mn></msup><mo>)</mo><mo>&lt;</mo><mi>O</mi><mo>(</mo><msup><mi>n</mi><mn>3</mn></msup><mo>)</mo><mo>&lt;</mo><mi>O</mi><mo>(</mo><msup><mn>2</mn><mi>n</mi></msup><mo>)</mo><mo>&lt;</mo><mi>O</mi><mo>(</mo><mi>n</mi><mo>!</mo><mo>)</mo><mo>&lt;</mo><mi>O</mi><mo>(</mo><msup><mi>n</mi><mi>n</mi></msup><mo>)</mo><mo>)</mo></mrow><annotation encoding="application/x-tex">O(1)&lt;O(\log_2{n})&lt;O(n)&lt;O(n\log_2{n}&lt;O(n^2)&lt;O(n^3)&lt;O(2^n)&lt;O(n!)&lt;O(n^n))</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.8141079999999999em;"></span><span class="strut bottom" style="height:1.064108em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mord mathit" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord mathrm">1</span><span class="mclose">)</span><span class="mrel">&lt;</span><span class="mord mathit" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mop"><span class="mop">lo<span style="margin-right:0.01389em;">g</span></span><span class="vlist"><span style="top:0.24444em;margin-right:0.05em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathrm">2</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mord textstyle uncramped"><span class="mord mathit">n</span></span><span class="mclose">)</span><span class="mrel">&lt;</span><span class="mord mathit" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord mathit">n</span><span class="mclose">)</span><span class="mrel">&lt;</span><span class="mord mathit" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord mathit">n</span><span class="mop"><span class="mop">lo<span style="margin-right:0.01389em;">g</span></span><span class="vlist"><span style="top:0.24444em;margin-right:0.05em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathrm">2</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mord textstyle uncramped"><span class="mord mathit">n</span></span><span class="mrel">&lt;</span><span class="mord mathit" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord"><span class="mord mathit">n</span><span class="vlist"><span style="top:-0.363em;margin-right:0.05em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle uncramped"><span class="mord mathrm">2</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mclose">)</span><span class="mrel">&lt;</span><span class="mord mathit" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord"><span class="mord mathit">n</span><span class="vlist"><span style="top:-0.363em;margin-right:0.05em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle uncramped"><span class="mord mathrm">3</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mclose">)</span><span class="mrel">&lt;</span><span class="mord mathit" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord"><span class="mord mathrm">2</span><span class="vlist"><span style="top:-0.363em;margin-right:0.05em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle uncramped"><span class="mord mathit">n</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mclose">)</span><span class="mrel">&lt;</span><span class="mord mathit" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord mathit">n</span><span class="mclose">!</span><span class="mclose">)</span><span class="mrel">&lt;</span><span class="mord mathit" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord"><span class="mord mathit">n</span><span class="vlist"><span style="top:-0.363em;margin-right:0.05em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle uncramped"><span class="mord mathit">n</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mclose">)</span><span class="mclose">)</span></span></span></span></p>
+<p><img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/n5zuj4kbf9gi12n7fe7nks5zz8httc5.png" alt="">
+后面好像都会，不记了，笔记就到这</p>
+
+                
+                <p class="end">__END__</p>
+            </div>
+            <div class="article-footer">
+                <div class="suffix-box">
+    <div class="suffix-box-left">
+        <img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/星锑(1).jpg" alt="作吾">
+    </div>
+    <div class="suffix-box-right">
+        <span class="suffix-box-title">文章作者：</span>作吾
+        <br>
+        <span class="suffix-box-title">文章出处：</span><a href="/2025/12/31/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" target="_blank">数据结构</a>
+        <br>
+        <span class="suffix-box-title">作者签名：</span>死人一个，在试图活着
+        <br>
+        <span class="suffix-box-title">关于主题：</span><a href="https://github.com/first19326/Hexo-LiveForCode" target="_blank">Hexo - Live For Code</a>
+        <br>
+        <span class="suffix-box-title">版权声明：</span>文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" title="BY-NC-SA" target="_blank">BY-NC-SA</a> 许可协议，转载请注明出处
+        <br>
+    </div>
+    <div style="clear: both;"></div>
+</div>
+                
+                    <div class="category">
+                        分类：
+                        
+                            <a href="/categories/final-review-notes/">期末复习笔记</a>
+                        
+                    </div>
+                
+                
+                    <div class="tag">
+                        标签：
+                        
+                            <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/">计算机基础</a>
+                        
+                    </div>
+                
+                <div class="article-prev-next">
+                    
+                    
+                        <a href="/2025/12/29/English%E2%80%94roots-and-affixes/" class="next-prefix">» </a> 下一篇：    <a href="/2025/12/29/English%E2%80%94roots-and-affixes/" title="发布于 2025-12-29 02:45">English—roots-and-affixes</a>
+                    
                 </div>
             </div>
+            
+    <div class="article-comments">
         
+            <div class="comments-title">
+                评论列表
+            </div>
+        
+        <div class="comments-content"></div>
+    </div>
+    
+ 
+        </div>
     
 </div>
     <div id="footer">
@@ -95,7 +191,7 @@
                     
                         <li class=""><a href="/" class="" target="_self"><span class="iconfont icon-home-fill"></span>首页</a></li>
                     
-                        <li class=" active "><a href="/category" class="" target="_self"><span class="iconfont icon-folder-fill"></span>分类</a></li>
+                        <li class=""><a href="/category" class="" target="_self"><span class="iconfont icon-folder-fill"></span>分类</a></li>
                     
                         <li class=""><a href="/tag" class="" target="_self"><span class="iconfont icon-discount-fill"></span>标签</a></li>
                     
