@@ -82,29 +82,38 @@
             <div class="article-body">
                 <h1>数制</h1>
 <p>多位数码中的每一位数的构成以及低位向高位进位的规则</p>
+<p>2进制数的补码与原码:</p>
+<ul>
+<li>正数的补码与原码都是将符号为变为0拼接原数值部分的二进制</li>
+<li>负数的1原码为符号位为1，补码为符号位不变拼接数值位取反后加1</li>
+</ul>
 <h2 id="码制">码制</h2>
 <ul>
 <li>8421BCD:四位二进制表示0到9</li>
 <li>余三码:比8421码大3。余三码最独特和有用的特性。它意味着对于任何一个十进制数 N，其对应的余三码与 9-N 的余三码互为按位取反（反码）。
 格雷码</li>
+<li>2421码:如名，每一位的值为对应的数。部分数字用此种表示方法不止一种形式，但只有一种具有自补性。自补指取反所得数为相对9的补数</li>
 </ul>
 <h1>逻辑代数基础</h1>
 <p>与、或、非、与非、或非、异或（<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>A</mi><mover accent="true"><mrow><mi>B</mi></mrow><mo stretchy="true">‾</mo></mover><mo>+</mo><mover accent="true"><mrow><mi>A</mi></mrow><mo stretchy="true">‾</mo></mover><mi>B</mi></mrow><annotation encoding="application/x-tex">A\overline{B}+\overline{A}B</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.8833300000000001em;"></span><span class="strut bottom" style="height:0.9666600000000001em;vertical-align:-0.08333em;"></span><span class="base textstyle uncramped"><span class="mord mathit">A</span><span class="overline mord"><span class="vlist"><span style="top:0em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:1em;">​</span></span><span class="mord textstyle cramped"><span class="mord mathit" style="margin-right:0.05017em;">B</span></span></span><span style="top:-0.80333em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:1em;">​</span></span><span class="reset-textstyle textstyle uncramped overline-line"></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:1em;">​</span></span>​</span></span></span><span class="mbin">+</span><span class="overline mord"><span class="vlist"><span style="top:0em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:1em;">​</span></span><span class="mord textstyle cramped"><span class="mord mathit">A</span></span></span><span style="top:-0.80333em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:1em;">​</span></span><span class="reset-textstyle textstyle uncramped overline-line"></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:1em;">​</span></span>​</span></span></span><span class="mord mathit" style="margin-right:0.05017em;">B</span></span></span></span>）、同或(<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>A</mi><mi>B</mi><mo>+</mo><mover accent="true"><mrow><mi>A</mi><mi>B</mi></mrow><mo stretchy="true">‾</mo></mover></mrow><annotation encoding="application/x-tex">AB+\overline{AB}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.8833300000000001em;"></span><span class="strut bottom" style="height:0.9666600000000001em;vertical-align:-0.08333em;"></span><span class="base textstyle uncramped"><span class="mord mathit">A</span><span class="mord mathit" style="margin-right:0.05017em;">B</span><span class="mbin">+</span><span class="overline mord"><span class="vlist"><span style="top:0em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:1em;">​</span></span><span class="mord textstyle cramped"><span class="mord mathit">A</span><span class="mord mathit" style="margin-right:0.05017em;">B</span></span></span><span style="top:-0.80333em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:1em;">​</span></span><span class="reset-textstyle textstyle uncramped overline-line"></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:1em;">​</span></span>​</span></span></span></span></span></span>)</p>
 <p>摩根定理:<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mover accent="true"><mrow><mover accent="true"><mrow><mi>A</mi></mrow><mo stretchy="true">‾</mo></mover><mo>⋅</mo><mi>B</mi></mrow><mo stretchy="true">‾</mo></mover><mo>=</mo><mi>A</mi><mo>+</mo><mover accent="true"><mrow><mi>B</mi></mrow><mo stretchy="true">‾</mo></mover></mrow><annotation encoding="application/x-tex">\overline{\overline{A}\cdot B}=A+\overline{B}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:1.0833300000000001em;"></span><span class="strut bottom" style="height:1.16666em;vertical-align:-0.08333em;"></span><span class="base textstyle uncramped"><span class="overline mord"><span class="vlist"><span style="top:0em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:1em;">​</span></span><span class="mord textstyle cramped"><span class="overline mord"><span class="vlist"><span style="top:0em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:1em;">​</span></span><span class="mord textstyle cramped"><span class="mord mathit">A</span></span></span><span style="top:-0.80333em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:1em;">​</span></span><span class="reset-textstyle textstyle uncramped overline-line"></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:1em;">​</span></span>​</span></span></span><span class="mbin">⋅</span><span class="mord mathit" style="margin-right:0.05017em;">B</span></span></span><span style="top:-1.00333em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:1em;">​</span></span><span class="reset-textstyle textstyle uncramped overline-line"></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:1em;">​</span></span>​</span></span></span><span class="mrel">=</span><span class="mord mathit">A</span><span class="mbin">+</span><span class="overline mord"><span class="vlist"><span style="top:0em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:1em;">​</span></span><span class="mord textstyle cramped"><span class="mord mathit" style="margin-right:0.05017em;">B</span></span></span><span style="top:-0.80333em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:1em;">​</span></span><span class="reset-textstyle textstyle uncramped overline-line"></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:1em;">​</span></span>​</span></span></span></span></span></span></p>
 <h2 id="逻辑代数的基本定律与恒等式">逻辑代数的基本定律与恒等式</h2>
-<p>代入定理:</p>
-<p>反</p>
 <h2 id="逻辑代数的基本定理">逻辑代数的基本定理</h2>
-<p>演定理:1.与(<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>⋅</mo></mrow><annotation encoding="application/x-tex">\cdot</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.44445em;"></span><span class="strut bottom" style="height:0.44445em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord">⋅</span></span></span></span>)变为或(<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>+</mo></mrow><annotation encoding="application/x-tex">+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.58333em;"></span><span class="strut bottom" style="height:0.66666em;vertical-align:-0.08333em;"></span><span class="base textstyle uncramped"><span class="mord">+</span></span></span></span>),2.原变量变为反变量，3.0变为1，即得到逻辑表达式的反函数，4.非变量以外的非号保留不变，反函数即为结果的反结果</p>
+<p>代入定理:</p>
+<p>反演定理:1.与(<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>⋅</mo></mrow><annotation encoding="application/x-tex">\cdot</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.44445em;"></span><span class="strut bottom" style="height:0.44445em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord">⋅</span></span></span></span>)变为或(<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>+</mo></mrow><annotation encoding="application/x-tex">+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.58333em;"></span><span class="strut bottom" style="height:0.66666em;vertical-align:-0.08333em;"></span><span class="base textstyle uncramped"><span class="mord">+</span></span></span></span>),2.原变量变为反变量，3.0变为1，即得到逻辑表达式的反函数，4.非变量以外的非号保留不变，反函数即为结果的反结果</p>
 <p>对偶定理:将反演定理的变换去掉原变量变为反变量的剩余步骤</p>
 <h2 id="逻辑函数表达式的形式">逻辑函数表达式的形式</h2>
 <p>1.真值表
 2.卡诺图
 3.最大项与最小项:最大项只有一项为0，其余为1，为多项相与，内部相或;  最小项只有一项为1，其余为零，为多项相或，内部为与。最大项与最小项互补</p>
+<ul>
+<li>对偶式:操作符与或互换，逻辑值01互换</li>
+<li>反函数:操作符互换、元素取反、逻辑值取反(本质是在整体上加一个包含整体的大取反上标，经过简化后就是前述的变换)</li>
+</ul>
 <h2 id="逻辑函数化简">逻辑函数化简</h2>
 <p>最简标准:与项个数最少，乘积项中变量个数最少</p>
 <p>1.公式法</p>
-<p>2.卡诺图法</p>
+<p>2.卡诺图法:“化简”的核心目标始终是“乘积项最少，且每个项变量最少”。</p>
 <p>留同去异，格局大圈少</p>
 <h2 id="组合逻辑电路">组合逻辑电路</h2>
 <p>定义:输出状态只取决于此刻的输入，与电路原来的状态无关，即无记忆功能</p>
@@ -129,14 +138,22 @@
 <h2 id="时序逻辑电路">时序逻辑电路</h2>
 <p>分析写出输入输出方程，画出真值表，画出状态转移图</p>
 <p>自启动: 位于任意一种状态中能否进入循环（即所有状态只组成一个流程环）</p>
+<p>冒险-竞争:</p>
+<ul>
+<li>修改逻辑设计，增加冗余项；</li>
+<li>格雷码编码；</li>
+<li>引入选通脉冲</li>
+</ul>
 <h2 id="常用时序逻辑电路">常用时序逻辑电路</h2>
 <h2 id="计数器">计数器</h2>
 <p>功能: 对时钟脉冲进行计数，当达到最大值后下一次变回0</p>
 <p>二进制计数器中74161与74163为常见组件，前者为异步清零，后者为同步清零。十进制为74160。</p>
 <p>组装特殊进制计数器，核心思想在于封装一些组件，使得整体模块输入进制数量后，最终结果就会输出一次1</p>
+<p>计数器模数（状态数）”与“触发器个数（位数）”之间的关系:模指计数器循环中一共有多少个不同的状态,因此输入的组合种数能大于模即可(每个输入有0盒和1态，因此需要2的n次方大于等于模)</p>
 <h2 id="寄存器">寄存器</h2>
 <p>本质是用于解决触发器只能存储一位数据出现的多个触发器级联的组件</p>
 <p>移位寄存器是由多个D触发器串联而成的，当时钟边沿到来时，所有触发器同时将自己 D 输入端的数据锁存到 Q 输出端。因为 D 端连接的是前一位的 Q，所以整体效果看起来就像数据“移动”了一位。</p>
+<p><img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/20260106214232047.png" alt=""></p>
 
                 
                 <p class="end">__END__</p>
