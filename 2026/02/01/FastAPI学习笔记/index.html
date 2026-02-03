@@ -9,7 +9,7 @@
     <meta http-equiv="Cache-Control" content="no-siteapp">
     <title>
         
-            归档
+            
         
     </title>
     <link rel="shortcut icon" href="#"/>
@@ -34,15 +34,38 @@
 <meta name="generator" content="Hexo 8.1.1"></head>
 <body>
     <a id="cover"></a>
-    <link type="text/css" rel="stylesheet" href="/css/archive.css">
+    <link type="text/css" rel="stylesheet" href="/css/post.css">
 <div id="header" class="header">
     <div class="vertical">
         <div class="inner">
             
-                <h1 class="header-subtitle">归档</h1>
+                <h1 class="header-subtitle"></h1>
                 <div class="header-subinfo">
-                    <p class="article-info-text Chinese"></p>
-                    <p class="article-info-text English"></p>                  
+                    <p class="article-info-text">
+                        <span>
+                            <i class="iconfont icon-time"></i> 发表时间：2026-02-01
+                        </span>
+                        
+                            
+                                <span id="/2026/02/01/FastAPI学习笔记/" class="leancloud_visitors" data-flag-title="">
+                                    <i class="iconfont icon-browse"></i> 阅读：<sapn class="leancloud-visitors-count"></span>
+                                </span>
+                            
+                            
+                                <span>
+                                    <i class="iconfont icon-interactive"></i> 评论：<span class="valine-comment-count" data-xid="/2026/02/01/FastAPI学习笔记/"></span>
+                                </span>
+                              
+                        
+                    </p>
+                    
+                    
+                        
+                            <span class="tag-color">学习笔记</span>
+                        
+                            <span class="tag-color">web</span>
+                        
+                    
                 </div>
             
         </div>
@@ -51,140 +74,127 @@
 </div>
 <div id="container">
     
-        
-            <!-- 归档页面、分类归档页面、标签归档页面 -->
-            <div class="articles">
-                <div class="articles-wrap">
-                    <span class="archive-move-on"></span>
-                    <span class="archive-counter">
+        <!-- 文章页面 -->
+        <div id="article">
+            <div class="toc"></div>
+            <div class="article-body">
+                <p><strong>预备知识点</strong>：</p>
+<p><strong>http协议</strong>:服务器与本地浏览器之间的传输超文本的传送协议。</p>
+<ul>
+<li>http基于请求-相应模式</li>
+<li>无状态保存：http协议自身不对请求和响应之间的通信状态进行保存，每次请求的所有信息（用户、内容等）都会在服务端回复后消失</li>
+<li>短连接：早期每次请求响应后客户端和服务器会立刻断开，节省connection资源。1.1后变为长连接</li>
+</ul>
+<p><strong>Socket:</strong> 网络通信的一个端点，它允许不同计算机上的程序通过网络进行数据交换。
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/%7B1A39CD98-F105-4FF4-AABB-156CFACC3959%7D.png" alt="">
+**Http请求协议</p>
+<ul>
+<li>请求协议发送POST请求，请求首行包含路径、参数、协议信息、请求头、请求体。</li>
+<li>请求头包含服务器的数据信息。（发送请求的位置、数据格式）</li>
+<li>请求体包含发送的数据，于请求头用空行隔开。（get请求没有请求体，数据挂载在请求头后面，这会导致所有数据都暴露在地址栏）
+<strong>Http响应协议</strong></li>
+<li>响应首行包含状态码和解释</li>
+<li>响应头包含日期、数据量、数据格式等</li>
+<li>响应体为返回的信息，与响应头用空行隔开</li>
+<li>URL地址包括协议、ip、端口（默认是80）、路径、参数</li>
+</ul>
+<h2 id="一、前后端">一、前后端</h2>
+<ul>
+<li>前后端不分离：客户端看到的内容和所有界面效果都是由服务端提供出来的
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/%7BA093886D-7A19-4BCD-AFBB-9DAAED960FAC%7D.png" alt=""></li>
+<li>前后端分离：前端的界面效果（html，css，js）分离到另一个服务器，python服务端只需返回数据，前端形成一个独立的网站，服务端构成一个独立的网络
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/%7B5892FF91-CB2A-480C-B538-AEFCEFA20173%7D.png" alt=""></li>
+</ul>
+<h3 id="api接口">api接口</h3>
+<p>应用程序对外提供的的操作数据入口。目前市面上的主要接口实现规范有restful、RPC</p>
+<h2 id="二、路径操作">二、路径操作</h2>
+<p>流程：客户端发起请求-&gt;ASGI服务器接受请求-&gt;fastapi路由匹配-&gt;依赖项处理-&gt;请求参数解析-&gt;执行路径操作函数-&gt;响应生成与返回-&gt;客户端接收响应</p>
+<h3 id="路径操作装饰器"><strong>路径操作装饰器:</strong></h3>
+<p>请求方式:</p>
+<ul>
+<li>get（查看）</li>
+<li>post（添加）</li>
+<li>put（更新）</li>
+<li>patch</li>
+<li>delete（删除）</li>
+<li>options</li>
+<li>head</li>
+<li>trace</li>
+</ul>
+<p>路径操作装饰器方法的参数：(&quot;/路径&quot;,tags=[&quot;(端口注释)&quot;]，summary=&quot;(总结)&quot;,description=&quot;(描述)&quot;，response_description=&quot;(响应描述)&quot;,deprecated=True/False（是否废弃）)</p>
+<h3 id="include-router"><strong>include_router</strong></h3>
+<p>可以在子目录路径下创建其他的urls，在里面创建APIRouter()对象以及该子对象的方法，然后用import将该对象引入主文件中，之后可以通过主文件的FastAPI对象的include_router方法将引入的APIRouter并入主路径下。
+以下为例，shop为引入的APIRouter()对象，prefix参数为设定的访问这个子对象的路径
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/%7B345E10DD-50D4-44ED-BEBC-AD836BEA54E0%7D.png" alt=""></p>
+<h2 id="三、请求与响应">三、请求与响应</h2>
+<p>请求首行内容:请求方式 请求路径?查询参数 协议版本</p>
+<p><strong>路径参数:</strong>
+API对象调用为装饰器后路径参数可以用花括号{}进行输入参数位置预留，然后可在修饰的函数中加入该参数实现动态请求。传递的参数默认为字符类型，被修饰函数的参数部分可以使用（参数名: (类型)）进行参数类型转换。(由于数据类型转换对数据有要求列入转换为int要求全部为数字的字符形式，因此需要注意输入的类型，否则容易发生类型错误)
+响应请求的路由是从上向下进行寻找的，即如果两个路由会有路径相同的情况（一个动态路由的一种路径是一个已经定义了的动态路由），会取先定义在程序中的路由。所以如果想将动态路由中的磨具写路径设定为特定情况，需要将静态路由放在前面。</p>
+<p><strong>查询参数</strong>
+在被修饰函数中声明不属于路径参数的其他函数参数是，它们会被自动解释为查询参数。通过将参数设置为默认参数（=None），可以实现部分条件查询，设置为None的参数不用在查找时必须输入。
+<strong>Union类型</strong>可以实现让参数拥有多个类型，下例为在保证可选输入的同时，限制输入类型为str。
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/%7B491CBC96-EDFB-491B-8BF3-2A3B12C2659A%7D.png" alt=""></p>
+<p><strong>请求体数据</strong>
+<strong>pydantic</strong>是一个用来进行数据验证的库，可如以下使用进行数据类型限制
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/%7BCC520D6F-63FB-40B1-A0D8-9D4145F40306%7D.png" alt="">
+可以创建class作为参数，同样可进行数据限制，也可用field、Union等进行更详细的限制
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/%7BF58D2BE5-78D3-4C42-AAFC-0C80F8F528A1%7D.png" alt="">
+pydantic中的@validator可用来在继承了BaseModel的结构体中声明数据验证函数（装饰器后的参数为要验证的参数，验证函数的第一个参数必须是cls，代表结构体本身，第二个参数为要验证的数据，下图的value代表值验证）
+![[{C82CFE38-EDF0-4FE9-8012-BEEDDA8F6132}.png]]</p>
+
+                
+                <p class="end">__END__</p>
+            </div>
+            <div class="article-footer">
+                <div class="suffix-box">
+    <div class="suffix-box-left">
+        <img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/星锑(1).jpg" alt="作吾">
+    </div>
+    <div class="suffix-box-right">
+        <span class="suffix-box-title">文章作者：</span>作吾
+        <br>
+        <span class="suffix-box-title">文章出处：</span><a href="/2026/02/01/FastAPI%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" target="_blank"></a>
+        <br>
+        <span class="suffix-box-title">作者签名：</span>死人一个，在试图活着
+        <br>
+        <span class="suffix-box-title">关于主题：</span><a href="https://github.com/first19326/Hexo-LiveForCode" target="_blank">Hexo - Live For Code</a>
+        <br>
+        <span class="suffix-box-title">版权声明：</span>文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" title="BY-NC-SA" target="_blank">BY-NC-SA</a> 许可协议，转载请注明出处
+        <br>
+    </div>
+    <div style="clear: both;"></div>
+</div>
+                
+                
+                    <div class="tag">
+                        标签：
                         
-                            目前共计 14 篇日志，继续加油！
+                            <a href="/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">学习笔记</a>
                         
-                    </span>
-                    
-                    
+                            <a href="/tags/web/">web</a>
                         
-                            <div class="archive-title">
-                                <h2 class="archive-year">2026</h2>
-                            </div>
-                            
-                           
-                        <div class="article">
-                            <div class="article-header">
-                                <h1 class="article-title"><a href="/2026/02/01/FastAPI%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"><span></span></a></h1>
-                                <div class="article-meta">
-                                    <span class="article-time">02-01</span>
-                                </div>
-                            </div>
-                        </div>
+                    </div>
+                
+                <div class="article-prev-next">
                     
-                           
-                        <div class="article">
-                            <div class="article-header">
-                                <h1 class="article-title"><a href="/2026/02/01/%E5%90%84%E7%A7%8D%E8%B5%84%E6%BA%90%E7%BD%91%E7%AB%99/"><span></span></a></h1>
-                                <div class="article-meta">
-                                    <span class="article-time">02-01</span>
-                                </div>
-                            </div>
-                        </div>
                     
-                           
-                        <div class="article">
-                            <div class="article-header">
-                                <h1 class="article-title"><a href="/2026/02/01/2026-02-01/"><span></span></a></h1>
-                                <div class="article-meta">
-                                    <span class="article-time">02-01</span>
-                                </div>
-                            </div>
-                        </div>
-                    
-                           
-                        <div class="article">
-                            <div class="article-header">
-                                <h1 class="article-title"><a href="/2026/02/01/%E5%88%BB%E4%B8%8B%E7%9A%84%E8%AF%9D%E8%AF%AD%EF%BC%8C%E6%B5%AE%E4%B8%8A%E5%BF%83%E5%A4%B4%EF%BC%8C%E5%B0%86%E6%88%91%E7%9A%84%E6%84%9A%E8%A0%A2%EF%BC%8C%E5%BC%83%E7%BD%AE%E4%BA%8E%E6%AD%A4%E3%80%82/"><span></span></a></h1>
-                                <div class="article-meta">
-                                    <span class="article-time">02-01</span>
-                                </div>
-                            </div>
-                        </div>
-                    
-                        
-                            <div class="archive-title">
-                                <h2 class="archive-year">2025</h2>
-                            </div>
-                            
-                           
-                        <div class="article">
-                            <div class="article-header">
-                                <h1 class="article-title"><a href="/2025/12/31/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/"><span>数据结构</span></a></h1>
-                                <div class="article-meta">
-                                    <span class="article-time">12-31</span>
-                                </div>
-                            </div>
-                        </div>
-                    
-                           
-                        <div class="article">
-                            <div class="article-header">
-                                <h1 class="article-title"><a href="/2025/12/29/English%E2%80%94roots-and-affixes/"><span>English—roots-and-affixes</span></a></h1>
-                                <div class="article-meta">
-                                    <span class="article-time">12-29</span>
-                                </div>
-                            </div>
-                        </div>
-                    
-                           
-                        <div class="article">
-                            <div class="article-header">
-                                <h1 class="article-title"><a href="/2025/12/18/test/"><span>nerf</span></a></h1>
-                                <div class="article-meta">
-                                    <span class="article-time">12-18</span>
-                                </div>
-                            </div>
-                        </div>
-                    
-                           
-                        <div class="article">
-                            <div class="article-header">
-                                <h1 class="article-title"><a href="/2025/12/18/English/"><span>English</span></a></h1>
-                                <div class="article-meta">
-                                    <span class="article-time">12-18</span>
-                                </div>
-                            </div>
-                        </div>
-                    
-                           
-                        <div class="article">
-                            <div class="article-header">
-                                <h1 class="article-title"><a href="/2025/12/18/%E6%95%B0%E5%AD%97%E9%80%BB%E8%BE%91/"><span>数字逻辑</span></a></h1>
-                                <div class="article-meta">
-                                    <span class="article-time">12-18</span>
-                                </div>
-                            </div>
-                        </div>
-                    
-                           
-                        <div class="article">
-                            <div class="article-header">
-                                <h1 class="article-title"><a href="/2025/12/18/%E5%A4%A7%E5%AD%A6%E7%89%A9%E7%90%86/"><span>大学物理</span></a></h1>
-                                <div class="article-meta">
-                                    <span class="article-time">12-18</span>
-                                </div>
-                            </div>
-                        </div>
+                        <a href="/2026/02/01/%E5%90%84%E7%A7%8D%E8%B5%84%E6%BA%90%E7%BD%91%E7%AB%99/" class="next-prefix">» </a> 下一篇：    <a href="/2026/02/01/%E5%90%84%E7%A7%8D%E8%B5%84%E6%BA%90%E7%BD%91%E7%AB%99/" title="发布于 2026-02-01 04:14"></a>
                     
                 </div>
             </div>
             
+    <div class="article-comments">
         
-    <div class="pagination-bottom">
-        <div class="pagination">
-            
-                <a href="/archives/page/2/">下一页</a>
-            
-        </div>
+            <div class="comments-title">
+                评论列表
+            </div>
+        
+        <div class="comments-content"></div>
     </div>
-
+    
+ 
+        </div>
     
 </div>
     <div id="footer">
@@ -222,7 +232,7 @@
                     
                         <li class=""><a href="/tag" class="" target="_self"><span class="iconfont icon-discount-fill"></span>标签</a></li>
                     
-                        <li class=" active "><a href="/archive" class="" target="_self"><span class="iconfont icon-calendar-fill"></span>归档</a></li>
+                        <li class=""><a href="/archive" class="" target="_self"><span class="iconfont icon-calendar-fill"></span>归档</a></li>
                     
                         <li class=""><a href="/donate" class="" target="_self"><span class="iconfont icon-heart-fill"></span>赞赏</a></li>
                     
