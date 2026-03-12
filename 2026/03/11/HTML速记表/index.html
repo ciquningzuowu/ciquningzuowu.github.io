@@ -9,7 +9,7 @@
     <meta http-equiv="Cache-Control" content="no-siteapp">
     <title>
         
-            Hello World
+            HTML速记表
         
     </title>
     <link rel="shortcut icon" href="#"/>
@@ -39,26 +39,32 @@
     <div class="vertical">
         <div class="inner">
             
-                <h1 class="header-subtitle">Hello World</h1>
+                <h1 class="header-subtitle">HTML速记表</h1>
                 <div class="header-subinfo">
                     <p class="article-info-text">
                         <span>
-                            <i class="iconfont icon-time"></i> 发表时间：2025-12-16
+                            <i class="iconfont icon-time"></i> 发表时间：2026-03-11
                         </span>
                         
                             
-                                <span id="/2025/12/16/hello-world/" class="leancloud_visitors" data-flag-title="Hello World">
+                                <span id="/2026/03/11/HTML速记表/" class="leancloud_visitors" data-flag-title="HTML速记表">
                                     <i class="iconfont icon-browse"></i> 阅读：<sapn class="leancloud-visitors-count"></span>
                                 </span>
                             
                             
                                 <span>
-                                    <i class="iconfont icon-interactive"></i> 评论：<span class="valine-comment-count" data-xid="/2025/12/16/hello-world/"></span>
+                                    <i class="iconfont icon-interactive"></i> 评论：<span class="valine-comment-count" data-xid="/2026/03/11/HTML速记表/"></span>
                                 </span>
                               
                         
                     </p>
                     
+                    
+                        
+                            <span class="tag-color">web</span>
+                        
+                            <span class="tag-color">计算机基础</span>
+                        
                     
                 </div>
             
@@ -72,20 +78,855 @@
         <div id="article">
             <div class="toc"></div>
             <div class="article-body">
-                <p>Welcome to <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a target="_blank" rel="noopener" href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a target="_blank" rel="noopener" href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a target="_blank" rel="noopener" href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="Quick-Start">Quick Start</h2>
-<h3 id="Create-a-new-post">Create a new post</h3>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/writing.html">Writing</a></p>
-<h3 id="Run-server">Run server</h3>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/server.html">Server</a></p>
-<h3 id="Generate-static-files">Generate static files</h3>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/generating.html">Generating</a></p>
-<h3 id="Deploy-to-remote-sites">Deploy to remote sites</h3>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
+                <h2 id="1-基础结构">1. 基础结构</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">标签</th>
+<th style="text-align:left">描述</th>
+<th style="text-align:left">状态</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><code>&lt;!DOCTYPE&gt;</code></td>
+<td style="text-align:left">定义文档类型（HTML5 为 <code>&lt;!DOCTYPE html&gt;</code>）</td>
+<td style="text-align:left">✅ 现行</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>&lt;html&gt;</code></td>
+<td style="text-align:left">定义 HTML 文档的根元素</td>
+<td style="text-align:left">✅ 现行</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>&lt;head&gt;</code></td>
+<td style="text-align:left">包含文档的元数据（标题、样式、脚本等）</td>
+<td style="text-align:left">✅ 现行</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>&lt;body&gt;</code></td>
+<td style="text-align:left">定义文档的主体内容（可见部分）</td>
+<td style="text-align:left">✅ 现行</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>&lt;base&gt;</code></td>
+<td style="text-align:left">指定页面上所有相对 URL 的基础 URL</td>
+<td style="text-align:left">✅ 现行</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>&lt;link&gt;</code></td>
+<td style="text-align:left">定义文档与外部资源（如 CSS 文件）的关系</td>
+<td style="text-align:left">✅ 现行</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>&lt;meta&gt;</code></td>
+<td style="text-align:left">定义关于 HTML 文档的元数据（字符集、作者、描述等）</td>
+<td style="text-align:left">✅ 现行</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>&lt;style&gt;</code></td>
+<td style="text-align:left">定义文档的内部样式表 (CSS)</td>
+<td style="text-align:left">✅ 现行</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>&lt;title&gt;</code></td>
+<td style="text-align:left">定义文档的标题（显示在浏览器标签页上）</td>
+<td style="text-align:left">✅ 现行</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left"></td>
+<td style="text-align:left"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="2-文本格式化">2. 文本格式化</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">标签</th>
+<th style="text-align:left">描述</th>
+<th style="text-align:left">状态</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><code>&lt;b&gt;</code></td>
+<td style="text-align:left">粗体文本（无语义强调）</td>
+<td style="text-align:left">✅ 现行</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>&lt;i&gt;</code></td>
+<td style="text-align:left">斜体文本（通常表示术语、思想等）</td>
+<td style="text-align:left">✅ 现行</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>&lt;u&gt;</code></td>
+<td style="text-align:left">下划线文本（通常表示拼写错误或专有名词）</td>
+<td style="text-align:left">✅ 现行</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>&lt;s&gt;</code> / <code>&lt;strike&gt;</code></td>
+<td style="text-align:left">删除线文本 (<code>&lt;strike&gt;</code> 已废弃，用 <code>&lt;s&gt;</code>)</td>
+<td style="text-align:left">⚠️ <code>&lt;strike&gt;</code> 废弃</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>&lt;strong&gt;</code></td>
+<td style="text-align:left">重要文本（通常渲染为粗体，有语义强调）</td>
+<td style="text-align:left">✅ 现行</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>&lt;em&gt;</code></td>
+<td style="text-align:left">强调文本（通常渲染为斜体，有语义强调）</td>
+<td style="text-align:left">✅ 现行</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>&lt;mark&gt;</code></td>
+<td style="text-align:left">标记/高亮文本</td>
+<td style="text-align:left">✅ 现行</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>&lt;small&gt;</code></td>
+<td style="text-align:left">小号文本（通常用于版权说明、侧注）</td>
+<td style="text-align:left">✅ 现行</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>&lt;del&gt;</code></td>
+<td style="text-align:left">被删除的文本</td>
+<td style="text-align:left">✅ 现行</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>&lt;ins&gt;</code></td>
+<td style="text-align:left">被插入的文本</td>
+<td style="text-align:left">✅ 现行</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>&lt;sub&gt;</code></td>
+<td style="text-align:left">下标文本</td>
+<td style="text-align:left">✅ 现行</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>&lt;sup&gt;</code></td>
+<td style="text-align:left">上标文本</td>
+<td style="text-align:left">❌ 现行</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>&lt;code&gt;</code></td>
+<td style="text-align:left">计算机代码文本</td>
+<td style="text-align:left">✅ 现行</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>&lt;kbd&gt;</code></td>
+<td style="text-align:left">键盘输入文本</td>
+<td style="text-align:left">✅ 现行</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>&lt;samp&gt;</code></td>
+<td style="text-align:left">计算机程序输出的样本</td>
+<td style="text-align:left">✅ 现行</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>&lt;var&gt;</code></td>
+<td style="text-align:left">变量文本</td>
+<td style="text-align:left">✅ 现行</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>&lt;cite&gt;</code></td>
+<td style="text-align:left">引用作品标题</td>
+<td style="text-align:left">✅ 现行</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>&lt;q&gt;</code></td>
+<td style="text-align:left">短引用（浏览器通常会自动添加引号）</td>
+<td style="text-align:left">✅ 现行</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>&lt;blockquote&gt;</code></td>
+<td style="text-align:left">长引用（块级引用）</td>
+<td style="text-align:left">✅ 现行</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>&lt;abbr&gt;</code></td>
+<td style="text-align:left">缩写词</td>
+<td style="text-align:left">✅ 现行</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>&lt;address&gt;</code></td>
+<td style="text-align:left">定义文档作者/拥有者的联系信息</td>
+<td style="text-align:left">✅ 现行</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>&lt;bdi&gt;</code></td>
+<td style="text-align:left">文本双向隔离（防止周围文本影响方向）</td>
+<td style="text-align:left">✅ 现行</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>&lt;bdo&gt;</code></td>
+<td style="text-align:left">文本双向覆盖（强制文本方向）</td>
+<td style="text-align:left">✅ 现行</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>&lt;ruby&gt;</code></td>
+<td style="text-align:left">定义 ruby 注释（常用于东亚字符注音）</td>
+<td style="text-align:left">✅ 现行</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>&lt;rt&gt;</code></td>
+<td style="text-align:left">定义 ruby 注释的解释部分</td>
+<td style="text-align:left">✅ 现行</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>&lt;rp&gt;</code></td>
+<td style="text-align:left">定义在不支持 ruby 时显示的括号</td>
+<td style="text-align:left">✅ 现行</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>&lt;time&gt;</code></td>
+<td style="text-align:left">定义日期/时间</td>
+<td style="text-align:left">✅ 现行</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>&lt;wbr&gt;</code></td>
+<td style="text-align:left">定义可能的换行点</td>
+<td style="text-align:left">✅ 现行</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>&lt;br&gt;</code></td>
+<td style="text-align:left">单行换行</td>
+<td style="text-align:left">✅ 现行</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>&lt;hr&gt;</code></td>
+<td style="text-align:left">水平分割线（主题分隔）</td>
+<td style="text-align:left">✅ 现行</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>&lt;pre&gt;</code></td>
+<td style="text-align:left">预格式化文本（保留空格和换行）</td>
+<td style="text-align:left">✅ 现行</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>&lt;font&gt;</code></td>
+<td style="text-align:left">定义字体、颜色和大小</td>
+<td style="text-align:left">❌ 已废弃</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>&lt;center&gt;</code></td>
+<td style="text-align:left">居中对齐</td>
+<td style="text-align:left">❌ 已废弃</td>
+</tr>
+</tbody>
+</table>
+<h3 id="3-表单和输入-Forms-Input">3. 表单和输入 (Forms &amp; Input)</h3>
+<p>用于收集用户输入。</p>
+<p>表格</p>
+<table>
+<thead>
+<tr>
+<th>标签</th>
+<th>描述</th>
+<th>状态</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>&lt;form&gt;</code></td>
+<td>定义用户输入的 HTML 表单</td>
+<td>✅ 现行</td>
+</tr>
+<tr>
+<td><code>&lt;input&gt;</code></td>
+<td>输入控件（类型由 <code>type</code> 属性决定）</td>
+<td>✅ 现行</td>
+</tr>
+<tr>
+<td><code>&lt;textarea&gt;</code></td>
+<td>多行文本输入控件</td>
+<td>✅ 现行</td>
+</tr>
+<tr>
+<td><code>&lt;button&gt;</code></td>
+<td>可点击按钮</td>
+<td>✅ 现行</td>
+</tr>
+<tr>
+<td><code>&lt;select&gt;</code></td>
+<td>下拉列表</td>
+<td>✅ 现行</td>
+</tr>
+<tr>
+<td><code>&lt;option&gt;</code></td>
+<td>下拉列表中的选项</td>
+<td>✅ 现行</td>
+</tr>
+<tr>
+<td><code>&lt;optgroup&gt;</code></td>
+<td>下拉列表中的选项组</td>
+<td>✅ 现行</td>
+</tr>
+<tr>
+<td><code>&lt;label&gt;</code></td>
+<td>表单控件的标签</td>
+<td>✅ 现行</td>
+</tr>
+<tr>
+<td><code>&lt;fieldset&gt;</code></td>
+<td>围绕表单相关元素的边框</td>
+<td>✅ 现行</td>
+</tr>
+<tr>
+<td><code>&lt;legend&gt;</code></td>
+<td>定义 <code>&lt;fieldset&gt;</code> 的标题</td>
+<td>✅ 现行</td>
+</tr>
+<tr>
+<td><code>&lt;datalist&gt;</code></td>
+<td>定义输入控件的预定义选项列表</td>
+<td>✅ 现行</td>
+</tr>
+<tr>
+<td><code>&lt;output&gt;</code></td>
+<td>定义计算结果的输出</td>
+<td>✅ 现行</td>
+</tr>
+<tr>
+<td><code>&lt;progress&gt;</code></td>
+<td>进度条</td>
+<td>✅ 现行</td>
+</tr>
+<tr>
+<td><code>&lt;meter&gt;</code></td>
+<td>标量测量（如磁盘使用量）</td>
+<td>✅ 现行</td>
+</tr>
+<tr>
+<td><code>&lt;keygen&gt;</code></td>
+<td>生成密钥对（已废弃，不再推荐使用）</td>
+<td>❌ <strong>已废弃</strong></td>
+</tr>
+<tr>
+<td><code>&lt;isindex&gt;</code></td>
+<td>定义单行搜索框（极旧，已废弃）</td>
+<td>❌ <strong>已废弃</strong></td>
+</tr>
+</tbody>
+</table>
+<h3 id="4-框架-Frames">4. 框架 (Frames)</h3>
+<p>用于创建框架集（现代网页开发中已基本不再使用，被 <code>iframe</code> 或 CSS 布局取代）。</p>
+<p>表格</p>
+<table>
+<thead>
+<tr>
+<th>标签</th>
+<th>描述</th>
+<th>状态</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>&lt;frame&gt;</code></td>
+<td>定义框架集中的窗口</td>
+<td>❌ <strong>已废弃</strong></td>
+</tr>
+<tr>
+<td><code>&lt;frameset&gt;</code></td>
+<td>定义框架集</td>
+<td>❌ <strong>已废弃</strong></td>
+</tr>
+<tr>
+<td><code>&lt;noframes&gt;</code></td>
+<td>定义不支持框架时的替代内容</td>
+<td>❌ <strong>已废弃</strong></td>
+</tr>
+<tr>
+<td><code>&lt;iframe&gt;</code></td>
+<td>内联框架（在当前页面嵌入另一个页面）</td>
+<td>✅ 现行</td>
+</tr>
+</tbody>
+</table>
+<h3 id="5-图像-Images">5. 图像 (Images)</h3>
+<p>用于嵌入图像和图形。</p>
+<p>表格</p>
+<table>
+<thead>
+<tr>
+<th>标签</th>
+<th>描述</th>
+<th>状态</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>&lt;img&gt;</code></td>
+<td>嵌入图像</td>
+<td>✅ 现行</td>
+</tr>
+<tr>
+<td><code>&lt;map&gt;</code></td>
+<td>定义图像映射（可点击区域）</td>
+<td>✅ 现行</td>
+</tr>
+<tr>
+<td><code>&lt;area&gt;</code></td>
+<td>定义图像映射中的区域</td>
+<td>✅ 现行</td>
+</tr>
+<tr>
+<td><code>&lt;canvas&gt;</code></td>
+<td>绘制图形的画布（通常通过 JS 操作）</td>
+<td>✅ 现行</td>
+</tr>
+<tr>
+<td><code>&lt;svg&gt;</code></td>
+<td>定义可缩放矢量图形</td>
+<td>✅ 现行</td>
+</tr>
+<tr>
+<td><code>&lt;figure&gt;</code></td>
+<td>规定自包含内容（如图片、图表、代码块）</td>
+<td>✅ 现行</td>
+</tr>
+<tr>
+<td><code>&lt;figcaption&gt;</code></td>
+<td>定义 <code>&lt;figure&gt;</code> 的标题</td>
+<td>✅ 现行</td>
+</tr>
+<tr>
+<td><code>&lt;picture&gt;</code></td>
+<td>定义多个图像资源（用于响应式图片）</td>
+<td>✅ 现行</td>
+</tr>
+<tr>
+<td><code>&lt;source&gt;</code></td>
+<td>定义媒体资源（用于 <code>&lt;video&gt;</code>, <code>&lt;audio&gt;</code>, <code>&lt;picture&gt;</code>）</td>
+<td>✅ 现行</td>
+</tr>
+</tbody>
+</table>
+<h3 id="6-音频-视频-Audio-Video">6. 音频/视频 (Audio &amp; Video)</h3>
+<p>多媒体标签。</p>
+<p>表格</p>
+<table>
+<thead>
+<tr>
+<th>标签</th>
+<th>描述</th>
+<th>状态</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>&lt;audio&gt;</code></td>
+<td>定义声音内容</td>
+<td>✅ 现行</td>
+</tr>
+<tr>
+<td><code>&lt;video&gt;</code></td>
+<td>定义视频内容</td>
+<td>✅ 现行</td>
+</tr>
+<tr>
+<td><code>&lt;track&gt;</code></td>
+<td>定义视频/音频的文本轨道（如字幕）</td>
+<td>✅ 现行</td>
+</tr>
+<tr>
+<td><code>&lt;embed&gt;</code></td>
+<td>嵌入外部应用程序或交互式内容（插件）</td>
+<td>✅ 现行</td>
+</tr>
+<tr>
+<td><code>&lt;object&gt;</code></td>
+<td>定义嵌入对象（如 PDF, Flash, 插件）</td>
+<td>✅ 现行</td>
+</tr>
+<tr>
+<td><code>&lt;param&gt;</code></td>
+<td>定义 <code>&lt;object&gt;</code> 的参数</td>
+<td>✅ 现行</td>
+</tr>
+</tbody>
+</table>
+<h3 id="7-链接-Links">7. 链接 (Links)</h3>
+<p>用于导航和超链接。</p>
+<p>表格</p>
+<table>
+<thead>
+<tr>
+<th>标签</th>
+<th>描述</th>
+<th>状态</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>&lt;a&gt;</code></td>
+<td>定义超链接</td>
+<td>✅ 现行</td>
+</tr>
+<tr>
+<td><code>&lt;nav&gt;</code></td>
+<td>定义导航链接的部分</td>
+<td>✅ 现行</td>
+</tr>
+</tbody>
+</table>
+<h3 id="8-列表-Lists">8. 列表 (Lists)</h3>
+<p>用于组织列表数据。</p>
+<p>表格</p>
+<table>
+<thead>
+<tr>
+<th>标签</th>
+<th>描述</th>
+<th>状态</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>&lt;ul&gt;</code></td>
+<td>无序列表</td>
+<td>✅ 现行</td>
+</tr>
+<tr>
+<td><code>&lt;ol&gt;</code></td>
+<td>有序列表</td>
+<td>✅ 现行</td>
+</tr>
+<tr>
+<td><code>&lt;li&gt;</code></td>
+<td>列表项</td>
+<td>✅ 现行</td>
+</tr>
+<tr>
+<td><code>&lt;dl&gt;</code></td>
+<td>描述列表</td>
+<td>✅ 现行</td>
+</tr>
+<tr>
+<td><code>&lt;dt&gt;</code></td>
+<td>描述列表中的术语</td>
+<td>✅ 现行</td>
+</tr>
+<tr>
+<td><code>&lt;dd&gt;</code></td>
+<td>描述列表中术语的描述</td>
+<td>✅ 现行</td>
+</tr>
+<tr>
+<td><code>&lt;menu&gt;</code></td>
+<td>定义命令/菜单列表（现主要用于上下文菜单）</td>
+<td>✅ 现行</td>
+</tr>
+<tr>
+<td><code>&lt;command&gt;</code></td>
+<td>定义用户可调用的命令（已废弃，功能并入 <code>&lt;menu&gt;</code>）</td>
+<td>❌ <strong>已废弃</strong></td>
+</tr>
+<tr>
+<td><code>&lt;dir&gt;</code></td>
+<td>目录列表（已废弃，用 <code>&lt;ul&gt;</code> 代替）</td>
+<td>❌ <strong>已废弃</strong></td>
+</tr>
+</tbody>
+</table>
+<h3 id="9-表格-Tables">9. 表格 (Tables)</h3>
+<p>用于展示表格数据。</p>
+<p>表格</p>
+<table>
+<thead>
+<tr>
+<th>标签</th>
+<th>描述</th>
+<th>状态</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>&lt;table&gt;</code></td>
+<td>定义表格</td>
+<td>✅ 现行</td>
+</tr>
+<tr>
+<td><code>&lt;caption&gt;</code></td>
+<td>定义表格标题</td>
+<td>✅ 现行</td>
+</tr>
+<tr>
+<td><code>&lt;thead&gt;</code></td>
+<td>定义表格的表头部分</td>
+<td>✅ 现行</td>
+</tr>
+<tr>
+<td><code>&lt;tbody&gt;</code></td>
+<td>定义表格的主体部分</td>
+<td>✅ 现行</td>
+</tr>
+<tr>
+<td><code>&lt;tfoot&gt;</code></td>
+<td>定义表格的页脚部分</td>
+<td>✅ 现行</td>
+</tr>
+<tr>
+<td><code>&lt;tr&gt;</code></td>
+<td>定义表格行</td>
+<td>✅ 现行</td>
+</tr>
+<tr>
+<td><code>&lt;th&gt;</code></td>
+<td>定义表格标题单元格</td>
+<td>✅ 现行</td>
+</tr>
+<tr>
+<td><code>&lt;td&gt;</code></td>
+<td>定义表格标准单元格</td>
+<td>✅ 现行</td>
+</tr>
+<tr>
+<td><code>&lt;col&gt;</code></td>
+<td>定义表格列的属性</td>
+<td>✅ 现行</td>
+</tr>
+<tr>
+<td><code>&lt;colgroup&gt;</code></td>
+<td>定义表格中列的组</td>
+<td>✅ 现行</td>
+</tr>
+</tbody>
+</table>
+<h3 id="10-样式、语义和布局-Style-Semantic-Layout">10. 样式、语义和布局 (Style, Semantic &amp; Layout)</h3>
+<p>HTML5 引入的语义化标签，用于构建页面结构和样式控制。</p>
+<p>表格</p>
+<table>
+<thead>
+<tr>
+<th>标签</th>
+<th>描述</th>
+<th>状态</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>&lt;div&gt;</code></td>
+<td>块级容器（通用分组）</td>
+<td>✅ 现行</td>
+</tr>
+<tr>
+<td><code>&lt;span&gt;</code></td>
+<td>行内容器（通用分组）</td>
+<td>✅ 现行</td>
+</tr>
+<tr>
+<td><code>&lt;header&gt;</code></td>
+<td>定义文档或节的页眉</td>
+<td>✅ 现行</td>
+</tr>
+<tr>
+<td><code>&lt;footer&gt;</code></td>
+<td>定义文档或节的页脚</td>
+<td>✅ 现行</td>
+</tr>
+<tr>
+<td><code>&lt;main&gt;</code></td>
+<td>定义文档的主要内容</td>
+<td>✅ 现行</td>
+</tr>
+<tr>
+<td><code>&lt;section&gt;</code></td>
+<td>定义文档中的一个节（章节）</td>
+<td>✅ 现行</td>
+</tr>
+<tr>
+<td><code>&lt;article&gt;</code></td>
+<td>定义独立的文章内容</td>
+<td>✅ 现行</td>
+</tr>
+<tr>
+<td><code>&lt;aside&gt;</code></td>
+<td>定义侧边栏或与主内容间接相关的内容</td>
+<td>✅ 现行</td>
+</tr>
+<tr>
+<td><code>&lt;details&gt;</code></td>
+<td>定义用户可展开/折叠的详情</td>
+<td>✅ 现行</td>
+</tr>
+<tr>
+<td><code>&lt;summary&gt;</code></td>
+<td>定义 <code>&lt;details&gt;</code> 的可见标题</td>
+<td>✅ 现行</td>
+</tr>
+<tr>
+<td><code>&lt;dialog&gt;</code></td>
+<td>定义对话框或窗口</td>
+<td>✅ 现行</td>
+</tr>
+<tr>
+<td><code>&lt;h1&gt;</code> - <code>&lt;h6&gt;</code></td>
+<td>定义标题（h1 最大，h6 最小）</td>
+<td>✅ 现行</td>
+</tr>
+<tr>
+<td><code>&lt;p&gt;</code></td>
+<td>定义段落</td>
+<td>✅ 现行</td>
+</tr>
+<tr>
+<td><code>&lt;span&gt;</code></td>
+<td>定义行内片段</td>
+<td>✅ 现行</td>
+</tr>
+<tr>
+<td><code>&lt;class&gt;</code></td>
+<td>(注意：这是属性不是标签，样式主要通过 class/id 配合 CSS)</td>
+<td>N/A</td>
+</tr>
+<tr>
+<td><code>&lt;acronym&gt;</code></td>
+<td>定义首字母缩写词（HTML5 已废弃，用 <code>&lt;abbr&gt;</code>）</td>
+<td>❌ <strong>已废弃</strong></td>
+</tr>
+<tr>
+<td><code>&lt;applet&gt;</code></td>
+<td>定义 Java Applet（已废弃）</td>
+<td>❌ <strong>已废弃</strong></td>
+</tr>
+<tr>
+<td><code>&lt;bgsound&gt;</code></td>
+<td>背景声音（IE 特有，已废弃）</td>
+<td>❌ <strong>已废弃</strong></td>
+</tr>
+<tr>
+<td><code>&lt;blink&gt;</code></td>
+<td>闪烁文本（已废弃）</td>
+<td>❌ <strong>已废弃</strong></td>
+</tr>
+<tr>
+<td><code>&lt;marquee&gt;</code></td>
+<td>滚动文本（已废弃）</td>
+<td>❌ <strong>已废弃</strong></td>
+</tr>
+<tr>
+<td><code>&lt;spacer&gt;</code></td>
+<td>空白占位符（已废弃）</td>
+<td>❌ <strong>已废弃</strong></td>
+</tr>
+<tr>
+<td><code>&lt;tt&gt;</code></td>
+<td>打字机文本（已废弃，用 <code>&lt;code&gt;</code> 或 CSS）</td>
+<td>❌ <strong>已废弃</strong></td>
+</tr>
+<tr>
+<td><code>&lt;xmp&gt;</code></td>
+<td>预格式化文本（已废弃，用 <code>&lt;pre&gt;</code>）</td>
+<td>❌ <strong>已废弃</strong></td>
+</tr>
+</tbody>
+</table>
+<h3 id="11-元信息-Metadata">11. 元信息 (Metadata)</h3>
+<p>主要在 <code>&lt;head&gt;</code> 中使用，提供关于页面的信息。</p>
+<p>表格</p>
+<table>
+<thead>
+<tr>
+<th>标签</th>
+<th>描述</th>
+<th>状态</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>&lt;meta&gt;</code></td>
+<td>元数据（字符集、视口、SEO 描述等）</td>
+<td>✅ 现行</td>
+</tr>
+<tr>
+<td><code>&lt;link&gt;</code></td>
+<td>外部资源链接（favicon, CSS）</td>
+<td>✅ 现行</td>
+</tr>
+<tr>
+<td><code>&lt;title&gt;</code></td>
+<td>页面标题</td>
+<td>✅ 现行</td>
+</tr>
+<tr>
+<td><code>&lt;base&gt;</code></td>
+<td>基础 URL</td>
+<td>✅ 现行</td>
+</tr>
+<tr>
+<td><code>&lt;noscript&gt;</code></td>
+<td>当浏览器不支持脚本或脚本被禁用时显示的内容</td>
+<td>✅ 现行</td>
+</tr>
+<tr>
+<td><code>&lt;script&gt;</code></td>
+<td>客户端 JavaScript 脚本</td>
+<td>✅ 现行</td>
+</tr>
+<tr>
+<td><code>&lt;template&gt;</code></td>
+<td>存储客户端模板内容（不立即渲染）</td>
+<td>✅ 现行</td>
+</tr>
+</tbody>
+</table>
+<h3 id="12-编程与脚本-Programming-Scripting">12. 编程与脚本 (Programming &amp; Scripting)</h3>
+<p>用于嵌入代码、插件或定义数据结构。</p>
+<p>表格</p>
+<table>
+<thead>
+<tr>
+<th>标签</th>
+<th>描述</th>
+<th>状态</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>&lt;script&gt;</code></td>
+<td>定义客户端脚本（JS）</td>
+<td>✅ 现行</td>
+</tr>
+<tr>
+<td><code>&lt;noscript&gt;</code></td>
+<td>定义无脚本时的替代内容</td>
+<td>✅ 现行</td>
+</tr>
+<tr>
+<td><code>&lt;canvas&gt;</code></td>
+<td>用于通过脚本（通常是 JS）绘制图形</td>
+<td>✅ 现行</td>
+</tr>
+<tr>
+<td><code>&lt;embed&gt;</code></td>
+<td>嵌入外部交互内容（插件）</td>
+<td>✅ 现行</td>
+</tr>
+<tr>
+<td><code>&lt;object&gt;</code></td>
+<td>嵌入外部对象（PDF, Flash 等）</td>
+<td>✅ 现行</td>
+</tr>
+<tr>
+<td><code>&lt;param&gt;</code></td>
+<td>定义对象的参数</td>
+<td>✅ 现行</td>
+</tr>
+<tr>
+<td><code>&lt;applet&gt;</code></td>
+<td>嵌入 Java Applet（已废弃）</td>
+<td>❌ <strong>已废弃</strong></td>
+</tr>
+<tr>
+<td><code>&lt;plaintext&gt;</code></td>
+<td>以纯文本形式显示剩余文档（极度危险，已废弃）</td>
+<td>❌ <strong>已废弃</strong></td>
+</tr>
+</tbody>
+</table>
 
                 
                 <p class="end">__END__</p>
@@ -98,7 +939,7 @@
     <div class="suffix-box-right">
         <span class="suffix-box-title">文章作者：</span>作吾
         <br>
-        <span class="suffix-box-title">文章出处：</span><a href="/2025/12/16/hello-world/" target="_blank">Hello World</a>
+        <span class="suffix-box-title">文章出处：</span><a href="/2026/03/11/HTML%E9%80%9F%E8%AE%B0%E8%A1%A8/" target="_blank">HTML速记表</a>
         <br>
         <span class="suffix-box-title">作者签名：</span>死人一个，在试图活着
         <br>
@@ -111,11 +952,22 @@
 </div>
                 
                 
+                    <div class="tag">
+                        标签：
+                        
+                            <a href="/tags/web/">web</a>
+                        
+                            <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/">计算机基础</a>
+                        
+                    </div>
+                
                 <div class="article-prev-next">
                     
-                        <a href="/2025/12/17/%E4%B8%89%E7%BB%B4%E9%87%8D%E5%BB%BA/" class="prev-prefix">« </a> 上一篇：    <a href="/2025/12/17/%E4%B8%89%E7%BB%B4%E9%87%8D%E5%BB%BA/" title="发布于 2025-12-17 05:25">三维重建</a>
+                        <a href="/2026/03/11/%E5%90%8E%E7%BB%AD%E7%9B%AE%E6%A0%87/" class="prev-prefix">« </a> 上一篇：    <a href="/2026/03/11/%E5%90%8E%E7%BB%AD%E7%9B%AE%E6%A0%87/" title="发布于 2026-03-11 08:07">待办</a>
                         <br>
                     
+                    
+                        <a href="/2026/03/11/2026-03-11/" class="next-prefix">» </a> 下一篇：    <a href="/2026/03/11/2026-03-11/" title="发布于 2026-03-11 07:31"></a>
                     
                 </div>
             </div>

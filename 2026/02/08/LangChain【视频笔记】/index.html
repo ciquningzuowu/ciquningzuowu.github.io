@@ -9,7 +9,7 @@
     <meta http-equiv="Cache-Control" content="no-siteapp">
     <title>
         
-            Hello World
+            LangChain【视频笔记】
         
     </title>
     <link rel="shortcut icon" href="#"/>
@@ -39,26 +39,34 @@
     <div class="vertical">
         <div class="inner">
             
-                <h1 class="header-subtitle">Hello World</h1>
+                <h1 class="header-subtitle">LangChain【视频笔记】</h1>
                 <div class="header-subinfo">
                     <p class="article-info-text">
                         <span>
-                            <i class="iconfont icon-time"></i> 发表时间：2025-12-16
+                            <i class="iconfont icon-time"></i> 发表时间：2026-02-08
                         </span>
                         
                             
-                                <span id="/2025/12/16/hello-world/" class="leancloud_visitors" data-flag-title="Hello World">
+                                <span id="/2026/02/08/LangChain【视频笔记】/" class="leancloud_visitors" data-flag-title="LangChain【视频笔记】">
                                     <i class="iconfont icon-browse"></i> 阅读：<sapn class="leancloud-visitors-count"></span>
                                 </span>
                             
                             
                                 <span>
-                                    <i class="iconfont icon-interactive"></i> 评论：<span class="valine-comment-count" data-xid="/2025/12/16/hello-world/"></span>
+                                    <i class="iconfont icon-interactive"></i> 评论：<span class="valine-comment-count" data-xid="/2026/02/08/LangChain【视频笔记】/"></span>
                                 </span>
                               
                         
                     </p>
                     
+                    
+                        
+                            <span class="tag-color">web</span>
+                        
+                            <span class="tag-color">人工智能</span>
+                        
+                            <span class="tag-color">计算机基础</span>
+                        
                     
                 </div>
             
@@ -72,20 +80,97 @@
         <div id="article">
             <div class="toc"></div>
             <div class="article-body">
-                <p>Welcome to <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a target="_blank" rel="noopener" href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a target="_blank" rel="noopener" href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a target="_blank" rel="noopener" href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="Quick-Start">Quick Start</h2>
-<h3 id="Create-a-new-post">Create a new post</h3>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/writing.html">Writing</a></p>
-<h3 id="Run-server">Run server</h3>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/server.html">Server</a></p>
-<h3 id="Generate-static-files">Generate static files</h3>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/generating.html">Generating</a></p>
-<h3 id="Deploy-to-remote-sites">Deploy to remote sites</h3>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
+                <p><a target="_blank" rel="noopener" href="https://docs.langchain.com/oss/python/langchain/">Langchain官方文档跳转</a></p>
+<p><img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/%7B02322DBF-E8ED-4D64-A7AA-375EE34B6D3D%7D.png" alt=""></p>
+<h2 id="一、主要组件：">一、主要组件：</h2>
+<ul>
+<li>Models：llm模型</li>
+<li>Prompts：提示词管理</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/%7BA27532E2-31D3-4721-AA37-5F19C4FFD874%7D.png" alt=""></p>
+<ul>
+<li>Chains：组合多个组件的工作流</li>
+<li>RAG：检索增强生成</li>
+<li>Agents：自主调用工具</li>
+<li>Memory：对话记忆管理</li>
+</ul>
+<h2 id="二、模型对象创建：">二、模型对象创建：</h2>
+<ul>
+<li><strong>1.创建模型对象，基于OpenAI规范</strong>（更换模型时只需要修改api和名称）
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/%7B5E186B66-B2F2-421B-9001-F758E6494A0B%7D.png" alt=""></li>
+<li><strong>2.init_chat_model函数</strong>（需要函数源码里找模型提供者）
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/%7B6DF95F96-5BF5-4F9E-87CC-50BF70982C14%7D.png" alt=""></li>
+<li><strong>3.ChatTongyi</strong>（不常切换模型的前提下，参数设置灵活）
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/%7BEDE50D56-4564-4D6A-8F78-54AEF1862078%7D.png" alt=""></li>
+</ul>
+<h2 id="三、消息">三、消息</h2>
+<p>消息是包含以下内容的对象：</p>
+<ul>
+<li>角色（标识消息类型）</li>
+<li>内容（指消息的实际内容）</li>
+<li>元数据（可选字段，例如响应信息，消息ID和令牌使用情况，想要传给模型的一些数据等，该部分形式随模型供应商存在不同）
+以下为两种设置方式：
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/%7BD10937DB-FFE3-4136-AF83-19D136C51766%7D.png" alt=""></li>
+</ul>
+<h3 id="系统提示词"><strong>系统提示词</strong></h3>
+<p>可以使用@dynamic_prompt装饰器创建动态提示词，以中间件参数的形式加在creat_agent函数的参数
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/%7B49D0C262-8F5C-480F-AFC7-2CB3CFB7B09D%7D.png" alt=""></p>
+<h2 id="四、链的构建语法："><strong>四、链的构建语法：</strong></h2>
+<p><strong>prompt|model|parser</strong>，后续调用invoke函数时可传入一个参数的字典，字典中的键值对会从前向后依次匹配管道中的参数
+<strong>另一种传入键值对方法：</strong>
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/%7B689EB42E-DB72-4D14-BCEC-CBF9F3BFBA0E%7D.png" alt=""></p>
+<h2 id="RunnableLambda">**`RunnableLambda</h2>
+<p><strong><code>RunnableLambda</code>是LangChain中将普通Python函数或方法转换为<code>Runnable</code>对象的封装器</strong>，这使得自定义逻辑能够无缝集成到LCEL（LangChain表达式语言）构建的链中<a target="_blank" rel="noopener" href="https://api.python.langchain.com/en/v0.0.339/schema/langchain.schema.runnable.base.RunnableLambda.html">-9</a>。</p>
+<h2 id="五、结构化输出">五、结构化输出</h2>
+<p>可以定义一个继承BaseModel的结构限制类，将其作为构建模型对象时的输出格式参数以限制输出内容的格式</p>
+<h2 id="六、Langchain的工具Tool">六、Langchain的工具Tool</h2>
+<p>定义：<strong>工具（Tools）</strong> 是 LangChain 中让 LLM 与外部世界交互的核心组件，类似 ChatGPT 的插件系统。
+<strong>使用：</strong> 用 <strong>@tool</strong> 装饰函数将其变为工具类型，@tool的参数为<strong>自定义工具名</strong>  、<strong>描述</strong> 、<strong>工具参数限制（args_schema参数，支持json和class类型）</strong></p>
+<h2 id="七、Langchain的中间件（Middleware）系统">七、Langchain的中间件（Middleware）系统</h2>
+<p>添加在agent的Middleware参数位置。
+<strong>使用</strong></p>
+<ul>
+<li>langchain.agents.middleware中有很多官方提供的中间件</li>
+<li>使用class自定义创建中间件</li>
+</ul>
+<h2 id="RAG">RAG</h2>
+<p><strong>直接使用大模型存在的缺点：</strong></p>
+<ul>
+<li><strong>时效性：</strong> 对于较新的信息没有认知</li>
+<li><strong>知识覆盖面：</strong> 知识覆盖面不足，对于一些私有数据了解性差</li>
+<li><strong>高幻觉：</strong> 指鹿为马，瞎扯淡</li>
+</ul>
+<p>通过创建向量数据库来限制<strong>模型的数据操作来源</strong>优化上述问题
+每次查询时先根据查询内容的特征向量进行<strong>语义分割提取数据库中相关内容</strong>，然后根据相关内容生成准确性较高的回答，即先<strong>查询后回答</strong></p>
+<h3 id="1-数据准备工作"><strong>1.数据准备工作</strong></h3>
+<p>收集原始数据-&gt;预处理-&gt;分块-&gt;向量化-&gt;存储</p>
+<p><strong>1.1加载数据方式</strong></p>
+<ul>
+<li>直接在线加载获取网页内容</li>
+<li>事先准备txt文件用于读取</li>
+<li>加载word文档</li>
+<li>加载pdf文件
+通过加载数据转化为document对象</li>
+</ul>
+<p><strong>1.2文档切分方式</strong></p>
+<ul>
+<li>使用智能递归分割函数</li>
+<li>按字符切（仅适合内容简单的内容）</li>
+<li>markdown切分（按照标题切分）</li>
+<li>基于句子切分（基于结束标点。！？等切分）</li>
+<li>正则切分</li>
+<li>基于信息结构动态选择（例如对话信息数据可以按说话人员的切换切分）</li>
+<li></li>
+</ul>
+<p><strong>1.3文档数据向量化</strong>
+选择一个各大平台的嵌入模型创建对象</p>
+<p><strong>1.4相似度计算</strong>
+跟计算损失原理相同</p>
+<p><strong>1.5向量数据库创建</strong>
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/%7BE4FFF654-53AB-40A5-AF91-21ED28C10170%7D.png" alt=""></p>
+<p><strong>流程：</strong>
+1.<strong>索引：</strong> 加载文档，切分处理，创建向量库，嵌入
+2.<strong>检索：</strong> 创建查询函数对象 ，创建链对象，传入上下文和问题，得到回答</p>
 
                 
                 <p class="end">__END__</p>
@@ -98,7 +183,7 @@
     <div class="suffix-box-right">
         <span class="suffix-box-title">文章作者：</span>作吾
         <br>
-        <span class="suffix-box-title">文章出处：</span><a href="/2025/12/16/hello-world/" target="_blank">Hello World</a>
+        <span class="suffix-box-title">文章出处：</span><a href="/2026/02/08/LangChain%E3%80%90%E8%A7%86%E9%A2%91%E7%AC%94%E8%AE%B0%E3%80%91/" target="_blank">LangChain【视频笔记】</a>
         <br>
         <span class="suffix-box-title">作者签名：</span>死人一个，在试图活着
         <br>
@@ -111,11 +196,24 @@
 </div>
                 
                 
+                    <div class="tag">
+                        标签：
+                        
+                            <a href="/tags/web/">web</a>
+                        
+                            <a href="/tags/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/">人工智能</a>
+                        
+                            <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/">计算机基础</a>
+                        
+                    </div>
+                
                 <div class="article-prev-next">
                     
-                        <a href="/2025/12/17/%E4%B8%89%E7%BB%B4%E9%87%8D%E5%BB%BA/" class="prev-prefix">« </a> 上一篇：    <a href="/2025/12/17/%E4%B8%89%E7%BB%B4%E9%87%8D%E5%BB%BA/" title="发布于 2025-12-17 05:25">三维重建</a>
+                        <a href="/2026/02/18/fastapi%E9%A1%B9%E7%9B%AE%E6%A0%87%E5%87%86/" class="prev-prefix">« </a> 上一篇：    <a href="/2026/02/18/fastapi%E9%A1%B9%E7%9B%AE%E6%A0%87%E5%87%86/" title="发布于 2026-02-18 06:11"></a>
                         <br>
                     
+                    
+                        <a href="/2026/02/05/sql%E8%AF%AD%E5%8F%A5/" class="next-prefix">» </a> 下一篇：    <a href="/2026/02/05/sql%E8%AF%AD%E5%8F%A5/" title="发布于 2026-02-05 02:25">sql语句</a>
                     
                 </div>
             </div>

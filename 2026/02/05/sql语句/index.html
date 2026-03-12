@@ -9,7 +9,7 @@
     <meta http-equiv="Cache-Control" content="no-siteapp">
     <title>
         
-            Hello World
+            sql语句
         
     </title>
     <link rel="shortcut icon" href="#"/>
@@ -39,26 +39,30 @@
     <div class="vertical">
         <div class="inner">
             
-                <h1 class="header-subtitle">Hello World</h1>
+                <h1 class="header-subtitle">sql语句</h1>
                 <div class="header-subinfo">
                     <p class="article-info-text">
                         <span>
-                            <i class="iconfont icon-time"></i> 发表时间：2025-12-16
+                            <i class="iconfont icon-time"></i> 发表时间：2026-02-05
                         </span>
                         
                             
-                                <span id="/2025/12/16/hello-world/" class="leancloud_visitors" data-flag-title="Hello World">
+                                <span id="/2026/02/05/sql语句/" class="leancloud_visitors" data-flag-title="sql语句">
                                     <i class="iconfont icon-browse"></i> 阅读：<sapn class="leancloud-visitors-count"></span>
                                 </span>
                             
                             
                                 <span>
-                                    <i class="iconfont icon-interactive"></i> 评论：<span class="valine-comment-count" data-xid="/2025/12/16/hello-world/"></span>
+                                    <i class="iconfont icon-interactive"></i> 评论：<span class="valine-comment-count" data-xid="/2026/02/05/sql语句/"></span>
                                 </span>
                               
                         
                     </p>
                     
+                    
+                        
+                            <span class="tag-color">计算机基础</span>
+                        
                     
                 </div>
             
@@ -72,20 +76,640 @@
         <div id="article">
             <div class="toc"></div>
             <div class="article-body">
-                <p>Welcome to <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a target="_blank" rel="noopener" href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a target="_blank" rel="noopener" href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a target="_blank" rel="noopener" href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="Quick-Start">Quick Start</h2>
-<h3 id="Create-a-new-post">Create a new post</h3>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/writing.html">Writing</a></p>
-<h3 id="Run-server">Run server</h3>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/server.html">Server</a></p>
-<h3 id="Generate-static-files">Generate static files</h3>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/generating.html">Generating</a></p>
-<h3 id="Deploy-to-remote-sites">Deploy to remote sites</h3>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
+                <p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_61370021/article/details/130797638">一篇较好的mysql语句总结文档</a></p>
+<h1>基础内容</h1>
+<h2 id="MySQL基础命令">MySQL基础命令</h2>
+<ul>
+<li>默认端口号：3306</li>
+<li>查看服务器版本：select version(); 或者 cmd命令 mysql -verison</li>
+<li>登录数据库：mysql -uroot -p</li>
+<li>退出数据库：exit/quit</li>
+<li>查看当前系统下的数据库：show databases;</li>
+<li>创建数据库：create 库名;</li>
+<li>使用数据库：use 库名;</li>
+<li>查看表：show tables;</li>
+<li>建表：create table 表名 (字段名 + 空格 + 数据类型);</li>
+<li>查看表结构：desc 表名;</li>
+<li>添加值：insert into 表名 (列名) values (值);</li>
+<li>查看表中所有数据：select * from 表名;</li>
+<li>查询建表时的结构：show create table 表名;</li>
+<li>删除字段中的值：delete from 表名 where 条件;</li>
+<li>删除表中的字段：delete from 表名 drop column 字段名; 或alter table 表名 drop 字段名</li>
+<li>删除表：drop table 表名;</li>
+<li>删除库：drop database 库名;</li>
+<li>主键约束：primary key</li>
+<li>唯一约束：unique</li>
+<li>非空约束：not null</li>
+<li>默认约束：default</li>
+<li>外键约束：foreign key（外键）references主表（主键）</li>
+<li>查看别的数据库的表格：show tables from 表名;</li>
+</ul>
+<h2 id="常用语句">常用语句</h2>
+<ul>
+<li><strong>mysql</strong> 连接MySQL数据库的命令，需要指定用户名和密码。</li>
+<li><strong>use</strong> 使用某个数据库。</li>
+<li><strong>show databases</strong> 显示所有数据库。</li>
+<li><strong>create database</strong> 创建新的数据库。</li>
+<li><strong>drop database</strong> 删除数据库。</li>
+<li><strong>create table</strong> 创建新的表。</li>
+<li><strong>alter table</strong> 修改表结构。</li>
+<li><strong>drop table</strong> 删除表。</li>
+<li><strong>insert into</strong> 向表中插入新的记录。</li>
+<li><strong>delete from</strong> 删除表中符合条件的记录。</li>
+<li><strong>update</strong> 更新表中符合条件的记录。</li>
+<li><strong>select</strong> 查询表中的记录。</li>
+<li><strong>where</strong> 对查询的记录进行条件筛选。</li>
+<li><strong>order by</strong> 对查询的记录进行排序。</li>
+<li><strong>group by</strong> 对查询的记录进行分组。</li>
+<li><strong>having</strong> 对分组后的记录进行筛选。</li>
+<li><strong>set names</strong> 设置字符集编码。</li>
+</ul>
+<h2 id="一些基础知识">一些基础知识</h2>
+<ul>
+<li>sql语句需要以分号；结尾</li>
+<li>且可以同时运行多个任务</li>
+<li>sql语句无大小写区分</li>
+<li>忽略空白和空行，可以放置在多个文本行上或者多个语句在一个行上组合</li>
+<li>主键是表中唯一标识表记录的字段，每行必须包含唯一值，不能存在NULL,（例如统计个人信息，名字是必须的，这是能确定身份的绝对信息）。</li>
+<li>各种运算可使用()划分优先级</li>
+<li>文本内容需要用英文单引号包括</li>
+<li>子查询:嵌套使用select语句，利用（）区分优先级</li>
+<li>select操作均为副本操作</li>
+</ul>
+<h2 id="SQL约束">SQL约束</h2>
+<ul>
+<li><strong>not null</strong>表示不能包含任何null值</li>
+<li>唯一<strong>unique</strong>表示不允许在表中插入重复值</li>
+<li>主键<strong>primary key</strong>表示强制表接受特定列的唯一数据，此约束创建一个唯一索引以更快的访问表</li>
+<li>检查<strong>check</strong>表示根据逻辑表达式确定值是否有效</li>
+<li>默认值<strong>default</strong>表示在将数据插入表中时如果没有向列提供值，则该列获得设置为默认值的值</li>
+<li><strong>auto_increment</strong>自动递增
+SQL约束用法为 name varchar（100）not null，即在创建时跟在列后面</li>
+</ul>
+<h1>运算符</h1>
+<h2 id="算术运算符">算术运算符</h2>
+<table>
+<thead>
+<tr>
+<th>运算符</th>
+<th>描述</th>
+<th>示例</th>
+<th>结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>+</code></td>
+<td>加法</td>
+<td><code>SELECT 10 + 5;</code></td>
+<td>15</td>
+</tr>
+<tr>
+<td><code>-</code></td>
+<td>减法</td>
+<td><code>SELECT 10 - 5;</code></td>
+<td>5</td>
+</tr>
+<tr>
+<td><code>*</code></td>
+<td>乘法</td>
+<td><code>SELECT 10 * 5;</code></td>
+<td>50</td>
+</tr>
+<tr>
+<td><code>/</code></td>
+<td>除法</td>
+<td><code>SELECT 10 / 5;</code></td>
+<td>2</td>
+</tr>
+<tr>
+<td><code>%</code> 或 <code>MOD()</code></td>
+<td>取模（余数）</td>
+<td><code>SELECT 10 % 3;</code></td>
+<td>1</td>
+</tr>
+<tr>
+<td><code>DIV</code></td>
+<td>整数除法（MySQL）</td>
+<td><code>SELECT 10 DIV 3;</code></td>
+<td>3</td>
+</tr>
+</tbody>
+</table>
+<h2 id="比较运算符">比较运算符</h2>
+<table>
+<thead>
+<tr>
+<th>运算符</th>
+<th>描述</th>
+<th>示例</th>
+<th>结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>=</code></td>
+<td>等于</td>
+<td><code>SELECT 10 = 10;</code></td>
+<td>TRUE</td>
+</tr>
+<tr>
+<td><code>!=</code> 或 <code>&lt;&gt;</code></td>
+<td>不等于</td>
+<td><code>SELECT 10 != 5;</code></td>
+<td>TRUE</td>
+</tr>
+<tr>
+<td><code>&gt;</code></td>
+<td>大于</td>
+<td><code>SELECT 10 &gt; 5;</code></td>
+<td>TRUE</td>
+</tr>
+<tr>
+<td><code>&lt;</code></td>
+<td>小于</td>
+<td><code>SELECT 10 &lt; 5;</code></td>
+<td>FALSE</td>
+</tr>
+<tr>
+<td><code>&gt;=</code></td>
+<td>大于等于</td>
+<td><code>SELECT 10 &gt;= 10;</code></td>
+<td>TRUE</td>
+</tr>
+<tr>
+<td><code>&lt;=</code></td>
+<td>小于等于</td>
+<td><code>SELECT 10 &lt;= 5;</code></td>
+<td>FALSE</td>
+</tr>
+<tr>
+<td><code>&lt;=&gt;</code></td>
+<td>NULL安全的等于（MySQL）</td>
+<td><code>SELECT NULL &lt;=&gt; NULL;</code></td>
+<td>TRUE</td>
+</tr>
+<tr>
+<td><code>BETWEEN</code></td>
+<td>在范围内</td>
+<td><code>SELECT 5 BETWEEN 1 AND 10;</code></td>
+<td>TRUE</td>
+</tr>
+<tr>
+<td><code>NOT BETWEEN</code></td>
+<td>不在范围内</td>
+<td><code>SELECT 15 NOT BETWEEN 1 AND 10;</code></td>
+<td>TRUE</td>
+</tr>
+<tr>
+<td><code>IN</code></td>
+<td>在列表中</td>
+<td><code>SELECT 5 IN (1,3,5,7);</code></td>
+<td>TRUE</td>
+</tr>
+<tr>
+<td><code>NOT IN</code></td>
+<td>不在列表中</td>
+<td><code>SELECT 2 NOT IN (1,3,5,7);</code></td>
+<td>TRUE</td>
+</tr>
+<tr>
+<td><code>IS NULL</code></td>
+<td>是NULL值</td>
+<td><code>SELECT NULL IS NULL;</code></td>
+<td>TRUE</td>
+</tr>
+<tr>
+<td><code>IS NOT NULL</code></td>
+<td>不是NULL值</td>
+<td><code>SELECT 10 IS NOT NULL;</code></td>
+<td>TRUE</td>
+</tr>
+<tr>
+<td><code>LIKE</code></td>
+<td>模式匹配</td>
+<td><code>SELECT 'abc' LIKE 'a%';</code></td>
+<td>TRUE</td>
+</tr>
+<tr>
+<td><code>NOT LIKE</code></td>
+<td>模式不匹配</td>
+<td><code>SELECT 'abc' NOT LIKE 'd%';</code></td>
+<td>TRUE</td>
+</tr>
+</tbody>
+</table>
+<h2 id="逻辑运算符">逻辑运算符</h2>
+<table>
+<thead>
+<tr>
+<th>运算符</th>
+<th>描述</th>
+<th>示例</th>
+<th>结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>AND</code> 或 <code>&amp;&amp;</code></td>
+<td>逻辑与</td>
+<td><code>SELECT TRUE AND FALSE;</code></td>
+<td>FALSE</td>
+</tr>
+<tr>
+<td><code>OR</code> 或 <code>|</code></td>
+<td>逻辑或</td>
+<td><code>SELECT TRUE OR FALSE;</code></td>
+<td>TRUE</td>
+</tr>
+<tr>
+<td><code>NOT</code> 或 <code>!</code></td>
+<td>逻辑非</td>
+<td><code>SELECT NOT TRUE;</code></td>
+<td>FALSE</td>
+</tr>
+<tr>
+<td><code>XOR</code></td>
+<td>逻辑异或</td>
+<td><code>SELECT TRUE XOR FALSE;</code></td>
+<td>TRUE</td>
+</tr>
+</tbody>
+</table>
+<h2 id="位运算符">位运算符</h2>
+<table>
+<thead>
+<tr>
+<th>运算符</th>
+<th>描述</th>
+<th>示例</th>
+<th>结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>&amp;</code></td>
+<td>位与</td>
+<td><code>SELECT 5 &amp; 3;</code></td>
+<td>1</td>
+</tr>
+<tr>
+<td><code>|</code></td>
+<td>位或</td>
+<td><code>SELECT 5 | 3;</code></td>
+<td>7</td>
+</tr>
+<tr>
+<td><code>^</code></td>
+<td>位异或</td>
+<td><code>SELECT 5 ^ 3;</code></td>
+<td>6</td>
+</tr>
+<tr>
+<td><code>~</code></td>
+<td>位取反</td>
+<td><code>SELECT ~1;</code></td>
+<td>-2</td>
+</tr>
+<tr>
+<td><code>&lt;&lt;</code></td>
+<td>左移位</td>
+<td><code>SELECT 1 &lt;&lt; 2;</code></td>
+<td>4</td>
+</tr>
+<tr>
+<td><code>&gt;&gt;</code></td>
+<td>右移位</td>
+<td><code>SELECT 8 &gt;&gt; 2;</code></td>
+<td>2</td>
+</tr>
+</tbody>
+</table>
+<h2 id="字符串运算符">字符串运算符</h2>
+<table>
+<thead>
+<tr>
+<th>运算符</th>
+<th>描述</th>
+<th>示例</th>
+<th>结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>|</code> 或 <code>CONCAT()</code></td>
+<td>字符串连接</td>
+<td><code>SELECT 'Hello' | ' World';</code></td>
+<td>'Hello World'</td>
+</tr>
+<tr>
+<td><code>LIKE</code></td>
+<td>模糊匹配</td>
+<td><code>SELECT 'abc' LIKE 'a%';</code></td>
+<td>TRUE</td>
+</tr>
+<tr>
+<td><code>NOT LIKE</code></td>
+<td>模糊不匹配</td>
+<td><code>SELECT 'abc' NOT LIKE 'd%';</code></td>
+<td>TRUE</td>
+</tr>
+<tr>
+<td><code>REGEXP</code></td>
+<td>正则匹配</td>
+<td><code>SELECT 'abc' REGEXP '^a';</code></td>
+<td>TRUE</td>
+</tr>
+<tr>
+<td><code>NOT REGEXP</code></td>
+<td>正则不匹配</td>
+<td><code>SELECT 'abc' NOT REGEXP '^d';</code></td>
+<td>TRUE</td>
+</tr>
+</tbody>
+</table>
+<h2 id="集合运算符">集合运算符</h2>
+<table>
+<thead>
+<tr>
+<th>运算符</th>
+<th>描述</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>UNION</code></td>
+<td>合并结果集（去重）</td>
+<td><code>SELECT a FROM t1 UNION SELECT b FROM t2;</code></td>
+</tr>
+<tr>
+<td><code>UNION ALL</code></td>
+<td>合并结果集（不去重）</td>
+<td><code>SELECT a FROM t1 UNION ALL SELECT b FROM t2;</code></td>
+</tr>
+<tr>
+<td><code>INTERSECT</code></td>
+<td>交集（共同部分）</td>
+<td><code>SELECT a FROM t1 INTERSECT SELECT b FROM t2;</code></td>
+</tr>
+<tr>
+<td><code>EXCEPT</code> 或 <code>MINUS</code></td>
+<td>差集（A有B无）</td>
+<td><code>SELECT a FROM t1 EXCEPT SELECT b FROM t2;</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="赋值运算符">赋值运算符</h2>
+<table>
+<thead>
+<tr>
+<th>运算符</th>
+<th>描述</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>:=</code></td>
+<td>赋值</td>
+<td><code>SET @var := 10;</code></td>
+</tr>
+<tr>
+<td><code>=</code></td>
+<td>赋值（在SET语句中）</td>
+<td><code>SET @var = 10;</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="特殊运算符">特殊运算符</h2>
+<table>
+<thead>
+<tr>
+<th>运算符</th>
+<th>描述</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>CASE</code></td>
+<td>条件表达式</td>
+<td><code>CASE WHEN condition THEN result ELSE default END</code></td>
+</tr>
+<tr>
+<td><code>COALESCE()</code></td>
+<td>返回第一个非NULL值</td>
+<td><code>SELECT COALESCE(NULL, NULL, 'default');</code></td>
+</tr>
+<tr>
+<td><code>NULLIF()</code></td>
+<td>相等返回NULL</td>
+<td><code>SELECT NULLIF(10, 10);</code></td>
+</tr>
+<tr>
+<td><code>IFNULL()</code></td>
+<td>为NULL则返回替换值</td>
+<td><code>SELECT IFNULL(NULL, 'replacement');</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="运算符优先级（从高到低）">运算符优先级（从高到低）</h2>
+<table>
+<thead>
+<tr>
+<th>优先级</th>
+<th>运算符</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>()</code>（括号）</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>-</code>（一元负号）, <code>~</code>（位取反）</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>*</code>, <code>/</code>, <code>%</code>, <code>DIV</code></td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>+</code>, <code>-</code>（减法）</td>
+</tr>
+<tr>
+<td>5</td>
+<td><code>&lt;&lt;</code>, <code>&gt;&gt;</code></td>
+</tr>
+<tr>
+<td>6</td>
+<td><code>&amp;</code></td>
+</tr>
+<tr>
+<td>7</td>
+<td><code>|</code></td>
+</tr>
+<tr>
+<td>8</td>
+<td><code>=</code>, <code>!=</code>, <code>&lt;&gt;</code>, <code>&lt;=&gt;</code>, <code>&lt;</code>, <code>&lt;=</code>, <code>&gt;</code>, <code>&gt;=</code>, <code>IN</code>, <code>IS</code>, <code>LIKE</code>, <code>REGEXP</code></td>
+</tr>
+<tr>
+<td>9</td>
+<td><code>BETWEEN</code>, <code>CASE</code>, <code>WHEN</code>, <code>THEN</code>, <code>ELSE</code></td>
+</tr>
+<tr>
+<td>10</td>
+<td><code>NOT</code></td>
+</tr>
+<tr>
+<td>11</td>
+<td><code>AND</code>, <code>&amp;&amp;</code></td>
+</tr>
+<tr>
+<td>12</td>
+<td><code>XOR</code></td>
+</tr>
+<tr>
+<td>13</td>
+<td><code>OR</code>, <code>|</code></td>
+</tr>
+<tr>
+<td>14</td>
+<td><code>:=</code>（赋值）</td>
+</tr>
+</tbody>
+</table>
+<h2 id="常用函数运算符">常用函数运算符</h2>
+<table>
+<thead>
+<tr>
+<th>类别</th>
+<th>运算符/函数</th>
+<th>描述</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>聚合函数</td>
+<td><code>COUNT()</code></td>
+<td>计数</td>
+<td><code>SELECT COUNT(*) FROM users;</code></td>
+</tr>
+<tr>
+<td>聚合函数</td>
+<td><code>SUM()</code></td>
+<td>求和</td>
+<td><code>SELECT SUM(salary) FROM employees;</code></td>
+</tr>
+<tr>
+<td>聚合函数</td>
+<td><code>AVG()</code></td>
+<td>平均值</td>
+<td><code>SELECT AVG(score) FROM grades;</code></td>
+</tr>
+<tr>
+<td>聚合函数</td>
+<td><code>MIN()</code></td>
+<td>最小值</td>
+<td><code>SELECT MIN(price) FROM products;</code></td>
+</tr>
+<tr>
+<td>聚合函数</td>
+<td><code>MAX()</code></td>
+<td>最大值</td>
+<td><code>SELECT MAX(age) FROM users;</code></td>
+</tr>
+<tr>
+<td>字符串函数</td>
+<td><code>CONCAT()</code></td>
+<td>连接字符串</td>
+<td><code>SELECT CONCAT(first_name, ' ', last_name);</code></td>
+</tr>
+<tr>
+<td>字符串函数</td>
+<td><code>SUBSTR()</code></td>
+<td>子字符串</td>
+<td><code>SELECT SUBSTR('Hello', 1, 3);</code></td>
+</tr>
+<tr>
+<td>字符串函数</td>
+<td><code>LENGTH()</code></td>
+<td>字符串长度</td>
+<td><code>SELECT LENGTH('abc');</code></td>
+</tr>
+<tr>
+<td>字符串函数</td>
+<td><code>UPPER()</code></td>
+<td>转大写</td>
+<td><code>SELECT UPPER('hello');</code></td>
+</tr>
+<tr>
+<td>字符串函数</td>
+<td><code>LOWER()</code></td>
+<td>转小写</td>
+<td><code>SELECT LOWER('HELLO');</code></td>
+</tr>
+<tr>
+<td>日期函数</td>
+<td><code>NOW()</code></td>
+<td>当前时间</td>
+<td><code>SELECT NOW();</code></td>
+</tr>
+<tr>
+<td>日期函数</td>
+<td><code>CURDATE()</code></td>
+<td>当前日期</td>
+<td><code>SELECT CURDATE();</code></td>
+</tr>
+<tr>
+<td>日期函数</td>
+<td><code>DATE_ADD()</code></td>
+<td>日期加法</td>
+<td><code>SELECT DATE_ADD(NOW(), INTERVAL 1 DAY);</code></td>
+</tr>
+<tr>
+<td>日期函数</td>
+<td><code>DATEDIFF()</code></td>
+<td>日期差</td>
+<td><code>SELECT DATEDIFF('2024-01-01', '2023-01-01');</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="模式匹配通配符">模式匹配通配符</h2>
+<table>
+<thead>
+<tr>
+<th>通配符</th>
+<th>描述</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>%</code></td>
+<td>匹配0个或多个字符</td>
+<td><code>LIKE 'a%'</code> 匹配以'a'开头的字符串</td>
+</tr>
+<tr>
+<td><code>_</code></td>
+<td>匹配单个字符</td>
+<td><code>LIKE 'a_'</code> 匹配以'a'开头且长度为2的字符串</td>
+</tr>
+<tr>
+<td><code>[]</code></td>
+<td>匹配指定字符集（某些数据库）</td>
+<td><code>LIKE '[abc]%'</code> 匹配以a、b或c开头的字符串</td>
+</tr>
+<tr>
+<td><code>[^]</code></td>
+<td>不匹配指定字符集（某些数据库）</td>
+<td><code>LIKE '[^abc]%'</code> 匹配不以a、b、c开头的字符串</td>
+</tr>
+</tbody>
+</table>
 
                 
                 <p class="end">__END__</p>
@@ -98,7 +722,7 @@
     <div class="suffix-box-right">
         <span class="suffix-box-title">文章作者：</span>作吾
         <br>
-        <span class="suffix-box-title">文章出处：</span><a href="/2025/12/16/hello-world/" target="_blank">Hello World</a>
+        <span class="suffix-box-title">文章出处：</span><a href="/2026/02/05/sql%E8%AF%AD%E5%8F%A5/" target="_blank">sql语句</a>
         <br>
         <span class="suffix-box-title">作者签名：</span>死人一个，在试图活着
         <br>
@@ -111,11 +735,20 @@
 </div>
                 
                 
+                    <div class="tag">
+                        标签：
+                        
+                            <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/">计算机基础</a>
+                        
+                    </div>
+                
                 <div class="article-prev-next">
                     
-                        <a href="/2025/12/17/%E4%B8%89%E7%BB%B4%E9%87%8D%E5%BB%BA/" class="prev-prefix">« </a> 上一篇：    <a href="/2025/12/17/%E4%B8%89%E7%BB%B4%E9%87%8D%E5%BB%BA/" title="发布于 2025-12-17 05:25">三维重建</a>
+                        <a href="/2026/02/08/LangChain%E3%80%90%E8%A7%86%E9%A2%91%E7%AC%94%E8%AE%B0%E3%80%91/" class="prev-prefix">« </a> 上一篇：    <a href="/2026/02/08/LangChain%E3%80%90%E8%A7%86%E9%A2%91%E7%AC%94%E8%AE%B0%E3%80%91/" title="发布于 2026-02-08 04:22">LangChain【视频笔记】</a>
                         <br>
                     
+                    
+                        <a href="/2026/02/01/FastAPI%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" class="next-prefix">» </a> 下一篇：    <a href="/2026/02/01/FastAPI%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" title="发布于 2026-02-01 05:24">FastAPI学习笔记</a>
                     
                 </div>
             </div>

@@ -9,7 +9,7 @@
     <meta http-equiv="Cache-Control" content="no-siteapp">
     <title>
         
-            Hello World
+            Langchain【官方文档笔记】
         
     </title>
     <link rel="shortcut icon" href="#"/>
@@ -39,26 +39,34 @@
     <div class="vertical">
         <div class="inner">
             
-                <h1 class="header-subtitle">Hello World</h1>
+                <h1 class="header-subtitle">Langchain【官方文档笔记】</h1>
                 <div class="header-subinfo">
                     <p class="article-info-text">
                         <span>
-                            <i class="iconfont icon-time"></i> 发表时间：2025-12-16
+                            <i class="iconfont icon-time"></i> 发表时间：2026-03-11
                         </span>
                         
                             
-                                <span id="/2025/12/16/hello-world/" class="leancloud_visitors" data-flag-title="Hello World">
+                                <span id="/2026/03/11/Langchain【官方文档笔记】/" class="leancloud_visitors" data-flag-title="Langchain【官方文档笔记】">
                                     <i class="iconfont icon-browse"></i> 阅读：<sapn class="leancloud-visitors-count"></span>
                                 </span>
                             
                             
                                 <span>
-                                    <i class="iconfont icon-interactive"></i> 评论：<span class="valine-comment-count" data-xid="/2025/12/16/hello-world/"></span>
+                                    <i class="iconfont icon-interactive"></i> 评论：<span class="valine-comment-count" data-xid="/2026/03/11/Langchain【官方文档笔记】/"></span>
                                 </span>
                               
                         
                     </p>
                     
+                    
+                        
+                            <span class="tag-color">web</span>
+                        
+                            <span class="tag-color">计算机进阶</span>
+                        
+                            <span class="tag-color">人工智能</span>
+                        
                     
                 </div>
             
@@ -72,20 +80,98 @@
         <div id="article">
             <div class="toc"></div>
             <div class="article-body">
-                <p>Welcome to <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a target="_blank" rel="noopener" href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a target="_blank" rel="noopener" href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a target="_blank" rel="noopener" href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="Quick-Start">Quick Start</h2>
-<h3 id="Create-a-new-post">Create a new post</h3>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/writing.html">Writing</a></p>
-<h3 id="Run-server">Run server</h3>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/server.html">Server</a></p>
-<h3 id="Generate-static-files">Generate static files</h3>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/generating.html">Generating</a></p>
-<h3 id="Deploy-to-remote-sites">Deploy to remote sites</h3>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
+                <h2 id="核心组件">核心组件</h2>
+<h3 id="一、创建代理">一、<strong>创建代理</strong></h3>
+<p><strong>1. creat_agent</strong>(
+model=&quot; &quot;,    //模型设置,包括模型标识符（支持自主推理，可模糊填入）、api_key、模型引入地址等<br>
+tools=[],         //注册关联工具
+system_prompt=&quot; &quot;,     //系统提示词，自主编写的文本对象
+context_schema=Context,   //上下文管理器，需引入
+response_format=ToolStrategy(ResponseFormat_class),       //响应格式，需自主创建模型并引入ToolStrategy管理
+checkpointer=checkpointer ,   //长期记忆管理器，需引入
+middleware=[]     //注册中间件
+）
+<strong>2.使用提供程序包初始化model</strong>
+例如Langchain_openai中的ChatOpenAI函数，不同的模型初始化函数的可选参数存在不同</p>
+<p><strong>3.动态模型</strong>
+使用@wrap_model_call装饰器创建的中间件可以在请求中修改模型，引用该装饰器的函数可以使用request.override(model=model)方法临时改变此次响应调用的模型</p>
+<p>创建的代理可以自动管理调用工具以及使用提示词</p>
+<h3 id="二、工具"><strong>二、工具</strong></h3>
+<p><strong>概述：</strong> 赋予智能体执行特殊操作的能力，具有连续调用、并行调用、重试和错误处理、跨工具调用功能。智能体遵循ReAct（推理+行动）模式，在简短的推理步骤和有针对性的工具调用之间交替进行，并将由此产生的观察结果输入到后续决策中。</p>
+<h3 id="1-静态工具"><strong>1.静态工具</strong></h3>
+<p>使用@tool装饰器创建函数，在创建代理时定义，且整个过程中保持不变。工具函数的编写需要在函数首行添加“”“ tool prompt ”“” 进行描述来让调用工具的模型能够确切理解该工具的用处。</p>
+<p><strong>2.动态工具</strong></p>
+<p><strong>概述：</strong> 动态工具指在运行时调整带路可用的工具集，而不是预先定义所有工具。初始化代理时，注册过多的工具模会使模型过载增加错误，注册过少则会限制功能。可通过身份验证状态、用户权限、功能标志、对话阶段等调整可用工具集。</p>
+<p><strong>处理方法：</strong>
+通过 <strong>@wrap_tool_call</strong> 创建中间件进行工具添加，可添加提示词，除方便开发人员识别外，可以被高级中间件技术管理选择调用（注册管理调用中间件的agent）</p>
+<p><strong>（1）筛选预注册工具</strong></p>
+<ul>
+<li>完成特定对话里程碑后启用高级工具</li>
+<li>根据用户偏好、应用商店中的功能标志筛选工具</li>
+<li>运行时上下文中的用户权限筛选</li>
+</ul>
+<p><strong>（2）运行时工具注册</strong>
+模型已部署时的添加方法，与上似乎区别不大（个人观点）</p>
+<p><strong>3.工具错误处理</strong></p>
+<p><strong>概述：</strong> 可通过 <strong>@wrap_tool_call</strong> 装饰器创建中间件，提示词设置为当出现工具运行错误时调用，返回错误信息给代理进行处理。</p>
+<h3 id="三、系统提示"><strong>三、系统提示</strong></h3>
+<p><strong>概述：</strong> 提示词，指示智能体身份功能等信息，如：“You are a helpful assistant for prefessional. Be concise and accurate.Accurately respond to absolutely certain information.”</p>
+<p><strong>1.基础格式</strong>
+可接受 <strong>str</strong> 和 <strong>SystemMessage</strong> 对象（后者可以更好地控制提示结构）。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">system_prompt=SystemMessage(  </span><br><span class="line">        content=[  </span><br><span class="line">            &#123;  </span><br><span class="line">                &quot;type&quot;: &quot;text&quot;,  </span><br><span class="line">                &quot;text&quot;: &quot;You are an AI assistant tasked with analyzing literary works.&quot;,  </span><br><span class="line">            &#125;,  </span><br><span class="line">            &#123;  </span><br><span class="line">                &quot;type&quot;: &quot;text&quot;,  </span><br><span class="line">                &quot;text&quot;: &quot;&lt;the entire contents of &#x27;Pride and Prejudice&#x27;&gt;&quot;,  </span><br><span class="line">                &quot;cache_control&quot;: &#123;&quot;type&quot;: &quot;ephemeral&quot;&#125;  </span><br><span class="line">            &#125;  </span><br><span class="line">        ]  </span><br><span class="line">    )</span><br></pre></td></tr></table></figure>
+<p><strong>2.动态系统提示</strong>
+<strong>@dynamic_prompt</strong> 可创建根据模型请求生成系统提示的中间件。例如根据用户身份，可添加f&quot;{base_prompt} Provide detailed technical responses.&quot;或f&quot;{base_prompt} Explain concepts simply and avoid jargon.&quot;，使用return返回最终的提示词。</p>
+<h3 id="四、结构化输出"><strong>四、结构化输出</strong></h3>
+<p><strong>1.常规方法</strong>
+使用 <strong>ToolStrategy</strong> 修饰BaseModel对象生成一个输出结构对象，传入模型初始化时的response_format参数。</p>
+<p><strong>2.提供者策略</strong>
+<strong>ProviderStrategy</strong> 使用模型提供商的原生化结构化输出功能，该方法较为可靠，但仅适用于支持原生结构化输出的提供商。</p>
+<h3 id="五、记忆"><strong>五、记忆</strong></h3>
+<p><strong>概述：</strong> 代理会通过 <strong>message</strong> 自动维护对话历史记录，存储在message中的信息可以视为智能体的短期记忆，也可以通过配置进行自定义状态方案。</p>
+<p><strong>1.通过中间件自定义状态（首选）</strong>
+（1）定义继承AgentState类的对象，添加各种属性。（例如: user_preferences: dict,custom_context: any）
+（2）使用创建继承AgentMiddleware对象的类，在其中创建AgentState实例为属性，包含其他属性，可重写before_model等方法，最后将其添加到模型初始化时的Middleware注册表。</p>
+<p><strong>2.更改state_schema参数</strong>
+初始化代理时将设定好的AgentState对象作为state_schema参数的值。</p>
+<h3 id="六、流媒体"><strong>六、流媒体</strong></h3>
+<p><strong>概述：</strong> 当代理程序执行多个步骤时需要一定时间，微课显示中间的进度，我们可以试试回传信息。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">for chunk in agent.steam( 请求信息（invoke传啥这里传啥），stema_mode等其它参数 )：</span><br><span class="line">	# Each chunk contains the full state at that point</span><br><span class="line">	pass</span><br></pre></td></tr></table></figure>
+<h3 id="七、中间件"><strong>七、中间件</strong></h3>
+<p>用法：</p>
+<ul>
+<li>在调用模型之前处理状态（例如，消息修剪、上下文注入）</li>
+<li>修改或验证模型的响应（例如，防护措施、内容过滤）</li>
+<li>使用自定义逻辑处理工具执行错误</li>
+<li>基于状态或上下文实现动态模型选择</li>
+<li>添加自定义日志记录、监控或分析功能</li>
+</ul>
+<h2 id="散装模型（搞半天原来还要自己拼）">散装模型（搞半天原来还要自己拼）</h2>
+<p><strong>概述：</strong> <strong>语言学习模型（LLM）</strong> 除文本生成外，还具有工具调用、结构化输出、多模态、推理。本部分为开发调试时所用技术。</p>
+<h3 id="一、基础用法"><strong>一、基础用法</strong></h3>
+<p>1.创建代理时动态指定模型
+2.直接在代理循环之外调用模型执行任务</p>
+<h3 id="二、初始化模型"><strong>二、初始化模型</strong></h3>
+<p>最简单的方法：init_chat_model(&quot;model_name&quot;)</p>
+<p><strong>三、参数</strong></p>
+<ul>
+<li>model：模型标识，不只是让你看，需要模糊匹配模型的名字以供识别对接什么模型</li>
+<li>api_key: 你自己注册的端口，消耗你自己花钱买的token，一点也不重要，注册了先发给我（doge）</li>
+<li>temperature: 模型输出的随机性，数值越高，响应的创造性越高（同时出错率也更高）</li>
+<li>max_tokens: 限制模型响应时最大输出token量，防止token浪费</li>
+<li>timeout: 等待响应时间限制</li>
+<li>max_retries: 出现网络问题等时的最大重复尝试次数</li>
+</ul>
+<h3 id="四、调用"><strong>四、调用</strong></h3>
+<p>使用invoke传入dict对象（包含human_message等信息）</p>
+<h3 id="五、流式"><strong>五、流式</strong></h3>
+<p>调用.stream()会返回一个迭代器，他会在生成过程中实时输出数据块，可通过循环实时处理每个数据块。（这里的迭代器更接近async操作，不断重复进行获取直至响应输出结束）。</p>
+<p>将获取的所有数据块按时间顺序组合即为本次对话得到的完整响应。</p>
+<h3 id="六、批"><strong>六、批</strong></h3>
+<p><strong>概述:</strong> 将一系列独立的模型请求批量处理，由于可以并行处理，可以显著提高性能并降低成本。调用方式与invoke、stream相同。最终同时返回多份响应，可用for进行遍历。
+（可以使用 <strong>batch_as_completed</strong> 实现每个输入生成后立刻返回）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">responses = model.batch([  </span><br><span class="line">    &quot;Why do parrots have colorful feathers?&quot;,  </span><br><span class="line">    &quot;How do airplanes fly?&quot;,  </span><br><span class="line">    &quot;What is quantum computing?&quot;  </span><br><span class="line">])</span><br></pre></td></tr></table></figure>
+<h3 id="七、工具调用"><strong>七、工具调用</strong></h3>
+<p><strong>概述：</strong> 要使你定义的工具可供模型使用，必须使用绑定方法 <strong>bind_tools</strong> 将它们绑定。该方法<strong>返回的是新的model对象</strong>，而不是向源对象添加工具，原因为langchain主要通过链式组合（例如在中间件中会临时添加工具和更改模型等）和配置叠加，如果直接修改源对象，可能导致链条断掉或混乱，且该方法只是复制了配置字典和工具的应用，创建新模型的代价并不大。</p>
 
                 
                 <p class="end">__END__</p>
@@ -98,7 +184,7 @@
     <div class="suffix-box-right">
         <span class="suffix-box-title">文章作者：</span>作吾
         <br>
-        <span class="suffix-box-title">文章出处：</span><a href="/2025/12/16/hello-world/" target="_blank">Hello World</a>
+        <span class="suffix-box-title">文章出处：</span><a href="/2026/03/11/Langchain%E3%80%90%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3%E7%AC%94%E8%AE%B0%E3%80%91/" target="_blank">Langchain【官方文档笔记】</a>
         <br>
         <span class="suffix-box-title">作者签名：</span>死人一个，在试图活着
         <br>
@@ -111,11 +197,24 @@
 </div>
                 
                 
+                    <div class="tag">
+                        标签：
+                        
+                            <a href="/tags/web/">web</a>
+                        
+                            <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%BF%9B%E9%98%B6/">计算机进阶</a>
+                        
+                            <a href="/tags/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/">人工智能</a>
+                        
+                    </div>
+                
                 <div class="article-prev-next">
                     
-                        <a href="/2025/12/17/%E4%B8%89%E7%BB%B4%E9%87%8D%E5%BB%BA/" class="prev-prefix">« </a> 上一篇：    <a href="/2025/12/17/%E4%B8%89%E7%BB%B4%E9%87%8D%E5%BB%BA/" title="发布于 2025-12-17 05:25">三维重建</a>
+                        <a href="/2026/03/11/2026-03-11/" class="prev-prefix">« </a> 上一篇：    <a href="/2026/03/11/2026-03-11/" title="发布于 2026-03-11 07:31"></a>
                         <br>
                     
+                    
+                        <a href="/2026/03/06/%E6%99%BA%E8%83%BD%E4%BD%93%E9%A1%B9%E7%9B%AE%E6%96%87%E4%BB%B6%E6%A0%87%E6%B3%A8/" class="next-prefix">» </a> 下一篇：    <a href="/2026/03/06/%E6%99%BA%E8%83%BD%E4%BD%93%E9%A1%B9%E7%9B%AE%E6%96%87%E4%BB%B6%E6%A0%87%E6%B3%A8/" title="发布于 2026-03-06 05:37">项目文件标注</a>
                     
                 </div>
             </div>
