@@ -9,7 +9,7 @@
     <meta http-equiv="Cache-Control" content="no-siteapp">
     <title>
         
-            Langchain【官方文档笔记】
+            
         
     </title>
     <link rel="shortcut icon" href="#"/>
@@ -39,21 +39,21 @@
     <div class="vertical">
         <div class="inner">
             
-                <h1 class="header-subtitle">Langchain【官方文档笔记】</h1>
+                <h1 class="header-subtitle"></h1>
                 <div class="header-subinfo">
                     <p class="article-info-text">
                         <span>
-                            <i class="iconfont icon-time"></i> 发表时间：2026-03-11
+                            <i class="iconfont icon-time"></i> 发表时间：2026-03-12
                         </span>
                         
                             
-                                <span id="/2026/03/11/Langchain【官方文档笔记】/" class="leancloud_visitors" data-flag-title="Langchain【官方文档笔记】">
+                                <span id="/2026/03/12/Python编写规范/" class="leancloud_visitors" data-flag-title="">
                                     <i class="iconfont icon-browse"></i> 阅读：<sapn class="leancloud-visitors-count"></span>
                                 </span>
                             
                             
                                 <span>
-                                    <i class="iconfont icon-interactive"></i> 评论：<span class="valine-comment-count" data-xid="/2026/03/11/Langchain【官方文档笔记】/"></span>
+                                    <i class="iconfont icon-interactive"></i> 评论：<span class="valine-comment-count" data-xid="/2026/03/12/Python编写规范/"></span>
                                 </span>
                               
                         
@@ -61,11 +61,7 @@
                     
                     
                         
-                            <span class="tag-color">web</span>
-                        
-                            <span class="tag-color">计算机进阶</span>
-                        
-                            <span class="tag-color">人工智能</span>
+                            <span class="tag-color">计算机基础</span>
                         
                     
                 </div>
@@ -80,210 +76,142 @@
         <div id="article">
             <div class="toc"></div>
             <div class="article-body">
-                <h2 id="核心组件">核心组件</h2>
-<h3 id="一、创建代理">一、<strong>创建代理</strong></h3>
-<p><strong>1. creat_agent</strong>(
-model=&quot; &quot;,    //模型设置,包括模型标识符（支持自主推理，可模糊填入）、api_key、模型引入地址等<br>
-tools=[],         //注册关联工具<br>
-system_prompt=&quot; &quot;,     //系统提示词，自主编写的文本对象<br>
-context_schema=Context,   //上下文管理器，需引入<br>
-response_format=ToolStrategy(ResponseFormat_class),       //响应格式，需自主创建模型并引入ToolStrategy管理<br>
-checkpointer=checkpointer ,   //长期记忆管理器，需引入<br>
-middleware=[]     //注册中间件<br>
-）</p>
-<p><strong>2.使用提供程序包初始化model</strong><br>
-例如Langchain_openai中的ChatOpenAI函数，不同的模型初始化函数的可选参数存在不同</p>
-<p><strong>3.动态模型</strong><br>
-使用@wrap_model_call装饰器创建的中间件可以在请求中修改模型，引用该装饰器的函数可以使用request.override(model=model)方法临时改变此次响应调用的模型</p>
-<p>创建的代理可以自动管理调用工具以及使用提示词</p>
-<h3 id="二、工具"><strong>二、工具</strong></h3>
-<p><strong>概述：</strong> 赋予智能体执行特殊操作的能力，具有连续调用、并行调用、重试和错误处理、跨工具调用功能。智能体遵循ReAct（推理+行动）模式，在简短的推理步骤和有针对性的工具调用之间交替进行，并将由此产生的观察结果输入到后续决策中。</p>
-<h3 id="1-静态工具"><strong>1.静态工具</strong></h3>
-<p>使用@tool装饰器创建函数，在创建代理时定义，且整个过程中保持不变。工具函数的编写需要在函数首行添加“”“ tool prompt ”“” 进行描述来让调用工具的模型能够确切理解该工具的用处。</p>
-<p><strong>2.动态工具</strong></p>
-<p><strong>概述：</strong> 动态工具指在运行时调整带路可用的工具集，而不是预先定义所有工具。初始化代理时，注册过多的工具模会使模型过载增加错误，注册过少则会限制功能。可通过身份验证状态、用户权限、功能标志、对话阶段等调整可用工具集。</p>
-<p><strong>处理方法：</strong><br>
-通过 <strong>@wrap_tool_call</strong> 创建中间件进行工具添加，可添加提示词，除方便开发人员识别外，可以被高级中间件技术管理选择调用（注册管理调用中间件的agent）</p>
-<p><strong>（1）筛选预注册工具</strong></p>
+                <h2 id="缩进">缩进</h2>
 <ul>
-<li>完成特定对话里程碑后启用高级工具</li>
-<li>根据用户偏好、应用商店中的功能标志筛选工具</li>
-<li>运行时上下文中的用户权限筛选</li>
+<li>不要使用<code>tap</code>缩进</li>
+<li>不要混用<code>tap</code>和<code>空格</code></li>
 </ul>
-<p><strong>（2）运行时工具注册</strong><br>
-模型已部署时的添加方法，与上似乎区别不大（个人观点）</p>
-<p><strong>3.工具错误处理</strong></p>
-<p><strong>概述：</strong> 可通过 <strong>@wrap_tool_call</strong> 装饰器创建中间件，提示词设置为当出现工具运行错误时调用，返回错误信息给代理进行处理。</p>
-<h3 id="三、系统提示"><strong>三、系统提示</strong></h3>
-<p><strong>概述：</strong> 提示词，指示智能体身份功能等信息，如：“You are a helpful assistant for prefessional. Be concise and accurate.Accurately respond to absolutely certain information.”</p>
-<p><strong>1.基础格式</strong><br>
-可接受 <strong>str</strong> 和 <strong>SystemMessage</strong> 对象（后者可以更好地控制提示结构）。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">system_prompt=SystemMessage(  </span><br><span class="line">        content=[  </span><br><span class="line">            &#123;  </span><br><span class="line">                &quot;type&quot;: &quot;text&quot;,  </span><br><span class="line">                &quot;text&quot;: &quot;You are an AI assistant tasked with analyzing literary works.&quot;,  </span><br><span class="line">            &#125;,  </span><br><span class="line">            &#123;  </span><br><span class="line">                &quot;type&quot;: &quot;text&quot;,  </span><br><span class="line">                &quot;text&quot;: &quot;&lt;the entire contents of &#x27;Pride and Prejudice&#x27;&gt;&quot;,  </span><br><span class="line">                &quot;cache_control&quot;: &#123;&quot;type&quot;: &quot;ephemeral&quot;&#125;  </span><br><span class="line">            &#125;  </span><br><span class="line">        ]  </span><br><span class="line">    )</span><br></pre></td></tr></table></figure>
-<p><strong>2.动态系统提示</strong><br>
-<strong>@dynamic_prompt</strong> 可创建根据模型请求生成系统提示的中间件。例如根据用户身份，可添加f&quot;{base_prompt} Provide detailed technical responses.&quot;或f&quot;{base_prompt} Explain concepts simply and avoid jargon.&quot;，使用return返回最终的提示词。</p>
-<h3 id="四、结构化输出"><strong>四、结构化输出</strong></h3>
-<p><strong>1.常规方法</strong><br>
-使用 <strong>ToolStrategy</strong> 修饰BaseModel对象生成一个输出结构对象，传入模型初始化时的response_format参数。</p>
-<p><strong>2.提供者策略</strong><br>
-<strong>ProviderStrategy</strong> 使用模型提供商的原生化结构化输出功能，该方法较为可靠，但仅适用于支持原生结构化输出的提供商。</p>
-<h3 id="五、记忆"><strong>五、记忆</strong></h3>
-<p><strong>概述：</strong> 代理会通过 <strong>message</strong> 自动维护对话历史记录，存储在message中的信息可以视为智能体的短期记忆，也可以通过配置进行自定义状态方案。</p>
-<p><strong>1.通过中间件自定义状态（首选）</strong><br>
-（1）定义继承AgentState类的对象，添加各种属性。（例如: user_preferences: dict,custom_context: any）<br>
-（2）使用创建继承AgentMiddleware对象的类，在其中创建AgentState实例为属性，包含其他属性，可重写before_model等方法，最后将其添加到模型初始化时的Middleware注册表。</p>
-<p><strong>2.更改state_schema参数</strong><br>
-初始化代理时将设定好的AgentState对象作为state_schema参数的值。</p>
-<h3 id="六、流媒体"><strong>六、流媒体</strong></h3>
-<p><strong>概述：</strong> 当代理程序执行多个步骤时需要一定时间，微课显示中间的进度，我们可以试试回传信息。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">for chunk in agent.steam( 请求信息（invoke传啥这里传啥），stema_mode等其它参数 )：</span><br><span class="line">	# Each chunk contains the full state at that point</span><br><span class="line">	pass</span><br></pre></td></tr></table></figure>
-<h3 id="七、中间件"><strong>七、中间件</strong></h3>
-<p>用法：</p>
+<h2 id="空格">空格</h2>
 <ul>
-<li>在调用模型之前处理状态（例如，消息修剪、上下文注入）</li>
-<li>修改或验证模型的响应（例如，防护措施、内容过滤）</li>
-<li>使用自定义逻辑处理工具执行错误</li>
-<li>基于状态或上下文实现动态模型选择</li>
-<li>添加自定义日志记录、监控或分析功能</li>
+<li><code>list，dict，tuple，set</code>后面加一个空格</li>
+<li><code>dict</code>的<code>:</code>后加一个空格</li>
+<li>注释符号<code>#</code>后加一个<code>空格</code></li>
+<li>操作符两端加一个空格</li>
+<li>参数列表的<code>=</code>两端不加空格</li>
+<li>括号内的两端不需要空格</li>
+<li>不要在列表索引、函数调用、关键字参数赋值两侧使用空格</li>
 </ul>
-<h2 id="model（搞半天原来还要自己拼）">model（搞半天原来还要自己拼）</h2>
-<p><strong>概述：</strong> <strong>语言学习模型（LLM）</strong> 除文本生成外，还具有工具调用、结构化输出、多模态、推理。本部分为开发调试时所用技术。</p>
-<h3 id="一、基础用法"><strong>一、基础用法</strong></h3>
-<p>1.创建代理时动态指定模型<br>
-2.直接在代理循环之外调用模型执行任务</p>
-<h3 id="二、初始化模型"><strong>二、初始化模型</strong></h3>
-<p>最简单的方法：init_chat_model(&quot;model_name&quot;)</p>
-<p><strong>三、参数</strong></p>
+<h2 id="空行">空行</h2>
 <ul>
-<li>model：模型标识，不只是让你看，需要模糊匹配模型的名字以供识别对接什么模型</li>
-<li>api_key: 你自己注册的端口，消耗你自己花钱买的token，一点也不重要，注册了先发给我（doge）</li>
-<li>temperature: 模型输出的随机性，数值越高，响应的创造性越高（同时出错率也更高）</li>
-<li>max_tokens: 限制模型响应时最大输出token量，防止token浪费</li>
-<li>timeout: 等待响应时间限制</li>
-<li>max_retries: 出现网络问题等时的最大重复尝试次数</li>
+<li><code>function</code>和<code>class</code>前后各用两个空行</li>
+<li><code>class</code>内部<code>method</code>之间用一个空白行分隔</li>
+<li>函数内逻辑无关的段落间空一行</li>
+<li><code>if/for/while</code>语句中即使执行语句只有一行也要另起一行</li>
 </ul>
-<h3 id="四、调用"><strong>四、调用</strong></h3>
-<p>使用invoke传入dict对象（包含human_message等信息），传入时可以包含config设置本次调用的临时配置。</p>
-<h3 id="五、流式"><strong>五、流式</strong></h3>
-<p>调用.stream()会返回一个迭代器，他会在生成过程中实时输出数据块，可通过循环实时处理每个数据块。（这里的迭代器更接近async操作，不断重复进行获取直至响应输出结束）。</p>
-<p>将获取的所有数据块按时间顺序组合即为本次对话得到的完整响应。</p>
-<h3 id="六、批"><strong>六、批</strong></h3>
-<p><strong>概述:</strong> 将一系列独立的模型请求批量处理，由于可以并行处理，可以显著提高性能并降低成本。调用方式与invoke、stream相同。最终同时返回多份响应，可用for进行遍历。
-（可以使用 <strong>batch_as_completed</strong> 实现每个输入生成后立刻返回）</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">responses = model.batch([  </span><br><span class="line">    &quot;Why do parrots have colorful feathers?&quot;,  </span><br><span class="line">    &quot;How do airplanes fly?&quot;,  </span><br><span class="line">    &quot;What is quantum computing?&quot;  </span><br><span class="line">])</span><br></pre></td></tr></table></figure>
-<h3 id="七、工具调用"><strong>七、工具调用</strong></h3>
-<p><strong>概述：</strong> 要使你定义的工具可供模型使用，必须使用绑定方法 <strong>bind_tools</strong> 将它们绑定。该方法<strong>返回的是新的model对象</strong>，而不是向源对象添加工具，原因为langchain主要通过链式组合（例如在中间件中会临时添加工具和更改模型等）和配置叠加，如果直接修改源对象，可能导致链条断掉或混乱，且该方法只是复制了配置字典和工具的应用，创建新模型的代价并不大。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">#工具执行循环：</span><br><span class="line"></span><br><span class="line"># Step 1: Model generates tool calls</span><br><span class="line"># 该体系创建的模型无法直接调用工具，只能识别到，调用invoke会返回提取的信息和调用工具的清单</span><br><span class="line"></span><br><span class="line">messages = [&#123;&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;What&#x27;s the weather in Boston?&quot;&#125;]</span><br><span class="line">ai_msg = model_with_tools.invoke(messages)</span><br><span class="line">messages.append(ai_msg)</span><br><span class="line"></span><br><span class="line"># Step 2: Execute tools and collect results</span><br><span class="line"># 该阶段为实际调用清单中的工具生成调用结果并注入messages</span><br><span class="line"></span><br><span class="line">for tool_call in ai_msg.tool_calls:</span><br><span class="line">    # Execute the tool with the generated arguments</span><br><span class="line">    tool_result = get_weather.invoke(tool_call)</span><br><span class="line">    messages.append(tool_result)</span><br><span class="line"></span><br><span class="line"># Step 3: Pass results back to model for final response</span><br><span class="line"># 最后将注入工具调用结果的messages提交给模型，生成最终的响应</span><br><span class="line"></span><br><span class="line">final_response = model_with_tools.invoke(messages)</span><br><span class="line">print(final_response.text)</span><br><span class="line"></span><br><span class="line"># &quot;The current weather in Boston is 72°F and sunny.&quot;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<h3 id="八、结构化输出"><strong>八、结构化输出</strong></h3>
-<p><strong>概述：</strong> 声明并编写response结构，使用<strong>model.with_structed_output</strong> (response_class,//add &quot; <strong>method=&quot;json_schema&quot;,</strong> &quot;when use JSON Schema ),该方法 <strong>返回的是新的model对象</strong>。</p>
-<p><strong>支持的模型：（可存在嵌套结构）</strong></p>
+<h2 id="换行">换行</h2>
 <ul>
-<li>Pydantic中的 <strong>BaseModel模型类</strong> ，功能丰富，包含字段验证、描述和嵌套结构。</li>
-<li>typing_extensions中的 <strong>TypeDict类</strong> ，相较Pydantic更简单，适合不需要运行时的验证。</li>
-<li><strong>JSON Schema</strong> 可以实现最大程度的控制和互操作性，不过存在编写相较前两者较麻烦的缺点</li>
+<li>每行代码控制在80字符以内</li>
+<li>使用<code>\</code>和<code>()</code>控制换行</li>
 </ul>
-<p><strong>九、高级主题</strong>（感觉这里的翻译并不准确，原文为 <strong>Advanced topics</strong> ）</p>
-<p><strong>概述：</strong> LangChain的 <strong>.profile方法</strong> 支持定义一个功能和特性字典（可限定例如最大输入、是否允许图像数据、是否可调用工具等属性）</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">model.profile </span><br><span class="line">&#123; </span><br><span class="line">	&quot;max_input_tokens&quot;: 400000, </span><br><span class="line">	&quot;image_inputs&quot;: True, </span><br><span class="line">	&quot;reasoning_output&quot;: True, </span><br><span class="line">	&quot;tool_calling&quot;: True, </span><br><span class="line">	 ... </span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
-<p><strong>十、多模态</strong></p>
-<p><strong>概述：</strong> 模型处理并返回非文本数据（images，audio，studio）</p>
-<p><strong>十一、推理</strong></p>
-<p><strong>概述：</strong> 许多模型能够进行多步骤推理得出结论。若底层模型支持，可以将这个推理过程展现出来，以便更好地理解模型是如何得出最终答案的。（<strong>.stream()</strong> 方法）</p>
-<p><strong>十二、token监测</strong></p>
-<p><strong>概述：</strong> 可注册上下文管理器 <strong>UsageMetadataCallbackHandler</strong> 对模型使用的token进行监测。</p>
-<h2 id="message">message</h2>
-<p><strong>概述：</strong> 模型的基本上下文单元，代表模型的输入输出，鞋带与LLM交互时的获取对话状态所需的内容和元数据。</p>
-<p>message是包含以下内容的对象：</p>
+<h2 id="命名">命名</h2>
 <ul>
-<li>角色——system，user</li>
-<li>内容——消息的实际内容，text，image，studio等</li>
-<li>元数据——响应信息、消息ID、令牌使用状况等</li>
+<li>使用蛇形命名法</li>
+<li><code>package/module</code>名中不要出现下划线<code>_</code></li>
+<li>函数、变量以及属性使用小写</li>
+<li>类和异常信息首字母大写，使用大驼峰命名</li>
+<li>模块级别的常量全部使用大写</li>
 </ul>
-<p><strong>一、基本用法</strong></p>
-<ol>
-<li>创建消息对象并在调用时传给模型。</li>
-</ol>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">from langchain.messages import HumanMessage, AIMessage, SystemMessage</span><br><span class="line"></span><br><span class="line">message= … …</span><br><span class="line"></span><br><span class="line">response = model.invoke(messages)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<ol start="2">
-<li>字典格式传入</li>
-</ol>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">messages = [ </span><br><span class="line">&#123;&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;You are a poetry expert&quot;&#125;, </span><br><span class="line">&#123;&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Write a haiku about spring&quot;&#125;, </span><br><span class="line">&#123;&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;Cherry blossoms bloom...&quot;&#125; </span><br><span class="line">] </span><br><span class="line"></span><br><span class="line">response = model.invoke(messages)</span><br></pre></td></tr></table></figure>
-<h3 id="二、消息类型"><strong>二、消息类型</strong></h3>
-<ul>
-<li>系统消息——告诉模型如何运行，并为交互提供上下文</li>
-<li>人类消息——代表用户输入以及与模型的交互</li>
-<li>AI消息——模型生成的响应，包括文本内容、工具调用和元数据</li>
-<li>工具消息——表示工具调用的输出</li>
-</ul>
-<ol>
-<li>
-<p>系统消息（ <strong>SystemMessage</strong> ）</p>
-<p>初始指令，用于启动模型的行为，可以用于设定基调、定义模型的角色并建立相应准则。</p>
-</li>
-<li>
-<p>人类信息（ <strong>HumanMessage</strong>）</p>
-<p>代表用户输入与交互。可以包含text、image、studio、file等多模态内容。包括常规文本并可包含消息元数据（例如用户名字id等）。</p>
-</li>
-<li>
-<p>人工智能信息（ <strong>AIMessage</strong>）</p>
-<p>模型调用的输出，可包含多模态数据、工具调用和特定于提供商的元数据。提供商对消息类型的权重不同，这意味着又是手动创建一个新的AIMessage对象并插入消息历史记录中会很有帮助。</p>
-</li>
-<li>
-<p>工具调用</p>
-<p>模型调用工具时，调用信息会包含在AIMessage中（调用响应体的 <strong>.tool_call属性</strong> 获取）。其他类似推理和引用的结构化数据也可以出现。除此之外，AIMessage中也可以保存令牌计数和其他使用元数据。（调用响应体的 <strong>.usage_metadata属性</strong> 获取）</p>
-<p>对于支持工具调用的模型，AIMessage可以包含工具信息。工具消息用于将单次工具执行的结果传递回模型。（个人不是太明白这种方式的意义）</p>
-</li>
-</ol>
-<h3 id="三、消息内容"><strong>三、消息内容</strong></h3>
-<p><strong>概述：</strong> 消息具有content弱类型属性，支持字符串和无类型对象列表（例如字典）。这使得Langchain能直接支持提供者原生结构，例如多模态内容。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">from langchain.messages import HumanMessage  </span><br><span class="line">  </span><br><span class="line"># String content  </span><br><span class="line">human_message = HumanMessage(&quot;Hello, how are you?&quot;)  </span><br><span class="line">  </span><br><span class="line"># Provider-native format (e.g., OpenAI)  </span><br><span class="line">human_message = HumanMessage(content=[  </span><br><span class="line">    &#123;&quot;type&quot;: &quot;text&quot;, &quot;text&quot;: &quot;Hello, how are you?&quot;&#125;,  </span><br><span class="line">    &#123;&quot;type&quot;: &quot;image_url&quot;, &quot;image_url&quot;: &#123;&quot;url&quot;: &quot;https://example.com/image.jpg&quot;&#125;&#125;  </span><br><span class="line">])  </span><br><span class="line">  </span><br><span class="line"># List of standard content blocks  </span><br><span class="line">human_message = HumanMessage(content_blocks=[  </span><br><span class="line">    &#123;&quot;type&quot;: &quot;text&quot;, &quot;text&quot;: &quot;Hello, how are you?&quot;&#125;,  </span><br><span class="line">    &#123;&quot;type&quot;: &quot;image&quot;, &quot;url&quot;: &quot;https://example.com/image.jpg&quot;&#125;,  </span><br><span class="line">])</span><br></pre></td></tr></table></figure>
-<p><strong>标准内容块:</strong> LangChain为消息提供了一种跨提供商通用的标准表示形式，消息对象实现了一个content_block属性，该属性会将 <strong>content</strong> 特性解析为标准的、类型安全的表示形式。</p>
-<h3 id="四、内容块引用">**四、内容块引用</h3>
 <table>
 <thead>
 <tr>
-<th>块类型（主）</th>
-<th>块类型（次）</th>
-<th>参数</th>
+<th style="text-align:left">类型</th>
+<th style="text-align:left">命名约定</th>
+<th style="text-align:left">例子</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>核</td>
-<td>文本内容块</td>
-<td>type:string  //类型<br><br>text:string   //内容<br><br>annotations:object() //注释  <br><br>extras:object  //额外</td>
+<td style="text-align:left">Class</td>
+<td style="text-align:left">每个单词都大写字母开头；不要用下划线 (PascalCase)</td>
+<td style="text-align:left"><code>Model</code>, <code>MyClass</code></td>
 </tr>
 <tr>
-<td></td>
-<td>推理内容块</td>
-<td>type:string  //类型<br><br>reasoning:string  //推导<br><br>extras:object   //额外</td>
+<td style="text-align:left">Constant</td>
+<td style="text-align:left">使用大写字母；下划线分隔单词 (UPPER_CASE)</td>
+<td style="text-align:left"><code>CONSTANT</code>, <code>MY_CONSTANT</code>, <code>MY_LONG_CONSTANT</code></td>
 </tr>
 <tr>
-<td>多模态</td>
-<td>图片、音频、视频、文件内容</td>
-<td>type:string  //类型<br><br>url：string  //网址<br><br>ID:string  //内容块的标识</td>
+<td style="text-align:left">Package</td>
+<td style="text-align:left">使用小写单词；不用下划线分隔单词</td>
+<td style="text-align:left"><code>package</code>, <code>mypackage</code></td>
 </tr>
 <tr>
-<td>工具调用</td>
-<td>工具调用</td>
-<td>type:string  //类型<br><br>name:string  //工具名<br><br>args:dict  //参数<br><br>id:string  //工具的唯一标识符</td>
+<td style="text-align:left">Function</td>
+<td style="text-align:left">使用小写字母；下划线分隔单词 (snake_case)</td>
+<td style="text-align:left"><code>function</code>, <code>my_function</code></td>
 </tr>
 <tr>
-<td></td>
-<td>工具调用快</td>
-<td>type:string  //tool_call_chunk<br><br>name:string  //工具名<br><br>args:string  //参数<br><br>id:string  //工具标识<br><br>index：index|string  //数据块在数据流中的位置<br></td>
+<td style="text-align:left">Variable</td>
+<td style="text-align:left">使用小写字母；下划线分隔单词 (snake_case)</td>
+<td style="text-align:left"><code>x</code>, <code>var</code>, <code>my_variable</code></td>
 </tr>
 <tr>
-<td></td>
-<td>调用失败记录</td>
-<td>type:string  //invaild_tool_call<br><br>name:string  //工具名<br><br>args:object  //参数<br><br>error:string //错误描述</td>
+<td style="text-align:left">Method</td>
+<td style="text-align:left">使用小写字母；下划线分隔单词 (snake_case)</td>
+<td style="text-align:left"><code>class_method</code>, <code>method</code></td>
+</tr>
+<tr>
+<td style="text-align:left">Module</td>
+<td style="text-align:left">使用小写字母；下划线分隔单词 (snake_case)</td>
+<td style="text-align:left"><code>module.py</code>, <code>my_module.py</code></td>
 </tr>
 </tbody>
 </table>
-<h2 id="tools">tools</h2>
-<h3 id="一、基本工具定义"><strong>一、基本工具定义</strong></h3>
-<p><strong>概述：</strong> 使用 <strong>@tool装饰器</strong> 创建工具，被修饰函数的文档字符会成为工具的描述，帮助模型理解何时使用该工具。工具函数参数的类型提示是必需的，这定义了工具的输入模式，调用工具时会一句类型提示生成message。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">class input_method(BaseModel):</span><br><span class="line">	&quot;&quot;&quot;description&quot;&quot;&quot;</span><br><span class="line">	arg1:str=Field(......)</span><br><span class="line">	arg2:Literal[&quot;string1&quot;,&quot;string2&quot;]=Field(</span><br><span class="line">	defult=False.</span><br><span class="line">	descriotion=&quot;......&quot;</span><br><span class="line">	)</span><br><span class="line"></span><br><span class="line">@tool(&quot;name for invoke&quot;,description=&quot;Performs arithmetic calculations.&quot;,args_schema=input_method)</span><br><span class="line">def function(arg:str) -&gt; str:</span><br><span class="line">	&quot;&quot;&quot;role of this function&quot;&quot;&quot;</span><br><span class="line">	pass</span><br></pre></td></tr></table></figure>
-<h3 id="二、访问上下文"><strong>二、访问上下文</strong></h3>
+<h2 id="import">import</h2>
+<ul>
+<li><code>import</code>之间进行分组，每组之间进行空行，组内尽量采用字典顺序排序，分组排序为标准库-&gt;第三方库-&gt;自主声明的文件</li>
+<li>引用一个模块式使用绝对的模块名称，例如要想引入<code>bar</code>包下面的<code>foo</code>模块，应该使用<code>from bar import foo</code>而不是<code>import foo</code>。</li>
+<li>必须使用相对引用时使用<code>from . import foo</code>（应该是用于与引入库区分）</li>
+<li>为了避免命名冲突，可以使用<code>as</code>或导入上一级命名空间</li>
+</ul>
+<h2 id="注释">注释</h2>
+<ul>
+<li>文档字符串docstring，是<code>package，module，class，method，function</code>级别的注释，可以通过<code>__doc__</code>成员访问到，注释在一对```之间</li>
+<li><code>function，method</code>的文档字符串应描述其<strong>功能、输入参数、返回值</strong> ，如果有<strong>复杂的算法和实现</strong>，也需要写清楚</li>
+<li>不要写错误的和无谓的注释</li>
+<li>优先使用英文写注释，英文不好就全部用中文</li>
+</ul>
+<h2 id="异常">异常</h2>
+<ul>
+<li>不要轻易使用<code>try/except</code></li>
+<li><code>except</code>后面需要指定捕捉的异常，裸露的<code>except</code>会捕捉所有异常，意味着会隐藏潜在的问题</li>
+<li>使用<code>finally</code>子句处理一些收尾操作，如关闭文件，关闭数据库连接等</li>
+<li>try/except里的内容不要太多，只在可能抛出异常的地方使用</li>
+<li>从<code>Exception</code>而不是<code>BaseException</code>集成自定义的异常类 <strong>（这个没接触过，后面要学一下）</strong></li>
+</ul>
+<h2 id="Class">Class</h2>
+<ul>
+<li>显示的写明父类，如果不是继承自别的类，就继承自<code>object类</code>（最基础的类对象）</li>
+<li>使用<code>super</code>调用父类的方法，这能明显的表明这是来自父类的方法</li>
+<li>支持多继承，即同时有多个父类，推荐使用<code>Mixin</code>(Mixin是指创建一些专门用于插入其他类中的插件类，这些类一般没有自己的属性，不会被用于实例化，主要用于扩展其他类的功能)</li>
+</ul>
+<h2 id="字符串">字符串</h2>
+<ul>
+<li>使用字符串的<code>join</code>方法拼接字符串</li>
+<li>使用字符串类型的方法，而不是string模块的方法</li>
+<li>使用<code>startswith</code>和<code>endwith</code>方法比较前后缀</li>
+<li>使用f-string方法格式化字符串，即<code>f&quot;str1{content}str2&quot;</code></li>
+</ul>
+<h2 id="比较">比较</h2>
+<ul>
+<li>空的<code>list，str，tuple，set，dict和0.0，None</code>都是False</li>
+<li>使用<code>if somelist</code> 而不是 <code>if len(somelist)</code> 判断为空</li>
+<li>使用<code>is</code> 和<code>is not</code> 与单例比较而不是<code>==</code> 和<code>!=</code></li>
+<li>使用<code>if a is not None</code>而不是<code>if not a is None</code>，尽量看着复合人脑的处理规则</li>
+<li>使用<code>isinstance()</code>而不是<code>type()</code>进行类型判断</li>
+<li>使用<code>in</code>操作:用<code>key in dict</code> 而不是 <code>dict.has_key()</code>进行查询</li>
+<li>用<code>set</code>加速存在性检查，<code>list</code>的查找是线性的，<code>set</code>的底层是<code>hash table</code>（缺点是<code>set</code>需要使用更多内存空间）</li>
+</ul>
+<h2 id="其他">其他</h2>
+<ul>
+<li>使用内建函数<code>sorted</code>和<code>.sort</code> 进行排序</li>
+<li>适量使用<code>map，reduce，filter和lambda</code>，使用内建的<code>all</code>和<code>any</code>处理多个条件的判断</li>
+<li>使用<code>with</code>语句处理上下文</li>
+<li>利用好python的Duck Type特性</li>
+<li>使用logging记录日志，配置好格式和级别</li>
+<li>了解python的魔术方法</li>
+<li>阅读优秀开源代码</li>
+</ul>
 
                 
                 <p class="end">__END__</p>
@@ -296,7 +224,7 @@ middleware=[]     //注册中间件<br>
     <div class="suffix-box-right">
         <span class="suffix-box-title">文章作者：</span>作吾
         <br>
-        <span class="suffix-box-title">文章出处：</span><a href="/2026/03/11/Langchain%E3%80%90%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3%E7%AC%94%E8%AE%B0%E3%80%91/" target="_blank">Langchain【官方文档笔记】</a>
+        <span class="suffix-box-title">文章出处：</span><a href="/2026/03/12/Python%E7%BC%96%E5%86%99%E8%A7%84%E8%8C%83/" target="_blank"></a>
         <br>
         <span class="suffix-box-title">作者签名：</span>死人一个，在试图活着
         <br>
@@ -312,21 +240,14 @@ middleware=[]     //注册中间件<br>
                     <div class="tag">
                         标签：
                         
-                            <a href="/tags/web/">web</a>
-                        
-                            <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%BF%9B%E9%98%B6/">计算机进阶</a>
-                        
-                            <a href="/tags/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/">人工智能</a>
+                            <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/">计算机基础</a>
                         
                     </div>
                 
                 <div class="article-prev-next">
                     
-                        <a href="/2026/03/11/2026-03-11/" class="prev-prefix">« </a> 上一篇：    <a href="/2026/03/11/2026-03-11/" title="发布于 2026-03-11 07:31"></a>
-                        <br>
                     
-                    
-                        <a href="/2026/03/06/%E6%99%BA%E8%83%BD%E4%BD%93%E9%A1%B9%E7%9B%AE%E6%96%87%E4%BB%B6%E6%A0%87%E6%B3%A8/" class="next-prefix">» </a> 下一篇：    <a href="/2026/03/06/%E6%99%BA%E8%83%BD%E4%BD%93%E9%A1%B9%E7%9B%AE%E6%96%87%E4%BB%B6%E6%A0%87%E6%B3%A8/" title="发布于 2026-03-06 05:37">项目文件标注</a>
+                        <a href="/2026/03/11/%E5%90%8E%E7%BB%AD%E7%9B%AE%E6%A0%87/" class="next-prefix">» </a> 下一篇：    <a href="/2026/03/11/%E5%90%8E%E7%BB%AD%E7%9B%AE%E6%A0%87/" title="发布于 2026-03-11 08:07">待办</a>
                     
                 </div>
             </div>
