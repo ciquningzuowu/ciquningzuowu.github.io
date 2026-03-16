@@ -79,46 +79,370 @@
             <div class="toc"></div>
             <div class="article-body">
                 <h2 id="ORM操作（此笔记为tortoise-orm）"><strong>ORM操作</strong>（此笔记为tortoise orm）</h2>
-<p>ORM（对象关系映射）是一种编程技术，用于在关系数据库和面向对象编程语言之间建立桥梁。</p>
+<p><strong>概述：</strong> ORM（对象关系映射）是一种编程技术，用于在关系数据库和面向对象编程语言之间建立桥梁。ORM 允许开发者以面向对象的方式操作数据库，而不必直接编写 <code>SQL</code> 查询语句。</p>
+<h2 id="一、数据库模型定义">一、数据库模型定义</h2>
+<p><code>Tortoise-ORM</code>中的数据库模型是通过Python定义的，继承了<code>tortoise.models.Model类</code>的每个类代表数据库中的一张表，类的每个属性代表表中的一个列。需注意的是该类型类属于实例类，无法用于接口直接传回，只能在后端框架中使用。</p>
+<h3 id="基本模型定义"><strong>基本模型定义</strong></h3>
+<ol>
+<li>继承<code>Model</code>类。</li>
+<li>定义字段。<code>Tortoise-ORM</code>提供了多种字段类定义模型的字段，如<code>CharField，IntField、DatetimeField</code>等。</li>
+<li>字段类型约束。每个字段都需要指定数据类型。可添加对应类型的特定约束，如CharField类型的长度，DatatimeField类型的创建时生成时间戳，也可添加第三范式，如独一性，自增性，主键指定等。</li>
+</ol>
+<h3 id="常见字段类型"><strong>常见字段类型</strong></h3>
+<ol>
+<li><code>CharField</code>: 用于存储字符串，需要指定 max_length 参数，表示该字段最大允许的字符长度。</li>
+<li><code>IntField</code>: 用于存储整数数据。</li>
+<li><code>FloatField</code>: 用于存储浮动点数数据。适合表示小数值，例如价格、评分等。</li>
+<li><code>BooleanField</code>: 用于存储布尔值（True 或 False）。</li>
+<li><code>TextField</code>: 用于存储长文本数据，没有字符长度限制。适用于存储文章内容、评论等大量文本数据。</li>
+<li><code>DateField 和 DatetimeField</code>: 分别用于存储日期和日期时间。DateField() 只存储日期，而 DatetimeField() 存储日期和时间。<code>created_at=fields.DatetimeField(auto_now_add=True) </code>用于自动记录创建时间。</li>
+<li><code>ForeignKeyField</code>: 用于定义模型间的一对多关系。例如，一个用户可以有多个订单，这时可以在 Order 模型中通过 <code>ForeignKeyField</code> 引用<code>User</code>模型。</li>
+<li><code>ManyToManyField</code>: 用于定义多对多关系。例如，一个学生可以选修多门课程，而一门课程也可以有多个学生选修。</li>
+<li><code>JSONField</code>: 用于存储 JSON 数据，适用于存储不确定结构的复杂数据。</li>
+</ol>
+<h3 id="字段约束："><strong>字段约束：</strong></h3>
+<ol>
+<li><code>unique=True</code>：独一性，该字段值不可重复。</li>
+<li><code>null=True</code>：是否允许为空，sql默认字段不可填入空值。</li>
+<li><code>default=value</code>：指定默认值。</li>
+<li><code>max_length=value</code>：字段最大长度</li>
+</ol>
+<h3 id="Meta类约束"><strong>Meta类约束</strong></h3>
+<p><code>Model类</code>中可定义<code>Meta内部类</code>，可用于定义模型的一些元信息，如表名、索引、约束等。
+常见<code>Meta类</code>属性：</p>
 <ul>
-<li>class继承Model类，根据n对m关系使用Foreignkeyfield和ManyToMany函数进行关系添加设置关联参数</li>
-<li>使用register_tortoise函数进行配置信息注册，创建settings文件填入链接方式、账号密码、ip、引擎、迁移类文件等信息。然后将settings文件引入主文件后填入主文件中的config参数位置</li>
+<li><code>table</code>：制定指定表名</li>
+<li><code>indexes</code>：定义索引字段，被添加索引属性的字段的查询操作性能显著高于未定义的字段。</li>
+<li><code>unique_together</code>：定义多个字段的联合唯一约束，确保多个字段的组合值是唯一的。</li>
+<li><code>ordering</code>：定义模型的默认排序规则，可指定用于排序的字段，如token的create_time属性。</li>
 </ul>
+<h2 id="二、异步与同步属性">二、异步与同步属性</h2>
+<p><strong>概述：</strong> Tortoise-ORM中所有与数据库交互的操作都可以通过<code>async/await</code>语法进行异步处理。下为tortoise的函数表：</p>
+<h3 id="1-创建数据">1.<strong>创建数据</strong></h3>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">方法</th>
+<th style="text-align:left">描述</th>
+<th style="text-align:left">示例代码</th>
+<th style="text-align:left">返回值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><code>.create()</code></td>
+<td style="text-align:left">创建并保存单个对象</td>
+<td style="text-align:left"><code>user = await User.create(name=&quot;Alice&quot;, age=20)</code></td>
+<td style="text-align:left">模型实例 (已保存)</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>.save()</code></td>
+<td style="text-align:left">保存实例 (新增或更新)</td>
+<td style="text-align:left"><code>user.name = &quot;Bob&quot;; await user.save()</code></td>
+<td style="text-align:left"><code>None</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>.bulk_create()</code></td>
+<td style="text-align:left">批量插入 (高性能)</td>
+<td style="text-align:left"><code>await User.bulk_create([u1, u2, u3])</code></td>
+<td style="text-align:left"><code>None</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>.get_or_create()</code></td>
+<td style="text-align:left">获取或创建 (原子操作)</td>
+<td style="text-align:left"><code>obj, created = await User.get_or_create(name=&quot;Alice&quot;, defaults={&quot;age&quot;: 20})</code></td>
+<td style="text-align:left"><code>(实例, bool)</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>.update_or_create()</code></td>
+<td style="text-align:left">更新或创建</td>
+<td style="text-align:left"><code>obj, created = await User.update_or_create(id=1, defaults={&quot;age&quot;: 21})</code></td>
+<td style="text-align:left"><code>(实例, bool)</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="2-查询数据">2.<strong>查询数据</strong></h3>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">方法</th>
+<th style="text-align:left">描述</th>
+<th style="text-align:left">示例代码</th>
+<th style="text-align:left">异常处理</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><code>.get()</code></td>
+<td style="text-align:left">获取唯一匹配项</td>
+<td style="text-align:left"><code>user = await User.get(id=1)</code></td>
+<td style="text-align:left">若无或多于1个，抛出 <code>DoesNotExist</code> 或 <code>MultipleObjectsReturned</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>.first()</code></td>
+<td style="text-align:left">获取查询集的第一个</td>
+<td style="text-align:left"><code>user = await User.filter(age=20).first()</code></td>
+<td style="text-align:left">若无返回 <code>None</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>.last()</code></td>
+<td style="text-align:left">获取查询集的最后一个</td>
+<td style="text-align:left"><code>user = await User.all().order_by(&quot;id&quot;).last()</code></td>
+<td style="text-align:left">若无返回 <code>None</code></td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left"></td>
+<td style="text-align:left"><br><strong>后为多对象操作</strong><br></td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>.all()</code></td>
+<td style="text-align:left">获取所有记录</td>
+<td style="text-align:left"><code>users = await User.all()</code></td>
+<td style="text-align:left"><code>List[Model]</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>.filter()</code></td>
+<td style="text-align:left">条件过滤 (最常用)</td>
+<td style="text-align:left"><code>users = await User.filter(age__gt=18, name__contains=&quot;A&quot;)</code></td>
+<td style="text-align:left"><code>List[Model]</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>.exclude()</code></td>
+<td style="text-align:left">排除条件</td>
+<td style="text-align:left"><code>users = await User.exclude(is_active=False)</code></td>
+<td style="text-align:left"><code>List[Model]</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>.limit()</code></td>
+<td style="text-align:left">限制数量</td>
+<td style="text-align:left"><code>users = await User.all().limit(5)</code></td>
+<td style="text-align:left"><code>List[Model]</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>.offset()</code></td>
+<td style="text-align:left">偏移量 (分页)</td>
+<td style="text-align:left"><code>users = await User.all().offset(10).limit(5)</code></td>
+<td style="text-align:left"><code>List[Model]</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>.values()</code></td>
+<td style="text-align:left">返回字典列表 (非实例)</td>
+<td style="text-align:left"><code>data = await User.filter(id=1).values(&quot;id&quot;, &quot;name&quot;)</code></td>
+<td style="text-align:left"><code>List[Dict]</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>.values_list()</code></td>
+<td style="text-align:left">返回元组列表</td>
+<td style="text-align:left"><code>data = await User.all().values_list(&quot;id&quot;, &quot;name&quot;)</code></td>
+<td style="text-align:left"><code>List[Tuple]</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>.count()</code></td>
+<td style="text-align:left">计数</td>
+<td style="text-align:left"><code>count = await User.filter(age=20).count()</code></td>
+<td style="text-align:left"><code>int</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>.exists()</code></td>
+<td style="text-align:left">是否存在 (性能优于 count)</td>
+<td style="text-align:left"><code>if await User.filter(name=&quot;Alice&quot;).exists(): ...</code></td>
+<td style="text-align:left"><code>bool</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="3-更新数据">3.<strong>更新数据</strong></h3>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">方法</th>
+<th style="text-align:left">描述</th>
+<th style="text-align:left">示例代码</th>
+<th style="text-align:left">返回值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><code>.update()</code></td>
+<td style="text-align:left">批量更新 (直接生成 SQL UPDATE)</td>
+<td style="text-align:left"><code>rows = await User.filter(age=20).update(age=21)</code></td>
+<td style="text-align:left">受影响的行数 (<code>int</code>)</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>.save()</code></td>
+<td style="text-align:left">实例级更新 (先查后改)</td>
+<td style="text-align:left"><code>user.age = 21; await user.save(update_fields=[&quot;age&quot;])</code></td>
+<td style="text-align:left"><code>None</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>.increment()</code></td>
+<td style="text-align:left">原子自增 (F 表达式替代)</td>
+<td style="text-align:left"><code>await User.filter(id=1).increment(view_count=1)</code></td>
+<td style="text-align:left"><code>None</code> (部分版本支持)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="4-删除数据">4.<strong>删除数据</strong></h3>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">方法</th>
+<th style="text-align:left">描述</th>
+<th style="text-align:left">示例代码</th>
+<th style="text-align:left">返回值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><code>.delete()</code></td>
+<td style="text-align:left">批量删除</td>
+<td style="text-align:left"><code>rows = await User.filter(age=20).delete()</code></td>
+<td style="text-align:left">受影响的行数 (<code>int</code>)</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>.delete()</code></td>
+<td style="text-align:left">实例级删除</td>
+<td style="text-align:left"><code>await user.delete()</code></td>
+<td style="text-align:left"><code>None</code> (或受影响行数)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="5-高级查询条件">5.<strong>高级查询条件</strong></h3>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">操作符</th>
+<th style="text-align:left">含义</th>
+<th style="text-align:left">示例</th>
+<th style="text-align:left">SQL 等价</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><code>exact</code></td>
+<td style="text-align:left">精确匹配 (默认)</td>
+<td style="text-align:left"><code>name=&quot;Alice&quot;</code></td>
+<td style="text-align:left"><code>=</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>in</code></td>
+<td style="text-align:left">在列表中</td>
+<td style="text-align:left"><code>id__in=[1, 2, 3]</code></td>
+<td style="text-align:left"><code>IN (...)</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>gt</code> / <code>gte</code></td>
+<td style="text-align:left">大于 / 大于等于</td>
+<td style="text-align:left"><code>age__gt=18</code></td>
+<td style="text-align:left"><code>&gt;</code> / <code>&gt;=</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>lt</code> / <code>lte</code></td>
+<td style="text-align:left">小于 / 小于等于</td>
+<td style="text-align:left"><code>age__lt=18</code></td>
+<td style="text-align:left"><code>&lt;</code> / <code>&lt;=</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>contains</code></td>
+<td style="text-align:left">包含 (模糊查询)</td>
+<td style="text-align:left"><code>name__contains=&quot;li&quot;</code></td>
+<td style="text-align:left"><code>LIKE '%li%'</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>startswith</code></td>
+<td style="text-align:left">以...开头</td>
+<td style="text-align:left"><code>name__startswith=&quot;A&quot;</code></td>
+<td style="text-align:left"><code>LIKE 'A%'</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>endswith</code></td>
+<td style="text-align:left">以...结尾</td>
+<td style="text-align:left"><code>name__endswith=&quot;e&quot;</code></td>
+<td style="text-align:left"><code>LIKE '%e'</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>isnull</code></td>
+<td style="text-align:left">是否为 NULL</td>
+<td style="text-align:left"><code>email__isnull=True</code></td>
+<td style="text-align:left"><code>IS NULL</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>year</code> / <code>month</code></td>
+<td style="text-align:left">日期提取</td>
+<td style="text-align:left"><code>created_at__year=2026</code></td>
+<td style="text-align:left"><code>YEAR(...)</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>order_by</code></td>
+<td style="text-align:left">排序</td>
+<td style="text-align:left"><code>.order_by(&quot;-age&quot;, &quot;name&quot;)</code></td>
+<td style="text-align:left"><code>ORDER BY</code> (-为降序)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="6-关联查询">6.<strong>关联查询</strong></h3>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">操作</th>
+<th style="text-align:left">描述</th>
+<th style="text-align:left">示例代码</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">正向查询</td>
+<td style="text-align:left">获取关联对象</td>
+<td style="text-align:left"><code>company = await user.company</code> (自动 lazy load)  <br><code>company = await user.company.get()</code> (显式)</td>
+</tr>
+<tr>
+<td style="text-align:left">反向查询</td>
+<td style="text-align:left">获取关联集合</td>
+<td style="text-align:left"><code>users = await company.users.all()</code></td>
+</tr>
+<tr>
+<td style="text-align:left">预加载 (解决 N+1)</td>
+<td style="text-align:left">非常重要</td>
+<td style="text-align:left"><code>users = await User.all().select_related(&quot;company&quot;)</code>  <br><code>companies = await Company.all().prefetch_related(&quot;users&quot;)</code></td>
+</tr>
+<tr>
+<td style="text-align:left">通过关联过滤</td>
+<td style="text-align:left">跨表查询</td>
+<td style="text-align:left"><code>await User.filter(company__name=&quot;Google&quot;)</code></td>
+</tr>
+</tbody>
+</table>
+<p>**补充：</p>
+<ol>
+<li>** tortoise支持<strong>链式查询</strong>和<strong>条件查询</strong>，前者可进行查询语句套用，后者可在查询时根据字段进行条件判断。</li>
+<li></li>
+</ol>
+<ul>
+<li><strong><code>exact</code></strong>：精确匹配</li>
+<li><strong><code>gte</code></strong>：大于等于</li>
+<li><strong><code>lte</code></strong>：小于等于</li>
+<li><strong><code>in</code></strong>：匹配指定列表中的任意值</li>
+<li><strong><code>isnull</code></strong>：检查字段是否为 <code>NULL</code></li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"># 查询所有年龄大于等于 18 岁的用户</span><br><span class="line">adult_users = await User.filter(age__gte=18).all()</span><br><span class="line"></span><br><span class="line"># 查询用户名为 &quot;admin&quot; 或 &quot;guest&quot; 的用户</span><br><span class="line">users = await User.filter(username__in=[&quot;admin&quot;, &quot;guest&quot;]).all()</span><br><span class="line"></span><br><span class="line"># 查询电子邮件为空的用户</span><br><span class="line">users_with_no_email = await User.filter(email__isnull=True).all()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>排序与分页：Tortoise-ORM 支持通过 <code>order_by()</code> 方法进行排序，并且可以通过 <code>limit()</code> 和 <code>offset()</code> 实现分页功能。</li>
+<li></li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"># 按照年龄升序排序</span><br><span class="line">users = await User.all().order_by(&quot;age&quot;)</span><br><span class="line"></span><br><span class="line"># 获取前 10 个用户</span><br><span class="line">users = await User.all().limit(10)</span><br><span class="line"></span><br><span class="line"># 跳过前 5 个用户，获取接下来的 10 个用户（分页）</span><br><span class="line">users = await User.all().offset(5).limit(10)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h2 id="三、数据库链接">三、数据库链接</h2>
+<p><strong>初始化：</strong></p>
+<ol>
+<li><code>Tortoise.init()</code></li>
+<li><code>register_tortoise()</code></li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">TORTOISE_CONFIG = &#123;  </span><br><span class="line">    &quot;connections&quot;: &#123;  </span><br><span class="line">        &quot;default&quot;: &#123;  </span><br><span class="line">            &quot;engine&quot;: &quot;tortoise.backends.mysql&quot;,  </span><br><span class="line">            &quot;credentials&quot;: &#123;  </span><br><span class="line">                &quot;host&quot;: &quot;localhost&quot;,  </span><br><span class="line">                &quot;port&quot;: 3306,  </span><br><span class="line">                &quot;user&quot;: &quot;root&quot;,  </span><br><span class="line">                &quot;password&quot;: &quot;******&quot;,  </span><br><span class="line">                &quot;database&quot;: &quot;******&quot;,  </span><br><span class="line">            &#125;  </span><br><span class="line">        &#125;  </span><br><span class="line">    &#125;,  </span><br><span class="line">    &quot;apps&quot;: &#123;  </span><br><span class="line">        &quot;models&quot;: &#123;  </span><br><span class="line">            &quot;models&quot;: [&quot;path&quot;],  </span><br><span class="line">            &quot;default_connection&quot;: &quot;default&quot;,  </span><br><span class="line">        &#125;  </span><br><span class="line">    &#125;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>关闭：</strong>
+<code>Tortoise.close_connections()</code></p>
 <h3 id="aerich"><strong>aerich</strong></h3>
-<p>一种orm迁移工具，需要结合tortoise使用。在register_tortoise的moduls参数部分（迁移类文件）添加aerich.models，然后便可使用aerich指令在终端进行创建、更新、查阅等操作</p>
+<p>一种orm迁移工具，需要结合tortoise使用。在register_tortoise的moduls参数部分（迁移类文件）添加aerich.models，然后便可使用aerich指令在终端进行创建、更新、查阅等操作，主要做应为可使用该工具对数据库进行回滚、统一读入读出等操作，对于开发安全性有益。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"># 安装</span><br><span class="line">pip install aerich</span><br><span class="line"></span><br><span class="line"># 初始化（生成迁移配置和文件夹）</span><br><span class="line">aerich init -t your_project.config.TORTOISE_ORM</span><br><span class="line"></span><br><span class="line"># 首次创建迁移（根据现有模型生成初始迁移）</span><br><span class="line">aerich init-db</span><br><span class="line"></span><br><span class="line"># 开发中：修改模型后生成新迁移</span><br><span class="line">aerich migrate --name &quot;add_user_age_field&quot;</span><br><span class="line"></span><br><span class="line"># 应用迁移到数据库</span><br><span class="line">aerich upgrade</span><br><span class="line"></span><br><span class="line"># 查看迁移状态和历史</span><br><span class="line">aerich history</span><br><span class="line">aerich heads      # 查看最新迁移</span><br><span class="line">aerich current    # 查看当前应用状态</span><br></pre></td></tr></table></figure>
-<h3 id="数据库交互"><strong>数据库交互</strong></h3>
-<h4 id="查询："><strong>查询：</strong></h4>
-<p><strong>一对一/多：</strong>
-在路由程序文件中可以引入主文件中的迁移类并以对象形式使用。需要注意引入的对象的操作是<strong>懒加载</strong>，无法直接操作，需要用async和await进行挂起才能作为可操作对象使用。以下为一些操作方法：</p>
-<ul>
-<li>all（）查询所有</li>
-<li>filter（）过滤查询（也可进行模糊查询，只是查询字段有点抽象，__双下划线作为操作中介，后接操作指令）
-<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/%7B76547899-5039-425F-A0AE-2B586ED22A50%7D.png" alt=""></li>
-<li>get（）</li>
-<li>values（）指定查询字段（列名，例如指定只查询返回的student表的name字段），可一次性指定多个字段
-<strong>多对多查询：</strong>
-查询返回的对象，除关联属性外可以直接以类格式访问。关联属性的查询只会返回主表中的关联id，要返回<strong>实际值的信息</strong>而非id，需要再<strong>对关联属性</strong>使用<strong>values加子表的具体属性名</strong>（属于数据库io操作，需要加await挂起）。另一个方法是直接使用返回的类对象的值的values方法，直接在<strong>参数位置添加关联属性参数名__（关联属性的参数名，例如班级的名字）</strong>
-<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/%7B02A80A39-CFB8-459A-9944-5357DD72A21B%7D.png" alt=""></li>
-</ul>
-<h4 id="添加"><strong>添加</strong></h4>
-<p><strong>一对一/多添加：</strong>
-创建一个继承了Basemodel的数据接收类，从请求接收数据后，</p>
-<ul>
-<li>将其参数赋给对应的要添加的表那个迁移类的实例对象，再使用实例化对象的 <strong>.save（）</strong> 方法进行保存（添加）操作（<strong>记得数据库io操作需要加await进行异步支持</strong> ）</li>
-<li>使用迁移类的<strong>create（）</strong> 方法，直接在参数部分用数据接收类的参数赋值，可直接添加到表中（记得加await）
-<strong>多对多添加：</strong>
-先得到要添加的多对多 子迁移类在值为要添加值的对象（例如下图得到要给这个学生添加的那几个班级的对象），然后使用主迁移类的关联属性的add方法添加需要添加的值的解包
-<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/%7B151F1935-870C-4EDF-BCA9-56B666617ABD%7D.png" alt=""></li>
-</ul>
-<h4 id="更新"><strong>更新</strong></h4>
-<p><strong>一对一/多：</strong>
-对fliter返回的对象调用update方法，参数部分填入要修改的参数和值（也可以直接传入数据接收类的dict类型解包，但需要注意数据接收对象的字段需要和迁移类对象的字段相同）
-<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/%7B8EC69FF8-5B42-4B2D-A990-FC5B21155150%7D.png" alt=""></p>
-<p><strong>多对多：</strong>
-接收的信息对象取出多对错字段属性后可直接用于更新，多对多字段属性需要先用于获取对应的表的对象，再获取更新第一次的主表对象，清空旧的多对多字段属性后，添加获取到的表的对象。</p>
-<h4 id="删除"><strong>删除</strong></h4>
-<p>最简单的一集，直接使用fliter返回对象的delete（）方法。（注意该方法还会删除成功删除的数量）</p>
 
                 
                 <p class="end">__END__</p>

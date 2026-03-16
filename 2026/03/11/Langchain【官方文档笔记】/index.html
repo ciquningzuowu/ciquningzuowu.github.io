@@ -63,9 +63,9 @@
                         
                             <span class="tag-color">web</span>
                         
-                            <span class="tag-color">计算机进阶</span>
-                        
                             <span class="tag-color">人工智能</span>
+                        
+                            <span class="tag-color">计算机进阶</span>
                         
                     
                 </div>
@@ -145,7 +145,7 @@ middleware=[]     //注册中间件<br>
 <li>基于状态或上下文实现动态模型选择</li>
 <li>添加自定义日志记录、监控或分析功能</li>
 </ul>
-<h2 id="model（搞半天原来还要自己拼）">model（搞半天原来还要自己拼）</h2>
+<h2 id="一、model（搞半天原来还要自己拼）">一、model（搞半天原来还要自己拼）</h2>
 <p><strong>概述：</strong> <strong>语言学习模型（LLM）</strong> 除文本生成外，还具有工具调用、结构化输出、多模态、推理。本部分为开发调试时所用技术。</p>
 <h3 id="一、基础用法"><strong>一、基础用法</strong></h3>
 <p>1.创建代理时动态指定模型<br>
@@ -190,7 +190,7 @@ middleware=[]     //注册中间件<br>
 <p><strong>概述：</strong> 许多模型能够进行多步骤推理得出结论。若底层模型支持，可以将这个推理过程展现出来，以便更好地理解模型是如何得出最终答案的。（<strong>.stream()</strong> 方法）</p>
 <p><strong>十二、token监测</strong></p>
 <p><strong>概述：</strong> 可注册上下文管理器 <strong>UsageMetadataCallbackHandler</strong> 对模型使用的token进行监测。</p>
-<h2 id="message">message</h2>
+<h2 id="二、message">二、message</h2>
 <p><strong>概述：</strong> 模型的基本上下文单元，代表模型的输入输出，鞋带与LLM交互时的获取对话状态所需的内容和元数据。</p>
 <p>message是包含以下内容的对象：</p>
 <ul>
@@ -279,11 +279,121 @@ middleware=[]     //注册中间件<br>
 </tr>
 </tbody>
 </table>
-<h2 id="tools">tools</h2>
+<h2 id="三、tools">三、tools</h2>
 <h3 id="一、基本工具定义"><strong>一、基本工具定义</strong></h3>
 <p><strong>概述：</strong> 使用 <strong>@tool装饰器</strong> 创建工具，被修饰函数的文档字符会成为工具的描述，帮助模型理解何时使用该工具。工具函数参数的类型提示是必需的，这定义了工具的输入模式，调用工具时会一句类型提示生成message。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">class input_method(BaseModel):</span><br><span class="line">	&quot;&quot;&quot;description&quot;&quot;&quot;</span><br><span class="line">	arg1:str=Field(......)</span><br><span class="line">	arg2:Literal[&quot;string1&quot;,&quot;string2&quot;]=Field(</span><br><span class="line">	defult=False.</span><br><span class="line">	descriotion=&quot;......&quot;</span><br><span class="line">	)</span><br><span class="line"></span><br><span class="line">@tool(&quot;name for invoke&quot;,description=&quot;Performs arithmetic calculations.&quot;,args_schema=input_method)</span><br><span class="line">def function(arg:str) -&gt; str:</span><br><span class="line">	&quot;&quot;&quot;role of this function&quot;&quot;&quot;</span><br><span class="line">	pass</span><br></pre></td></tr></table></figure>
 <h3 id="二、访问上下文"><strong>二、访问上下文</strong></h3>
+<table>
+<thead>
+<tr>
+<th>component</th>
+<th>description</th>
+<th>call on</th>
+<th>update</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>State</strong></td>
+<td>短期记忆</td>
+<td><code>runtime.state</code></td>
+<td><code>return Command(update={&quot;key&quot;,value})</code></td>
+</tr>
+<tr>
+<td><strong>Context</strong></td>
+<td>调用时传递的不可变配置</td>
+<td><code>runtime.context</code></td>
+<td>该内容不可变</td>
+</tr>
+<tr>
+<td><strong>Store</strong></td>
+<td>长期记忆</td>
+<td><code>runtime.store</code></td>
+<td>automatic generation<br></td>
+</tr>
+<tr>
+<td><strong>Stream Writer</strong></td>
+<td>工具执行期间实时更新</td>
+<td><code>runtime.stream_writer</code></td>
+<td><code>writer=runtime.stream_writer</code><br><code>writer(f&quot;information&quot;)</code></td>
+</tr>
+<tr>
+<td><strong>Config</strong></td>
+<td><code>RunnableConfig</code>执行</td>
+<td></td>
+<td>只能临时改变</td>
+</tr>
+<tr>
+<td><strong>Tool Call ID</strong></td>
+<td>当期那工具调用唯一标识符</td>
+<td><code>tool_call[&quot;id&quot;]</code></td>
+<td>该内容不可变</td>
+</tr>
+</tbody>
+</table>
+<h2 id="四、short-memory">四、short memory</h2>
+<p><strong>概述:</strong> 短期记忆可以让应用程序记住单个线程或对话的先前交互，最常见的形式是对话历史。<code>model</code>通过<code>message</code>接受上下文信息，包括系统信息和用户信息。由于上下文窗口有限，许多应用可以通过一些技术来益处或者以往过时的信息。</p>
+<h3 id="基础使用"><strong>基础使用</strong></h3>
+<p>创建代理时指定<code>checkpointer</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">from langchain.agents import create_agent </span><br><span class="line">from langgraph.checkpoint.memory import InMemorySaver </span><br><span class="line"></span><br><span class="line">agent = create_agent( &quot;gpt-5&quot;, </span><br><span class="line">	tools=[get_user_info], </span><br><span class="line">	checkpointer=InMemorySaver(), </span><br><span class="line">	)</span><br></pre></td></tr></table></figure>
+<h3 id="生产环境"><strong>生产环境</strong></h3>
+<p><code>checkpointer</code>为开发阶段使用的对象，只能在程序运行期间存储短期记忆，生产环境中使用<code>PostgoresSaver</code>，该对象可将上下文记忆存储进<code>postgresql</code>数据库.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">from langgraph.checkpoint.postgres import PostgresSaver</span><br></pre></td></tr></table></figure>
+<h3 id="自定义代理内存"><strong>自定义代理内存</strong></h3>
+<p><strong>概述：</strong> 默认情况下，代理使用密匙<code>AgentState</code>管理短期记忆，特别是对话历史记录<code>message</code>。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">from langchain.agents import create_agent, AgentState</span><br><span class="line">from langgraph.checkpoint.memory import InMemorySaver</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">class CustomAgentState(AgentState):</span><br><span class="line">    user_id: str</span><br><span class="line">    preferences: dict</span><br><span class="line"></span><br><span class="line">agent = create_agent(</span><br><span class="line">    &quot;gpt-5&quot;,</span><br><span class="line">    tools=[get_user_info],</span><br><span class="line">    state_schema=CustomAgentState,</span><br><span class="line">    checkpointer=InMemorySaver(),</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<h3 id="消息清理"><strong>消息清理</strong></h3>
+<ol>
+<li><strong>修剪消息</strong></li>
+</ol>
+<p>要在代理中清理消息历史记录，需使用@before_model中间件装饰器，在调用代理前修剪消息。以下为保留最开始时的原始信息与最新的三条信息。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">@before_model</span><br><span class="line">def trim_messages(state: AgentState, runtime: Runtime) -&gt; dict[str, Any] | None:</span><br><span class="line">    &quot;&quot;&quot;Keep only the last few messages to fit context window.&quot;&quot;&quot;</span><br><span class="line">    messages = state[&quot;messages&quot;]</span><br><span class="line"></span><br><span class="line">    if len(messages) &lt;= 3:</span><br><span class="line">        return None  # No changes needed</span><br><span class="line"></span><br><span class="line">    first_msg = messages[0]</span><br><span class="line">    recent_messages = messages[-3:] if len(messages) % 2 == 0 else messages[-4:]</span><br><span class="line">    new_messages = [first_msg] + recent_messages</span><br><span class="line"></span><br><span class="line">    return &#123;</span><br><span class="line">        &quot;messages&quot;: [</span><br><span class="line">            RemoveMessage(id=REMOVE_ALL_MESSAGES),</span><br><span class="line">            *new_messages</span><br><span class="line">        ]</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>
+<p><strong>删除消息</strong>
+使用<code>RemoveMessage</code>并指定要删除信息的id，或者要删除内容的指令，如<code>REMOVE_ALL_MESSAGES</code>为全部删除。</p>
+</li>
+<li>
+<p><strong>消息摘要</strong>
+<strong>概述:</strong> 直接修剪或删除消息容易导致有效信息损失，因此需要采用更加复杂的方法。创建代理时向<code>middleware</code>参数中添加内置函数<code>SummarizationMiddleware</code>，可自动汇总消息历史记录。</p>
+</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">agent = create_agent(</span><br><span class="line">    model=&quot;gpt-4.1&quot;,</span><br><span class="line">    tools=[],</span><br><span class="line">    middleware=[</span><br><span class="line">        SummarizationMiddleware(</span><br><span class="line">            model=&quot;gpt-4.1-mini&quot;,</span><br><span class="line">            trigger=(&quot;tokens&quot;, 4000),</span><br><span class="line">            keep=(&quot;messages&quot;, 20)</span><br><span class="line">        )</span><br><span class="line">    ],</span><br><span class="line">    checkpointer=checkpointer,</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<h3 id="访问内存"><strong>访问内存</strong></h3>
+<ol>
+<li><strong>工具</strong>
+（1）<strong>使用工具访问短期记忆：</strong> 工具函数的参数部分添加<code>runtime:ToolRuntime</code>。可在函数体中访问runtime的属性以获取例如config，state等的信息。
+（2）<strong>从工具写入短期记忆：</strong> 可通过从工具返回状态更新的方式实现。</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">return Command(update=&#123;</span><br><span class="line">        &quot;user_name&quot;: name,</span><br><span class="line">        # update the message history</span><br><span class="line">        &quot;messages&quot;: [</span><br><span class="line">            ToolMessage(</span><br><span class="line">                &quot;Successfully looked up user information&quot;,</span><br><span class="line">                tool_call_id=runtime.tool_call_id</span><br><span class="line">            )</span><br><span class="line">        ]</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>提示词
+在中间件中访问短期记忆，需要在@`before_mode 阶段根据历史记录或自定义状态字段创建动态提示后返回新的系统提示词。</li>
+</ol>
+<h2 id="五、stream">五、stream</h2>
+<p><strong>概述：</strong> LangChain的流式系统允许将代理运行的实时反馈呈现给应用程序。具体有以下功能：</p>
+<ol>
+<li><strong>Sream agent progress</strong></li>
+<li><strong>Stream LLM tokens</strong></li>
+<li><strong>Stream thinking/reasoning tokens</strong></li>
+<li>**Stream custom updates</li>
+<li><strong>Stream multiple models</strong>: 可混合选择<code>updates</code>（返回state的更新）、<code>messages</code>（LLM token+元数据，模型的输出内容）、<code>custom</code>（任意用户数据）</li>
+</ol>
+<h3 id="流式进程"><strong>流式进程</strong></h3>
+<p>使用<code>stream</code> 或 <code>astream</code>方法并选择<code>stream_mode=&quot;updates(or other)&quot;</code>,这将在代理执行每个步骤后发送一个事件。例：</p>
+<ul>
+<li>LLM节点：带有工具调用请求的<code>AIMessage</code></li>
+<li>工具节点：带有执行结果的<code>ToolMessage</code></li>
+<li>LLM节点：最终响应结果</li>
+</ul>
+<h3 id="LLM-token"><strong>LLM token</strong></h3>
+<p>使用<code>stream_mode=&quot;messages&quot;</code>后可实时传输LLM生成的token。可访问可以查看流式工具调用和最终响应。</p>
+<h3 id="Custom-updates"><strong>Custom updates</strong></h3>
+<p>要在运行时更改stream模式，可以使用<code>get_stream_writer</code>,当stream模式为<code>custom</code>时，<code>writer</code>会立刻将内容返回而不需要等待整个响应流程结束，这可以用来返回类似&quot;程序正在思考中&quot;等过渡信息，且这个操作是进步进行的，不会显著影响主进程的运行。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">def get_weather(city: str) -&gt; str:</span><br><span class="line">    &quot;&quot;&quot;Get weather for a given city.&quot;&quot;&quot;</span><br><span class="line">    </span><br><span class="line">    writer = get_stream_writer()</span><br><span class="line">    </span><br><span class="line">    # stream any arbitrary data</span><br><span class="line">    </span><br><span class="line">    writer(f&quot;Looking up data for city: &#123;city&#125;&quot;)</span><br><span class="line">    writer(f&quot;Acquired data for city: &#123;city&#125;&quot;)</span><br><span class="line">    </span><br><span class="line">    return f&quot;It&#x27;s always sunny in &#123;city&#125;!&quot;</span><br></pre></td></tr></table></figure>
+<h3 id="Stream-multiple-modes"><strong>Stream multiple modes</strong></h3>
+<p>上述三种模式可混合使用。</p>
 
                 
                 <p class="end">__END__</p>
@@ -314,9 +424,9 @@ middleware=[]     //注册中间件<br>
                         
                             <a href="/tags/web/">web</a>
                         
-                            <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%BF%9B%E9%98%B6/">计算机进阶</a>
-                        
                             <a href="/tags/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/">人工智能</a>
+                        
+                            <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%BF%9B%E9%98%B6/">计算机进阶</a>
                         
                     </div>
                 
