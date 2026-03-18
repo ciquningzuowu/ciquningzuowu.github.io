@@ -9,7 +9,7 @@
     <meta http-equiv="Cache-Control" content="no-siteapp">
     <title>
         
-            pep8
+            计算机组成原理笔记
         
     </title>
     <link rel="shortcut icon" href="#"/>
@@ -39,21 +39,21 @@
     <div class="vertical">
         <div class="inner">
             
-                <h1 class="header-subtitle">pep8</h1>
+                <h1 class="header-subtitle">计算机组成原理笔记</h1>
                 <div class="header-subinfo">
                     <p class="article-info-text">
                         <span>
-                            <i class="iconfont icon-time"></i> 发表时间：2026-03-12
+                            <i class="iconfont icon-time"></i> 发表时间：2026-03-16
                         </span>
                         
                             
-                                <span id="/2026/03/12/Python编写规范（pep8）/" class="leancloud_visitors" data-flag-title="pep8">
+                                <span id="/2026/03/16/计算机组成原理笔记/" class="leancloud_visitors" data-flag-title="计算机组成原理笔记">
                                     <i class="iconfont icon-browse"></i> 阅读：<sapn class="leancloud-visitors-count"></span>
                                 </span>
                             
                             
                                 <span>
-                                    <i class="iconfont icon-interactive"></i> 评论：<span class="valine-comment-count" data-xid="/2026/03/12/Python编写规范（pep8）/"></span>
+                                    <i class="iconfont icon-interactive"></i> 评论：<span class="valine-comment-count" data-xid="/2026/03/16/计算机组成原理笔记/"></span>
                                 </span>
                               
                         
@@ -76,141 +76,57 @@
         <div id="article">
             <div class="toc"></div>
             <div class="article-body">
-                <h2 id="缩进">缩进</h2>
+                <p><strong>概述图：</strong>
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/20260316152615889.png" alt=""></p>
+<h2 id="一、概论">一、概论</h2>
+<h3 id="1-计算机系统的组成"><strong>1.计算机系统的组成</strong></h3>
+<p>早期的冯.诺依曼机体系：</p>
 <ul>
-<li>不要使用<code>tap</code>缩进</li>
-<li>不要混用<code>tap</code>和<code>空格</code></li>
+<li>硬件系统由<strong>存储器</strong>，<strong>运算器</strong>，<strong>控制器</strong>，<strong>输出设备</strong>，<strong>输入设备</strong>组成。</li>
+<li>指令与数据以同等地位存于存储器，可按照地址访问</li>
+<li>指令和数据用二进制表示</li>
+<li>指令由操作码和地址码组成</li>
+<li>存储程序</li>
+<li>以运算器为中心</li>
 </ul>
-<h2 id="空格">空格</h2>
+<h2 id="二、计算机的功能部件"><strong>二、计算机的功能部件</strong></h2>
+<h3 id="1-硬件"><strong>1.硬件</strong></h3>
+<p><img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/20260316153251886.png" alt="">
+输入输出设备不多记录，存储器分为<strong>主存储器</strong>和<strong>辅助存储器</strong>，区分处为<strong>是否能被CPU直接访问</strong>。辅助存储器的内容需要淡入主存储器中才能被CPU访问。
+主存储器的工作方式是<strong>按存储单元</strong>的地址进行存取，称为<strong>内容寻址的存储器</strong>。
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/20260316153931447.png" alt=""></p>
+<p><strong>控制器</strong>是计算机的指挥中心，现代计算机将运算器和控制器集成到一个芯片，即为中央处理器CPU。有程序计数器（CU），指令寄存器（IR），控制单元（CU）。
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/20260316154154646.png" alt="">
+一般将<strong>运算器</strong>和<strong>控制器</strong>集成到同一个芯片上，称为中央处理器(CPU)。CPU和主存储器共同构成主机，而除主机外的其他硬件装置(外存、I/O设备等)统称为外部设备，简称外设。CPU与主存之间通过一组总线相连，总线中有地址、控制、和数据三组信号线</p>
+<h3 id="2-软件"><strong>2.软件</strong></h3>
+<ol>
+<li>计算机软件一般分为系统软件和应用软件。</li>
+</ol>
 <ul>
-<li><code>list，dict，tuple，set</code>后面加一个空格</li>
-<li><code>dict</code>的<code>:</code>后加一个空格</li>
-<li>注释符号<code>#</code>后加一个<code>空格</code></li>
-<li>操作符两端加一个空格</li>
-<li>参数列表的<code>=</code>两端不加空格</li>
-<li>括号内的两端不需要空格</li>
-<li>不要在列表索引、函数调用、关键字参数赋值两侧使用空格</li>
+<li>系统软件包括操作系统、数据库管理系统、语言处理系统（如编译器），分布式软件系统、网络软件系统、标准库系统、服务性系统。</li>
+<li>应用软件包括葛铮科学计算类程序、工程设计类程序，数据统计与处理程序</li>
 </ul>
-<h2 id="空行">空行</h2>
+<ol start="2">
+<li>三个级别的语言
+（1）机器语言：二进制代码
+（2）汇编语言：英文单词以及缩写代替二级制代码，例如cmd
+（3）高级语言：c、c++、java等
+高级语言转换到汇编语言的过程叫做<strong>编译</strong>，由汇编语言转换到机器语言叫做<strong>汇编</strong>，边翻译边执行的叫做<strong>解析</strong>。</li>
+</ol>
+<h3 id="3-计算机的工作过程"><strong>3.计算机的工作过程</strong></h3>
 <ul>
-<li><code>function</code>和<code>class</code>前后各用两个空行</li>
-<li><code>class</code>内部<code>method</code>之间用一个空白行分隔</li>
-<li>函数内逻辑无关的段落间空一行</li>
-<li><code>if/for/while</code>语句中即使执行语句只有一行也要另起一行</li>
+<li><strong>IR</strong>存放当下<strong>欲执行的指令</strong>；<strong>PC</strong>存放<strong>下一条指令的地址</strong></li>
+<li>MAR存放<strong>欲访问的存储单元地址</strong>；MDR存放<strong>从存储单元取来的数据</strong>。</li>
+<li>地址译码器是<strong>主存的构成部分，不属于CPU</strong>；地址寄存器虽然一般属于主存，但是现代计算机中绝大多数CPU内集成了地址寄存器。</li>
+<li>关于CPU存取速度的比较：寄存器（CPU内部）&gt; Cache(高速的SRAM) &gt; 内存 （SDRAM）</li>
+<li>首先PC将指令地址发送给MAR，MAR根据地址在存储体中找到指令数据存放在MDR中，之后MDR将指令存放在IR中，取指令结束，之后指令中的操作码进入CU中，地址码重复上述取指令步骤，将数据发送到ACC中，执行指令结束。注意区分指令和数据的依据:指令周期的不同阶段</li>
 </ul>
-<h2 id="换行">换行</h2>
+<h3 id="4-计算机性能指标"><strong>4.计算机性能指标</strong></h3>
 <ul>
-<li>每行代码控制在80字符以内</li>
-<li>使用<code>\</code>和<code>()</code>控制换行</li>
-</ul>
-<h2 id="命名">命名</h2>
-<ul>
-<li>使用蛇形命名法</li>
-<li><code>package/module</code>名中不要出现下划线<code>_</code></li>
-<li>函数、变量以及属性使用小写</li>
-<li>类和异常信息首字母大写，使用大驼峰命名</li>
-<li>模块级别的常量全部使用大写</li>
-</ul>
-<table>
-<thead>
-<tr>
-<th style="text-align:left">类型</th>
-<th style="text-align:left">命名约定</th>
-<th style="text-align:left">例子</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">Class</td>
-<td style="text-align:left">每个单词都大写字母开头；不要用下划线 (PascalCase)</td>
-<td style="text-align:left"><code>Model</code>, <code>MyClass</code></td>
-</tr>
-<tr>
-<td style="text-align:left">Constant</td>
-<td style="text-align:left">使用大写字母；下划线分隔单词 (UPPER_CASE)</td>
-<td style="text-align:left"><code>CONSTANT</code>, <code>MY_CONSTANT</code>, <code>MY_LONG_CONSTANT</code></td>
-</tr>
-<tr>
-<td style="text-align:left">Package</td>
-<td style="text-align:left">使用小写单词；不用下划线分隔单词</td>
-<td style="text-align:left"><code>package</code>, <code>mypackage</code></td>
-</tr>
-<tr>
-<td style="text-align:left">Function</td>
-<td style="text-align:left">使用小写字母；下划线分隔单词 (snake_case)</td>
-<td style="text-align:left"><code>function</code>, <code>my_function</code></td>
-</tr>
-<tr>
-<td style="text-align:left">Variable</td>
-<td style="text-align:left">使用小写字母；下划线分隔单词 (snake_case)</td>
-<td style="text-align:left"><code>x</code>, <code>var</code>, <code>my_variable</code></td>
-</tr>
-<tr>
-<td style="text-align:left">Method</td>
-<td style="text-align:left">使用小写字母；下划线分隔单词 (snake_case)</td>
-<td style="text-align:left"><code>class_method</code>, <code>method</code></td>
-</tr>
-<tr>
-<td style="text-align:left">Module</td>
-<td style="text-align:left">使用小写字母；下划线分隔单词 (snake_case)</td>
-<td style="text-align:left"><code>module.py</code>, <code>my_module.py</code></td>
-</tr>
-</tbody>
-</table>
-<h2 id="import">import</h2>
-<ul>
-<li><code>import</code>之间进行分组，每组之间进行空行，组内尽量采用字典顺序排序，分组排序为标准库-&gt;第三方库-&gt;自主声明的文件</li>
-<li>引用一个模块式使用绝对的模块名称，例如要想引入<code>bar</code>包下面的<code>foo</code>模块，应该使用<code>from bar import foo</code>而不是<code>import foo</code>。</li>
-<li>必须使用相对引用时使用<code>from . import foo</code>（应该是用于与引入库区分）</li>
-<li>为了避免命名冲突，可以使用<code>as</code>或导入上一级命名空间</li>
-</ul>
-<h2 id="注释">注释</h2>
-<ul>
-<li>文档字符串docstring，是<code>package，module，class，method，function</code>级别的注释，可以通过<code>__doc__</code>成员访问到，注释在一对```之间</li>
-<li><code>function，method</code>的文档字符串应描述其<strong>功能、输入参数、返回值</strong> ，如果有<strong>复杂的算法和实现</strong>，也需要写清楚</li>
-<li>不要写错误的和无谓的注释</li>
-<li>优先使用英文写注释，英文不好就全部用中文</li>
-</ul>
-<h2 id="异常">异常</h2>
-<ul>
-<li>不要轻易使用<code>try/except</code></li>
-<li><code>except</code>后面需要指定捕捉的异常，裸露的<code>except</code>会捕捉所有异常，意味着会隐藏潜在的问题</li>
-<li>使用<code>finally</code>子句处理一些收尾操作，如关闭文件，关闭数据库连接等</li>
-<li>try/except里的内容不要太多，只在可能抛出异常的地方使用</li>
-<li>从<code>Exception</code>而不是<code>BaseException</code>集成自定义的异常类 <strong>（这个没接触过，后面要学一下）</strong></li>
-</ul>
-<h2 id="Class">Class</h2>
-<ul>
-<li>显示的写明父类，如果不是继承自别的类，就继承自<code>object类</code>（最基础的类对象）</li>
-<li>使用<code>super</code>调用父类的方法，这能明显的表明这是来自父类的方法</li>
-<li>支持多继承，即同时有多个父类，推荐使用<code>Mixin</code>(Mixin是指创建一些专门用于插入其他类中的插件类，这些类一般没有自己的属性，不会被用于实例化，主要用于扩展其他类的功能)</li>
-</ul>
-<h2 id="字符串">字符串</h2>
-<ul>
-<li>使用字符串的<code>join</code>方法拼接字符串</li>
-<li>使用字符串类型的方法，而不是string模块的方法</li>
-<li>使用<code>startswith</code>和<code>endwith</code>方法比较前后缀</li>
-<li>使用f-string方法格式化字符串，即<code>f&quot;str1{content}str2&quot;</code></li>
-</ul>
-<h2 id="比较">比较</h2>
-<ul>
-<li>空的<code>list，str，tuple，set，dict和0.0，None</code>都是False</li>
-<li>使用<code>if somelist</code> 而不是 <code>if len(somelist)</code> 判断为空</li>
-<li>使用<code>is</code> 和<code>is not</code> 与单例比较而不是<code>==</code> 和<code>!=</code></li>
-<li>使用<code>if a is not None</code>而不是<code>if not a is None</code>，尽量看着复合人脑的处理规则</li>
-<li>使用<code>isinstance()</code>而不是<code>type()</code>进行类型判断</li>
-<li>使用<code>in</code>操作:用<code>key in dict</code> 而不是 <code>dict.has_key()</code>进行查询</li>
-<li>用<code>set</code>加速存在性检查，<code>list</code>的查找是线性的，<code>set</code>的底层是<code>hash table</code>（缺点是<code>set</code>需要使用更多内存空间）</li>
-</ul>
-<h2 id="其他">其他</h2>
-<ul>
-<li>使用内建函数<code>sorted</code>和<code>.sort</code> 进行排序</li>
-<li>适量使用<code>map，reduce，filter和lambda</code>，使用内建的<code>all</code>和<code>any</code>处理多个条件的判断</li>
-<li>使用<code>with</code>语句处理上下文</li>
-<li>利用好python的Duck Type特性</li>
-<li>使用logging记录日志，配置好格式和级别</li>
-<li>了解python的魔术方法</li>
-<li>阅读优秀开源代码</li>
+<li><strong>机器字长</strong> 计算机能直接处理的二进制数据的位数，机器字长一般等于内部寄存器的大小，它决定了计算机的运算精度。</li>
+<li><strong>指令字长</strong> 一个指令字中包含的二进制代码的位数。</li>
+<li><strong>存储字长</strong> 一个存储单元存储的二进制代码的长度。等于MDR的位数， 它们都必须是字节的整数倍。</li>
+<li><strong>数据字长</strong> 数据总线一次能传送信息的位数，它可以不等于MDR的位数。</li>
 </ul>
 
                 
@@ -224,7 +140,7 @@
     <div class="suffix-box-right">
         <span class="suffix-box-title">文章作者：</span>作吾
         <br>
-        <span class="suffix-box-title">文章出处：</span><a href="/2026/03/12/Python%E7%BC%96%E5%86%99%E8%A7%84%E8%8C%83%EF%BC%88pep8%EF%BC%89/" target="_blank">pep8</a>
+        <span class="suffix-box-title">文章出处：</span><a href="/2026/03/16/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86%E7%AC%94%E8%AE%B0/" target="_blank">计算机组成原理笔记</a>
         <br>
         <span class="suffix-box-title">作者签名：</span>死人一个，在试图活着
         <br>
@@ -246,11 +162,8 @@
                 
                 <div class="article-prev-next">
                     
-                        <a href="/2026/03/13/%E6%9C%AA%E5%91%BD%E5%90%8D/" class="prev-prefix">« </a> 上一篇：    <a href="/2026/03/13/%E6%9C%AA%E5%91%BD%E5%90%8D/" title="发布于 2026-03-13 08:22"></a>
-                        <br>
                     
-                    
-                        <a href="/2026/03/11/%E5%90%8E%E7%BB%AD%E7%9B%AE%E6%A0%87/" class="next-prefix">» </a> 下一篇：    <a href="/2026/03/11/%E5%90%8E%E7%BB%AD%E7%9B%AE%E6%A0%87/" title="发布于 2026-03-11 08:07">待办</a>
+                        <a href="/2026/03/16/PyNPut%E7%AC%94%E8%AE%B0/" class="next-prefix">» </a> 下一篇：    <a href="/2026/03/16/PyNPut%E7%AC%94%E8%AE%B0/" title="发布于 2026-03-16 12:33">PyNPut笔记</a>
                     
                 </div>
             </div>

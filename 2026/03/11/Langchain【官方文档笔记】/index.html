@@ -63,9 +63,9 @@
                         
                             <span class="tag-color">web</span>
                         
-                            <span class="tag-color">人工智能</span>
-                        
                             <span class="tag-color">计算机进阶</span>
+                        
+                            <span class="tag-color">人工智能</span>
                         
                     
                 </div>
@@ -394,6 +394,173 @@ middleware=[]     //注册中间件<br>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">def get_weather(city: str) -&gt; str:</span><br><span class="line">    &quot;&quot;&quot;Get weather for a given city.&quot;&quot;&quot;</span><br><span class="line">    </span><br><span class="line">    writer = get_stream_writer()</span><br><span class="line">    </span><br><span class="line">    # stream any arbitrary data</span><br><span class="line">    </span><br><span class="line">    writer(f&quot;Looking up data for city: &#123;city&#125;&quot;)</span><br><span class="line">    writer(f&quot;Acquired data for city: &#123;city&#125;&quot;)</span><br><span class="line">    </span><br><span class="line">    return f&quot;It&#x27;s always sunny in &#123;city&#125;!&quot;</span><br></pre></td></tr></table></figure>
 <h3 id="Stream-multiple-modes"><strong>Stream multiple modes</strong></h3>
 <p>上述三种模式可混合使用。</p>
+<h2 id="六、structured-output">六、structured output</h2>
+<p><strong>概述：</strong> 允许自定义<strong>JSON对象</strong>、<strong>Pydantic models对象</strong>或直接用<strong>数据类对象</strong>作为格式输出限制。使用方式为在create_agent的response_format参数注册，且需注意的是，响应对象格式声明可以使用Union，即：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">def create_agent(</span><br><span class="line">    ...</span><br><span class="line">    response_format: Union[</span><br><span class="line">        ToolStrategy[StructuredResponseT],  # 调用工具进行结构输出</span><br><span class="line">        ProviderStrategy[StructuredResponseT], # 使用厂商原生输出结构</span><br><span class="line">        type[StructuredResponseT],  # 基于模型能力自动选择最优策略</span><br><span class="line">        None,  # 无特殊输出格式要求</span><br><span class="line">    ]</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h3 id="1-原生策略"><strong>1.原生策略</strong></h3>
+<p><strong>概述：</strong> 部分模型厂商支持通过API使用原生输出结构，一般来说，厂商提供的原生结构可使用的最可靠的方法。</p>
+<p><strong>使用</strong>：定义<code>ProvideStrategy类</code>，属性有下：</p>
+<ol>
+<li><strong>schema</strong>：支持<code>Pydantic models</code>（返回pydantic实例）、<code>Dataclasses</code>（返回带类型注解的python类）、<code>TyprdDict</code>（返回字典）、<code>Json Schema</code>（返回字典）</li>
+<li><strong>strict</strong>：是否启用严格的模式遵循，需注意仅部分厂商支持此功能</li>
+</ol>
+<h3 id="2-工具策略"><strong>2.工具策略</strong></h3>
+<p><strong>概述</strong>：对于不支持原生结构输出的模型，可以使用工具调用实现相同作用。这支持左右的模型使用。</p>
+<p><strong>使用</strong>：定义<code>ToolStrategy类</code>,属性有下：</p>
+<ol>
+<li><strong>schema</strong>：与原生策略大致相同，支持<code>Pydantic models</code>（返回pydantic实例）、<code>Dataclasses</code>（返回带类型注解的python类）、<code>TyprdDict</code>（返回字典）、<code>Json Schema</code>（返回字典），但额外可以使用<strong>Union types</strong>，模型会自动给予上下文选择最合适的结构。</li>
+<li><strong>tool_message_content</strong>：调用时会返回的工具消息的定义，如果不提供，默认返回结构化形影数据。</li>
+<li><strong>handle_errors</strong>：结构化输出验证失败的错误处理策略，默认为True
+<ul>
+<li><strong>True</strong>：默认错误模板捕获所有错误</li>
+<li><strong>str</strong>：自定义消息捕获所有错误</li>
+<li><strong>type[exceotion]</strong>：仅使用默认消息捕获此异常类型</li>
+<li><strong>tuple[type[Exception]]</strong>：仅捕获这些类型的异常，并使用默认消息</li>
+<li><strong>Callable[[Exception],str]</strong>：返回错误消息的自定义函数</li>
+<li><strong>False</strong>：不重试，让异常传播</li>
+</ul>
+</li>
+<li><strong>Custom tool message content</strong>：支持自定义工具消息内容，当调用工具结构化输出时会出现在会话历史中。</li>
+<li>**handleing errors：
+<strong>Error Handing</strong>：可设置当发生结构输出应用错误时的重试机制。
+<ul>
+<li><strong>Multiple structured outputs error</strong>：多重结构化输出错误，当模型错误的调用多个结构化输出工具时，代理会提供错误反馈。</li>
+<li><strong>Schema validation error</strong>：架构验证错误，当结构输出不匹配期望架构时，智能体会提供特定的错误反馈。自定义<code>handle_errprs属性</code>，</li>
+<li></li>
+</ul>
+</li>
+</ol>
+<p><code>handle_errors</code>参数可设置处理方式:</p>
+<ul>
+<li>一段让智能体识别怎么处理的字符串。</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ToolStrategy( </span><br><span class="line">schema=ProductRating, </span><br><span class="line">handle_errors=&quot;Please provide a valid rating between 1-5 and include a comment.&quot; )</span><br></pre></td></tr></table></figure>
+<ul>
+<li>仅处理一个或多个特定异常情况，仅在发生指定异常时会重试，其他所有情况下都会引发异常。</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ToolStrategy( </span><br><span class="line">schema=ProductRating, </span><br><span class="line">handle_errors=ValueError # Only retry on ValueError, raise others )</span><br></pre></td></tr></table></figure>
+<ul>
+<li>自定义错误处理函数</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">def custom_error_handler(error: Exception) -&gt; str:</span><br><span class="line">    if isinstance(error, StructuredOutputValidationError):</span><br><span class="line">        return &quot;There was an issue with the format. Try again.&quot;</span><br><span class="line">    elif isinstance(error, MultipleStructuredOutputsError):</span><br><span class="line">        return &quot;Multiple structured outputs were returned. Pick the most relevant one.&quot;</span><br><span class="line">    else:</span><br><span class="line">        return f&quot;Error: &#123;str(error)&#125;&quot;</span><br></pre></td></tr></table></figure>
+<h2 id="七、middleware">七、middleware</h2>
+<p><strong>概述</strong>：中间件提供了一种能更彻底的公职智能体内发行什么的方式，对一下场景较为有效：</p>
+<ul>
+<li>通过记录、分析和调试追溯agent行为</li>
+<li>改变提示词、工具选择以及输出格式</li>
+<li>添加重试、回退以及终止逻辑</li>
+<li>应用速率限制、防护措施和个人身份信息检测</li>
+</ul>
+<h3 id="1-代理循环"><strong>1.代理循环</strong></h3>
+<p><strong>概述</strong>：最简单的模型运行流程包括调用模型，让模型选择要执行的工具，然后在不再需要调用任何工具时结束。Middleware运行在智能体调用前、模型调用前、模型调用后、智能体调用后四个阶段，以及工具运行时前后的整个阶段。</p>
+<h3 id="2-预构建中间键"><strong>2.预构建中间键</strong></h3>
+<p><strong>概述</strong>：Langchain和Deep Agents（深度代理）提供了预创建的中间件以供日常情况使用，每个中间件都已准备投入生产并且为你的特定需要做贡献。</p>
+<p><strong>与中间商无关的中间件</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>Middleware</th>
+<th>Description</th>
+<th>options</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://reference.langchain.com/python/langchain/agents/middleware/summarization/SummarizationMiddleware"><code>SummarizationMiddleware</code></a></td>
+<td>接近消息数量上限时自动<strong>生成对话历史记录摘要</strong>，保留最近的消息同时压缩较早的上下文</td>
+<td>1. model <br>2. trigger：触发摘要的条件<br>3. keep：保持多少上下文大小<br>4. token_conter<br>5. summary_prompt：摘要的自定义提示模板<br>6. trim_tokens_to_summarize</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://reference.langchain.com/python/langchain/agents/middleware/human_in_the_loop/HumanInTheLoopMiddleware"><code>HumanInTheLoopMiddleware</code></a></td>
+<td><strong>工具调用前，暂停代理程序的执行，以便人工审批、编辑和拒绝这些调用</strong></td>
+<td>1. interrupt_on</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://reference.langchain.com/python/langchain/agents/middleware/model_call_limit/ModelCallLimitMiddleware"><code>ModelCallLimitMiddleware</code></a></td>
+<td><strong>限制模型调用次数</strong>以防止无限循环或过高的成本</td>
+<td>1. thread_limit<br>2. run_limit：调用次数限制<br>3. exit_behavior：end/error</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://reference.langchain.com/python/langchain/agents/middleware/tool_call_limit/ToolCallLimitMiddleware"><code>ToolCallLimitMiddleware</code></a></td>
+<td><strong>控制agent运行tool的数量</strong>，可全局限制或对特定工具限制</td>
+<td>1. tool_name<br>2. thread_limit：线程内所有运行工具的最大调用次数<br>3. run_limit：每次调用的最大工具调用次数<br>4. exit_behavier：达到限制时的行为，如显示错误信息，报错，终止执行</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://reference.langchain.com/python/langchain/agents/middleware/model_fallback/ModelFallbackMiddleware"><code>ModelFallbackMiddleware</code></a></td>
+<td>主模型失效时自动<strong>回退到备用模型</strong></td>
+<td>1. first_model：主模型<br>2. additional_models：备用模型</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://reference.langchain.com/python/langchain/agents/middleware/pii/PIIMiddleware"><code>PIIMiddleware</code></a></td>
+<td>使用可配置策略检测和<strong>处理对话中的个人身份信息</strong>（PII：（<strong>Personally Identifiable Information</strong>.））</td>
+<td>1. pii_type：检测的个人身份信息（PII）类型，可以使内置类型如email，也可以是自定义类型名称<br>2. strategy：如何检测：<br>- <code>'block'</code>- 检测到异常时抛出异常<br>- <code>'redact'</code>- 替换为<code>[REDACTED_{PII_TYPE}]</code><br>- <code>'mask'</code>- 部分遮盖（例如，<code>****-****-****-1234</code>）<br>- <code>'hash'</code>- 替换为确定性哈希<br>3. detector：自定义探测器函数或正则表达式模式<br>4. apply_to_input：是否在模型调用前检查用户信息<br>5. apply_to_output：是否在模型调用后检查AI信息<br>6. apply_to_tool_results：执行后检查工具消息结果消息<br><br></td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://reference.langchain.com/python/langchain/agents/middleware/todo/TodoListMiddleware"><code>TodoListMiddleware</code></a></td>
+<td>为代理<strong>配备任务规划和追踪功能</strong></td>
+<td>1. system_prompt：用于指导待办事项的使用<br>2. tool_description</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://reference.langchain.com/python/langchain/agents/middleware/tool_selection/LLMToolSelectorMiddleware"><code>LLMToolSelectorMiddleware</code></a></td>
+<td>使用LLM调用主模型之前智能的<strong>选择注入的工具</strong></td>
+<td>1. model<br>2. system_promopt<br>3. max_tools<br>4. always_include</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://reference.langchain.com/python/langchain/agents/middleware/tool_retry/ToolRetryMiddleware"><code>ToolRetryMiddleware</code></a></td>
+<td>使用可配置的指数退避算法自动<strong>重试失败的工具调用</strong></td>
+<td>0. max_retries<br>1. tools<br>2. retry_on：重试的异常类型元祖<br>3. on_failure：所有重试次数用尽时<br>4. backoff_factor：回退因子，每次重试等待initial_delay * (backoff_factor ** retry_number)<br>5. initial_delay：首次重试前的初始延迟时间<br>6. max_delay：重试之间的最大延迟时间<br>7. jitter：是否添加随机扰动<br></td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://reference.langchain.com/python/langchain/agents/middleware/model_retry/ModelRetryMiddleware"><code>ModelRetryMiddleware</code></a></td>
+<td>使用可配置的指数退避算法自动<strong>重试失败的模型调用</strong></td>
+<td>0. retry_on<br>1. on_failure<br>2. backoff_factor<br>3. initial_delay<br>4. max_delay<br>5. jitter</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://reference.langchain.com/python/langchain/agents/middleware/tool_emulator/LLMToolEmulator"><code>LLMToolEmulator</code></a></td>
+<td>使用LLM模拟工具执行过程进行测试，<strong>用AI生成的响应替换实际的工具调用</strong></td>
+<td>0. tools：模拟的工具列表<br>1. model<br></td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://reference.langchain.com/python/langchain/agents/middleware/context_editing/ContextEditingMiddleware"><code>ContextEditingMiddleware</code></a>：<a target="_blank" rel="noopener" href="https://reference.langchain.com/python/langchain/agents/middleware/context_editing/ClearToolUsesEdit"><code>ClearToolUsesEdit</code></a></td>
+<td>达到token限制时，<strong>清除较旧的工具调用输出管理对话上下文</strong>，同时保留最近的结果这有助于在包含大量工具调用的长时间对话中保持上下文窗口的可控性。</td>
+<td>0. edits：可应用策略列表<br>1. token_count_method：token计数方法<br>2. trigger：触发的token数量<br>3. clear_at_least：回收的最小令牌书<br>4. keep：必须保留的最新工具结果数量<br>5. clear_tool_inputs<br>6. exclude_tools：排除在外的工具名称列表<br>7. placeholder：占位符脚本，用于显示已清除的工具输出，将替换原始工具消息内容</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://reference.langchain.com/python/langchain/agents/middleware/shell_tool/ShellToolMiddleware"><code>ShellToolMiddleware</code></a></td>
+<td><strong>管理向代理公开持久化的shell</strong>（命令行）会话以执行命令</td>
+<td>0. workspace_root：会话基本目录<br>1. startup_commands：会话开始后按顺序执行的可选命令<br>2. shutdown_commands：会话关闭前执行的可选命令<br>3. execution_policy：执行策略控制超时、输出限制和资源配置：<br>- <code>HostExecutionPolicy</code>- 完全主机访问权限（默认）；最适合代理程序已在容器或虚拟机中运行的可信环境。<br>- <code>DockerExecutionPolicy</code>- 为每个代理运行启动一个独立的 Docker 容器，从而提供更强的隔离性<br>- <code>CodexSandboxExecutionPolicy</code>- 复用 Codex CLI 沙箱，以增加系统调用/文件系统限制<br>4. redaction_rules：可选地编辑规则，用于在将命令输出返回给模型之前对其进行清理<br>5. tool_description<br>6. shell_command：用于启动持久会话的可选shell可执行文件或参数序列<br>7. env：可选的环境变量，可提供给shell对话</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://reference.langchain.com/python/langchain/agents/middleware/file_search/FilesystemFileSearchMiddleware"><code>FilesystemFileSearchMiddleware</code></a></td>
+<td>在文件系统上**提供Glob（文件检索工具）和Grep（文件内容检索工具）**搜索工具</td>
+<td>0. root_path：搜索的根目录<br>1. use_ripgrep：是否使用ripgrep进行搜索<br>2. max_file_size_mb<br></td>
+</tr>
+<tr>
+<td>FilesystemMiddleware</td>
+<td>上下文工程是构建高效智能体的主要挑战之一，当使用返回可变长度结果的工具（例如web_search RAG）时，这一点尤其困难，过长的工具结果会迅速填满上下文窗口。出自Deep Agent该中间件提供了四种与短期记忆和长期记忆交互的工具：<br>- <code>ls</code>列出文件系统中的文件<br>- <code>read_file</code>读取整个文件或文件中指定数量的行<br>- <code>write_file</code>向文件系统写入一个新文件<br>- <code>edit_file</code>编辑文件系统中已存在的文件</td>
+<td>LangGraph内容，暂不补充</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://docs.langchain.com/oss/python/langchain/middleware/built-in#subagent">Subagent</a></td>
+<td>Add the ability to spawn subagents.</td>
+<td>LangGraph内容，暂不补充</td>
+</tr>
+</tbody>
+</table>
+<h3 id="3-自定义中间件"><strong>3.自定义中间件</strong></h3>
+<ol>
+<li><strong>Hook（拦截点）</strong>
+<strong>概述</strong>：通过在代理执行流程的特定点运行<strong>拦截点（hook）</strong> 来构建自定义中间件。一下为两种运行agent时插入拦截点的方式：</li>
+</ol>
+<p><strong>Node-style hooks：</strong>
+在特殊节点使用，例如登录、验证和更新
+<strong>相关hook：</strong></p>
+<ul>
+<li><code>before_agent</code> - Before agent starts (once per invocation)</li>
+<li><code>before_model</code> - Before each model call</li>
+<li><code>after_model</code> - After each model response</li>
+<li><code>after_agent</code> - After agent completes (once per invocation)</li>
+</ul>
 
                 
                 <p class="end">__END__</p>
@@ -424,9 +591,9 @@ middleware=[]     //注册中间件<br>
                         
                             <a href="/tags/web/">web</a>
                         
-                            <a href="/tags/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/">人工智能</a>
-                        
                             <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%BF%9B%E9%98%B6/">计算机进阶</a>
+                        
+                            <a href="/tags/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/">人工智能</a>
                         
                     </div>
                 

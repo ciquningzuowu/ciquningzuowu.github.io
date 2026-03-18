@@ -9,7 +9,7 @@
     <meta http-equiv="Cache-Control" content="no-siteapp">
     <title>
         
-            pep8
+            PyNPut笔记
         
     </title>
     <link rel="shortcut icon" href="#"/>
@@ -39,21 +39,21 @@
     <div class="vertical">
         <div class="inner">
             
-                <h1 class="header-subtitle">pep8</h1>
+                <h1 class="header-subtitle">PyNPut笔记</h1>
                 <div class="header-subinfo">
                     <p class="article-info-text">
                         <span>
-                            <i class="iconfont icon-time"></i> 发表时间：2026-03-12
+                            <i class="iconfont icon-time"></i> 发表时间：2026-03-16
                         </span>
                         
                             
-                                <span id="/2026/03/12/Python编写规范（pep8）/" class="leancloud_visitors" data-flag-title="pep8">
+                                <span id="/2026/03/16/PyNPut笔记/" class="leancloud_visitors" data-flag-title="PyNPut笔记">
                                     <i class="iconfont icon-browse"></i> 阅读：<sapn class="leancloud-visitors-count"></span>
                                 </span>
                             
                             
                                 <span>
-                                    <i class="iconfont icon-interactive"></i> 评论：<span class="valine-comment-count" data-xid="/2026/03/12/Python编写规范（pep8）/"></span>
+                                    <i class="iconfont icon-interactive"></i> 评论：<span class="valine-comment-count" data-xid="/2026/03/16/PyNPut笔记/"></span>
                                 </span>
                               
                         
@@ -62,6 +62,8 @@
                     
                         
                             <span class="tag-color">计算机基础</span>
+                        
+                            <span class="tag-color">python</span>
                         
                     
                 </div>
@@ -76,143 +78,39 @@
         <div id="article">
             <div class="toc"></div>
             <div class="article-body">
-                <h2 id="缩进">缩进</h2>
+                <p><strong>补充</strong> ：该技术与PyAutoGUI技术关联较高，主要为监听特化。</p>
+<p>该技术主要分两个模块<strong>mouse</strong>和<strong>keyboard</strong>，其下又各分<strong>控制</strong>与<strong>监听</strong>两部分。</p>
+<h2 id="一、鼠标操作">一、鼠标操作</h2>
+<h3 id="1-控制"><strong>1.控制</strong></h3>
+<p><strong>概述：</strong> 鼠标按键在<code>mouse.Button</code>中，分为lift、right、middle和unknown，每个按键有<strong>name</strong>和<strong>value</strong>两个属性：<strong>name</strong>为按键名；<strong>value</strong>为上次点击位置的元组。进行鼠标操作前需要先生成<strong>Controller对象</strong>,应用该对象对鼠标进行操作。</p>
 <ul>
-<li>不要使用<code>tap</code>缩进</li>
-<li>不要混用<code>tap</code>和<code>空格</code></li>
+<li><code>loc=mouse.position</code>：获取鼠标位置</li>
+<li><code>mouse.position = (x, y)</code>：改变鼠标位置</li>
+<li><code>mouse.move(250, 250)</code>：移动鼠标的相对位置</li>
+<li><code>mouse.click(Button.right/left/middle,int)</code>：点击鼠标指定键位int次</li>
+<li><code>mouse.press(Button.right/left/middle)和mouse.release(Button.right/left/middle)</code>：click函数的拆解，按下与松开</li>
+<li><code>mouse.scroll(x,y)</code>：滚动滚轮</li>
 </ul>
-<h2 id="空格">空格</h2>
-<ul>
-<li><code>list，dict，tuple，set</code>后面加一个空格</li>
-<li><code>dict</code>的<code>:</code>后加一个空格</li>
-<li>注释符号<code>#</code>后加一个<code>空格</code></li>
-<li>操作符两端加一个空格</li>
-<li>参数列表的<code>=</code>两端不加空格</li>
-<li>括号内的两端不需要空格</li>
-<li>不要在列表索引、函数调用、关键字参数赋值两侧使用空格</li>
-</ul>
-<h2 id="空行">空行</h2>
-<ul>
-<li><code>function</code>和<code>class</code>前后各用两个空行</li>
-<li><code>class</code>内部<code>method</code>之间用一个空白行分隔</li>
-<li>函数内逻辑无关的段落间空一行</li>
-<li><code>if/for/while</code>语句中即使执行语句只有一行也要另起一行</li>
-</ul>
-<h2 id="换行">换行</h2>
-<ul>
-<li>每行代码控制在80字符以内</li>
-<li>使用<code>\</code>和<code>()</code>控制换行</li>
-</ul>
-<h2 id="命名">命名</h2>
-<ul>
-<li>使用蛇形命名法</li>
-<li><code>package/module</code>名中不要出现下划线<code>_</code></li>
-<li>函数、变量以及属性使用小写</li>
-<li>类和异常信息首字母大写，使用大驼峰命名</li>
-<li>模块级别的常量全部使用大写</li>
-</ul>
-<table>
-<thead>
-<tr>
-<th style="text-align:left">类型</th>
-<th style="text-align:left">命名约定</th>
-<th style="text-align:left">例子</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">Class</td>
-<td style="text-align:left">每个单词都大写字母开头；不要用下划线 (PascalCase)</td>
-<td style="text-align:left"><code>Model</code>, <code>MyClass</code></td>
-</tr>
-<tr>
-<td style="text-align:left">Constant</td>
-<td style="text-align:left">使用大写字母；下划线分隔单词 (UPPER_CASE)</td>
-<td style="text-align:left"><code>CONSTANT</code>, <code>MY_CONSTANT</code>, <code>MY_LONG_CONSTANT</code></td>
-</tr>
-<tr>
-<td style="text-align:left">Package</td>
-<td style="text-align:left">使用小写单词；不用下划线分隔单词</td>
-<td style="text-align:left"><code>package</code>, <code>mypackage</code></td>
-</tr>
-<tr>
-<td style="text-align:left">Function</td>
-<td style="text-align:left">使用小写字母；下划线分隔单词 (snake_case)</td>
-<td style="text-align:left"><code>function</code>, <code>my_function</code></td>
-</tr>
-<tr>
-<td style="text-align:left">Variable</td>
-<td style="text-align:left">使用小写字母；下划线分隔单词 (snake_case)</td>
-<td style="text-align:left"><code>x</code>, <code>var</code>, <code>my_variable</code></td>
-</tr>
-<tr>
-<td style="text-align:left">Method</td>
-<td style="text-align:left">使用小写字母；下划线分隔单词 (snake_case)</td>
-<td style="text-align:left"><code>class_method</code>, <code>method</code></td>
-</tr>
-<tr>
-<td style="text-align:left">Module</td>
-<td style="text-align:left">使用小写字母；下划线分隔单词 (snake_case)</td>
-<td style="text-align:left"><code>module.py</code>, <code>my_module.py</code></td>
-</tr>
-</tbody>
-</table>
-<h2 id="import">import</h2>
-<ul>
-<li><code>import</code>之间进行分组，每组之间进行空行，组内尽量采用字典顺序排序，分组排序为标准库-&gt;第三方库-&gt;自主声明的文件</li>
-<li>引用一个模块式使用绝对的模块名称，例如要想引入<code>bar</code>包下面的<code>foo</code>模块，应该使用<code>from bar import foo</code>而不是<code>import foo</code>。</li>
-<li>必须使用相对引用时使用<code>from . import foo</code>（应该是用于与引入库区分）</li>
-<li>为了避免命名冲突，可以使用<code>as</code>或导入上一级命名空间</li>
-</ul>
-<h2 id="注释">注释</h2>
-<ul>
-<li>文档字符串docstring，是<code>package，module，class，method，function</code>级别的注释，可以通过<code>__doc__</code>成员访问到，注释在一对```之间</li>
-<li><code>function，method</code>的文档字符串应描述其<strong>功能、输入参数、返回值</strong> ，如果有<strong>复杂的算法和实现</strong>，也需要写清楚</li>
-<li>不要写错误的和无谓的注释</li>
-<li>优先使用英文写注释，英文不好就全部用中文</li>
-</ul>
-<h2 id="异常">异常</h2>
-<ul>
-<li>不要轻易使用<code>try/except</code></li>
-<li><code>except</code>后面需要指定捕捉的异常，裸露的<code>except</code>会捕捉所有异常，意味着会隐藏潜在的问题</li>
-<li>使用<code>finally</code>子句处理一些收尾操作，如关闭文件，关闭数据库连接等</li>
-<li>try/except里的内容不要太多，只在可能抛出异常的地方使用</li>
-<li>从<code>Exception</code>而不是<code>BaseException</code>集成自定义的异常类 <strong>（这个没接触过，后面要学一下）</strong></li>
-</ul>
-<h2 id="Class">Class</h2>
-<ul>
-<li>显示的写明父类，如果不是继承自别的类，就继承自<code>object类</code>（最基础的类对象）</li>
-<li>使用<code>super</code>调用父类的方法，这能明显的表明这是来自父类的方法</li>
-<li>支持多继承，即同时有多个父类，推荐使用<code>Mixin</code>(Mixin是指创建一些专门用于插入其他类中的插件类，这些类一般没有自己的属性，不会被用于实例化，主要用于扩展其他类的功能)</li>
-</ul>
-<h2 id="字符串">字符串</h2>
-<ul>
-<li>使用字符串的<code>join</code>方法拼接字符串</li>
-<li>使用字符串类型的方法，而不是string模块的方法</li>
-<li>使用<code>startswith</code>和<code>endwith</code>方法比较前后缀</li>
-<li>使用f-string方法格式化字符串，即<code>f&quot;str1{content}str2&quot;</code></li>
-</ul>
-<h2 id="比较">比较</h2>
-<ul>
-<li>空的<code>list，str，tuple，set，dict和0.0，None</code>都是False</li>
-<li>使用<code>if somelist</code> 而不是 <code>if len(somelist)</code> 判断为空</li>
-<li>使用<code>is</code> 和<code>is not</code> 与单例比较而不是<code>==</code> 和<code>!=</code></li>
-<li>使用<code>if a is not None</code>而不是<code>if not a is None</code>，尽量看着复合人脑的处理规则</li>
-<li>使用<code>isinstance()</code>而不是<code>type()</code>进行类型判断</li>
-<li>使用<code>in</code>操作:用<code>key in dict</code> 而不是 <code>dict.has_key()</code>进行查询</li>
-<li>用<code>set</code>加速存在性检查，<code>list</code>的查找是线性的，<code>set</code>的底层是<code>hash table</code>（缺点是<code>set</code>需要使用更多内存空间）</li>
-</ul>
-<h2 id="其他">其他</h2>
-<ul>
-<li>使用内建函数<code>sorted</code>和<code>.sort</code> 进行排序</li>
-<li>适量使用<code>map，reduce，filter和lambda</code>，使用内建的<code>all</code>和<code>any</code>处理多个条件的判断</li>
-<li>使用<code>with</code>语句处理上下文</li>
-<li>利用好python的Duck Type特性</li>
-<li>使用logging记录日志，配置好格式和级别</li>
-<li>了解python的魔术方法</li>
-<li>阅读优秀开源代码</li>
-</ul>
-
+<h3 id="2-监听"><strong>2.监听</strong></h3>
+<p>方式1：
+构造<code>on_move</code>（移动到的坐标）,<code>on_click</code>（点击的坐标与点击的按键以及按下还是松开）,<code>on_scroll</code>（鼠标位置和滚动变换的距离）函数，然后构造监听器对象<code>mouse.Listener</code>,将构造的监听函数注入，使用<code>with</code>或<code>start()</code>方法启动,调用<code>Listener.stop()</code>或在回调方法中<code>ruturn False</code>结束。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">from pynput import mouse</span><br><span class="line"> </span><br><span class="line"># 移动监听</span><br><span class="line">def on_move(x, y):</span><br><span class="line">    print(&#x27;鼠标移动到了：&#123;&#125;&#x27;.format((x, y)))</span><br><span class="line"> </span><br><span class="line"># 点击监听</span><br><span class="line">def on_click(x, y, button, pressed):</span><br><span class="line">    print(&#x27;鼠标按键：&#123;&#125;，在位置处 &#123;&#125;, &#123;&#125; &#x27;.format(button, (x, y), &#x27;按下了&#x27; if pressed else &#x27;释放了&#x27;))</span><br><span class="line"> </span><br><span class="line"># 滚动监听</span><br><span class="line">def on_scroll(x, y, dx, dy):</span><br><span class="line">    print(&#x27;滚动中... &#123;&#125; 至 &#123;&#125;&#x27;.format(&#x27;向下：&#x27; if dy &lt; 0 else &#x27;向上：&#x27;, (x, y)))</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line"># 构造监听器对象，方式1: （监听哪几种类型事件）</span><br><span class="line">with mouse.Listener(</span><br><span class="line">        on_move=on_move,</span><br><span class="line">        on_click=on_click,</span><br><span class="line">        on_scroll=on_scroll) as listener:</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line"># 构造监听器对象，方式2（可替换上面with）（监听哪几种类型事件）</span><br><span class="line">listener = mouse.Listener(</span><br><span class="line">    on_move=on_move,</span><br><span class="line">    on_click=on_click,</span><br><span class="line">    on_scroll=on_scroll)</span><br><span class="line"> </span><br><span class="line"># 开始监听</span><br><span class="line">listener.start()</span><br></pre></td></tr></table></figure>
+<p>方式2：
+使用event进行监听</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">from pynput import mouse</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">with mouse.Events() as events:</span><br><span class="line">    for event in events:</span><br><span class="line">        if hasattr(event, &#x27;button&#x27;):</span><br><span class="line">            deal = &#x27;按下了:&#x27; if event.pressed else &#x27;释放了:&#x27;</span><br><span class="line">            if event.button == mouse.Button.left:</span><br><span class="line">                print(&#x27;&#123;&#125;mouse.Button.left&#x27;.format(deal))</span><br><span class="line"> </span><br><span class="line">            elif event.button == mouse.Button.right:</span><br><span class="line">                print(&#x27;&#123;&#125; mouse.Button.right&#x27;.format(deal))</span><br><span class="line"> </span><br><span class="line">            elif event.button == mouse.Button.middle:</span><br><span class="line"> </span><br><span class="line">                print(&#x27;&#123;&#125; mouse.Button.middle&#x27;.format(deal))</span><br><span class="line"> </span><br><span class="line">            elif event.button == mouse.Button.unknown:</span><br><span class="line">                print(&#x27;&#123;&#125; mouse.Button.unknown&#x27;.format(deal))</span><br><span class="line">        else:</span><br><span class="line">            print(&#x27;鼠标箭头：滑动中...&#x27;)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h2 id="二、键盘操作">二、键盘操作</h2>
+<h3 id="1-控制-2"><strong>1.控制</strong></h3>
+<p><strong>概述：</strong> 与鼠标类似，先声明Controller()对象，然后通过对该对象的操作进行键盘操作。</p>
+<p>keyboard.press(Key.button)
+keyboard.release(Key.button)
+keyboard.type('string') # 输入</p>
+<h3 id="2-控制"><strong>2.控制</strong></h3>
+<p>方式1：
+Listener，与鼠标监控大差不差，没有了对滚轮的监控，监听函数只有key参数（操作的按键）。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">from pynput import keyboard</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">def on_press(key):</span><br><span class="line">    try:</span><br><span class="line">        print(&#x27;字母键： &#123;&#125; 被按下&#x27;.format(key.char))</span><br><span class="line">    except AttributeError:</span><br><span class="line">        print(&#x27;特殊键： &#123;&#125; 被按下&#x27;.format(key))</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">def on_release(key):</span><br><span class="line">    print(&#x27;&#123;&#125; 释放了&#x27;.format(key))</span><br><span class="line">    if key == keyboard.Key.esc:</span><br><span class="line">        # 释放了esc 键，停止监听</span><br><span class="line">        return False</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line"># 方式1：构造监听器对象listener</span><br><span class="line">with keyboard.Listener(</span><br><span class="line">        on_press=on_press,</span><br><span class="line">        on_release=on_release) as listener:</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line"># 方式2：构造监听器对象listener</span><br><span class="line">listener = keyboard.Listener(</span><br><span class="line">    on_press=on_press,</span><br><span class="line">    on_release=on_release)</span><br><span class="line"> </span><br><span class="line"># 开始监听</span><br><span class="line"># 监听启动方式1：阻断式</span><br><span class="line">listener.join()</span><br><span class="line"> </span><br><span class="line"># 监听启动方式2：非阻断式</span><br><span class="line">listener.start()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>方式2：
+event方式，同样大差不差。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">from pynput import keyboard</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line"># 监听键盘键入</span><br><span class="line">with keyboard.Events() as events:</span><br><span class="line">    for event in events:</span><br><span class="line"> </span><br><span class="line">        # 监听esc键，释放esc键，停止监听。</span><br><span class="line">        if event.key == keyboard.Key.esc:</span><br><span class="line">            print(&#x27;接收到事件 &#123;&#125;, 停止监听&#x27;.format(event))</span><br><span class="line">            break</span><br><span class="line">        else:</span><br><span class="line">            if isinstance(event, keyboard.Events.Press):</span><br><span class="line">                print(&#x27;按下按键 &#123;&#125; &#x27;.format(event))</span><br><span class="line">            elif isinstance(event, keyboard.Events.Release):</span><br><span class="line">                print(&#x27;松开按键 &#123;&#125;&#x27;.format(event))</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">----------</span><br><span class="line"> </span><br><span class="line">说明：</span><br><span class="line">1.判断是按下键盘还是释放键盘，通过：</span><br><span class="line">if isinstance(event, keyboard.Events.Press):</span><br><span class="line">   print(&#x27;按下按键 &#123;&#125; &#x27;.format(event))</span><br><span class="line">elif isinstance(event, keyboard.Events.Release):</span><br><span class="line">   print(&#x27;松开按键 &#123;&#125;&#x27;.format(event))</span><br><span class="line"> </span><br><span class="line">2.判断是哪个键，通过event.key，</span><br><span class="line">pynput.keyboard.Key类中定义了键盘中的所有键。</span><br><span class="line"> </span><br><span class="line">3.上面，监听esc键，释放esc键，停止监听。</span><br><span class="line"></span><br></pre></td></tr></table></figure>
                 
                 <p class="end">__END__</p>
             </div>
@@ -224,7 +122,7 @@
     <div class="suffix-box-right">
         <span class="suffix-box-title">文章作者：</span>作吾
         <br>
-        <span class="suffix-box-title">文章出处：</span><a href="/2026/03/12/Python%E7%BC%96%E5%86%99%E8%A7%84%E8%8C%83%EF%BC%88pep8%EF%BC%89/" target="_blank">pep8</a>
+        <span class="suffix-box-title">文章出处：</span><a href="/2026/03/16/PyNPut%E7%AC%94%E8%AE%B0/" target="_blank">PyNPut笔记</a>
         <br>
         <span class="suffix-box-title">作者签名：</span>死人一个，在试图活着
         <br>
@@ -242,15 +140,17 @@
                         
                             <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/">计算机基础</a>
                         
+                            <a href="/tags/python/">python</a>
+                        
                     </div>
                 
                 <div class="article-prev-next">
                     
-                        <a href="/2026/03/13/%E6%9C%AA%E5%91%BD%E5%90%8D/" class="prev-prefix">« </a> 上一篇：    <a href="/2026/03/13/%E6%9C%AA%E5%91%BD%E5%90%8D/" title="发布于 2026-03-13 08:22"></a>
+                        <a href="/2026/03/16/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86%E7%AC%94%E8%AE%B0/" class="prev-prefix">« </a> 上一篇：    <a href="/2026/03/16/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86%E7%AC%94%E8%AE%B0/" title="发布于 2026-03-16 03:23">计算机组成原理笔记</a>
                         <br>
                     
                     
-                        <a href="/2026/03/11/%E5%90%8E%E7%BB%AD%E7%9B%AE%E6%A0%87/" class="next-prefix">» </a> 下一篇：    <a href="/2026/03/11/%E5%90%8E%E7%BB%AD%E7%9B%AE%E6%A0%87/" title="发布于 2026-03-11 08:07">待办</a>
+                        <a href="/2026/03/15/PyAutoGUI%E7%AC%94%E8%AE%B0/" class="next-prefix">» </a> 下一篇：    <a href="/2026/03/15/PyAutoGUI%E7%AC%94%E8%AE%B0/" title="发布于 2026-03-15 05:50">PyAutoGUI笔记</a>
                     
                 </div>
             </div>

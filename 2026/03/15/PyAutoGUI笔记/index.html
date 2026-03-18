@@ -9,7 +9,7 @@
     <meta http-equiv="Cache-Control" content="no-siteapp">
     <title>
         
-            
+            PyAutoGUI笔记
         
     </title>
     <link rel="shortcut icon" href="#"/>
@@ -39,7 +39,7 @@
     <div class="vertical">
         <div class="inner">
             
-                <h1 class="header-subtitle"></h1>
+                <h1 class="header-subtitle">PyAutoGUI笔记</h1>
                 <div class="header-subinfo">
                     <p class="article-info-text">
                         <span>
@@ -47,7 +47,7 @@
                         </span>
                         
                             
-                                <span id="/2026/03/15/PyAutoGUI笔记/" class="leancloud_visitors" data-flag-title="">
+                                <span id="/2026/03/15/PyAutoGUI笔记/" class="leancloud_visitors" data-flag-title="PyAutoGUI笔记">
                                     <i class="iconfont icon-browse"></i> 阅读：<sapn class="leancloud-visitors-count"></span>
                                 </span>
                             
@@ -78,7 +78,8 @@
         <div id="article">
             <div class="toc"></div>
             <div class="article-body">
-                <h2 id="通用功能">通用功能</h2>
+                <p><strong>补充：</strong> 该技术与PyNput技术关联较高，主要为操作与识别特化。</p>
+<h2 id="通用功能">通用功能</h2>
 <ol>
 <li>暂停<code>.PAUSE</code>，默认为0.1秒</li>
 <li>临时休眠<code>.sleep()</code></li>
@@ -215,6 +216,30 @@
 <li><code>getAllWindows()</code> 获取所有可见窗口</li>
 <li><code>getWindowsAt(x,y)</code> 获取所有包含点(x，y)的可见窗口的Windows对象列表</li>
 <li><code>getWindowsWithTitle(title)</code>  获取所有在标题栏中包含字符串title的可见窗口的Windows对象的列表。</li>
+<li><code>getAllTitles()</code> 获取所有可见窗口的字符串列表</li>
+</ul>
+<h3 id="操作窗口"><strong>操作窗口</strong></h3>
+<ul>
+<li><code>win.move(xOffset, yOffset)</code></li>
+<li><code>win.moveTo(newLeft, newTop)</code></li>
+<li><code>win.resize(widthOffset, heightOffset)</code></li>
+<li><code>win.resizeTo(width, height)</code></li>
+<li><code>win.maximize() </code></li>
+<li><code>win.minimize() </code></li>
+<li><code>win.restore() </code> # 如果是最大/小化，则恢复成正常状态</li>
+<li><code>win.close()</code></li>
+<li><code>win.position() </code>  # 获取窗口左上角坐标</li>
+<li><code>win.moveRel(x=0, y=0) </code> # 相对窗口左上角移动</li>
+<li><code>win.clickRel(x=0, y=0, clicks=1, interval=0.0, button=’left’) </code> # 相对窗口左上角点击</li>
+</ul>
+<h2 id="简单定位技术（mouseInfo）">简单定位技术（mouseInfo）</h2>
+<p><strong>概述：</strong> <code>pyautogui.mouseInfo()</code>函数可以单独使用，而不是作为程序的一部分。 它启动了一个名为<code>MouseInfo</code>的小应用程序， 该应用程序是<code>PyAutoGUI</code>的一部分。打开的窗口提供了<strong>关于鼠标指针当前位置的信息</strong>， 以及<strong>鼠标指针处的像素的颜色</strong>， 以<strong>3个整数的RGB元组</strong>和<strong>十六进制值的形式</strong>显示。 颜色本身会出现在窗口中的颜色框中。
+<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/%7BB8AB6445-1BF6-485E-B878-D66FC70D07DB%7D.png" alt=""></p>
+<ul>
+<li><strong>Copy All、 Copy XY、 Copy RGB</strong>和<strong>Copy RGB Hex</strong>按钮将对应的信息复制到剪贴板上。</li>
+<li><strong>Log All、 Log XY、 Log RGB</strong>和<strong>Log RGB Hex</strong>按钮将对应的信息写入窗口中的大文本字段。</li>
+<li>可以通过单击Save Log按钮， 保存这个文本字段中的文本。</li>
+<li>可以通过使用 F1, F2 … F8 功能键类实现。</li>
 </ul>
 
                 
@@ -228,7 +253,7 @@
     <div class="suffix-box-right">
         <span class="suffix-box-title">文章作者：</span>作吾
         <br>
-        <span class="suffix-box-title">文章出处：</span><a href="/2026/03/15/PyAutoGUI%E7%AC%94%E8%AE%B0/" target="_blank"></a>
+        <span class="suffix-box-title">文章出处：</span><a href="/2026/03/15/PyAutoGUI%E7%AC%94%E8%AE%B0/" target="_blank">PyAutoGUI笔记</a>
         <br>
         <span class="suffix-box-title">作者签名：</span>死人一个，在试图活着
         <br>
@@ -251,6 +276,9 @@
                     </div>
                 
                 <div class="article-prev-next">
+                    
+                        <a href="/2026/03/16/PyNPut%E7%AC%94%E8%AE%B0/" class="prev-prefix">« </a> 上一篇：    <a href="/2026/03/16/PyNPut%E7%AC%94%E8%AE%B0/" title="发布于 2026-03-16 12:33">PyNPut笔记</a>
+                        <br>
                     
                     
                         <a href="/2026/03/13/%E6%9C%AA%E5%91%BD%E5%90%8D/" class="next-prefix">» </a> 下一篇：    <a href="/2026/03/13/%E6%9C%AA%E5%91%BD%E5%90%8D/" title="发布于 2026-03-13 08:22"></a>
