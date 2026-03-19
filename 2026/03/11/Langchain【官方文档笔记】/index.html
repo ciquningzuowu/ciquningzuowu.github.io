@@ -63,9 +63,9 @@
                         
                             <span class="tag-color">web</span>
                         
-                            <span class="tag-color">计算机进阶</span>
-                        
                             <span class="tag-color">人工智能</span>
+                        
+                            <span class="tag-color">计算机进阶</span>
                         
                     
                 </div>
@@ -101,7 +101,7 @@ middleware=[]     //注册中间件<br>
 <h3 id="1-静态工具"><strong>1.静态工具</strong></h3>
 <p>使用@tool装饰器创建函数，在创建代理时定义，且整个过程中保持不变。工具函数的编写需要在函数首行添加“”“ tool prompt ”“” 进行描述来让调用工具的模型能够确切理解该工具的用处。</p>
 <p><strong>2.动态工具</strong></p>
-<p><strong>概述：</strong> 动态工具指在运行时调整带路可用的工具集，而不是预先定义所有工具。初始化代理时，注册过多的工具模会使模型过载增加错误，注册过少则会限制功能。可通过身份验证状态、用户权限、功能标志、对话阶段等调整可用工具集。</p>
+<p><strong>概述：</strong> 动态工具指在运行时调整可用的工具集，而不是预先定义所有工具。初始化代理时，注册过多的工具模会使模型过载增加错误，注册过少则会限制功能。可通过身份验证状态、用户权限、功能标志、对话阶段等调整可用工具集。</p>
 <p><strong>处理方法：</strong><br>
 通过 <strong>@wrap_tool_call</strong> 创建中间件进行工具添加，可添加提示词，除方便开发人员识别外，可以被高级中间件技术管理选择调用（注册管理调用中间件的agent）</p>
 <p><strong>（1）筛选预注册工具</strong></p>
@@ -112,6 +112,7 @@ middleware=[]     //注册中间件<br>
 </ul>
 <p><strong>（2）运行时工具注册</strong><br>
 模型已部署时的添加方法，与上似乎区别不大（个人观点）</p>
+<p><strong>（3）初始全部注册，使用中间件在调用时筛选runtime中的tool_call需要的工具进行保留</strong></p>
 <p><strong>3.工具错误处理</strong></p>
 <p><strong>概述：</strong> 可通过 <strong>@wrap_tool_call</strong> 装饰器创建中间件，提示词设置为当出现工具运行错误时调用，返回错误信息给代理进行处理。</p>
 <h3 id="三、系统提示"><strong>三、系统提示</strong></h3>
@@ -548,12 +549,10 @@ middleware=[]     //注册中间件<br>
 </tbody>
 </table>
 <h3 id="3-自定义中间件"><strong>3.自定义中间件</strong></h3>
-<ol>
-<li><strong>Hook（拦截点）</strong>
-<strong>概述</strong>：通过在代理执行流程的特定点运行<strong>拦截点（hook）</strong> 来构建自定义中间件。一下为两种运行agent时插入拦截点的方式：</li>
-</ol>
-<p><strong>Node-style hooks：</strong>
-在特殊节点使用，例如登录、验证和更新
+<h4 id="Hook（拦截点）"><strong>Hook（拦截点）</strong></h4>
+<p><strong>概述</strong>：通过在代理执行流程的特定点运行<strong>拦截点（hook）</strong> 来构建自定义中间件。一下为两种运行agent时插入拦截点的方式：</p>
+<p><strong>（1）Node-style hooks：</strong>
+在执行节点使用，用于<strong>日志记录、验证和更新</strong>
 <strong>相关hook：</strong></p>
 <ul>
 <li><code>before_agent</code> - Before agent starts (once per invocation)</li>
@@ -561,6 +560,225 @@ middleware=[]     //注册中间件<br>
 <li><code>after_model</code> - After each model response</li>
 <li><code>after_agent</code> - After agent completes (once per invocation)</li>
 </ul>
+<p><strong>（2）Wrap-style hooks</strong>
+拦截执行过程，并在调用处理程序时进行控制。可用于<strong>重试、缓存和转换</strong>
+<strong>相关hook：</strong></p>
+<ul>
+<li>wrap_model_call 每次模型调用前后</li>
+<li>wrap_tool_call 每次工具调用前后</li>
+</ul>
+<p>两种方式均可更新代理状态，机制也有所不同</p>
+<ul>
+<li>Node风格返回一个字典，使用图的reducer应用于代理状态。</li>
+<li>包装式拦截点对于模型调用返回<a target="_blank" rel="noopener" href="https://reference.langchain.com/python/langchain/agents/middleware/types/ExtendedModelResponse"><code>ExtendedModelResponse</code></a>和一个向模型响应中注入的命令。对于工具调用直接返回一个命令。
+<strong>（3）包含多个中间件的组合：</strong>
+当多个中间件返回<code>ExtendedModelResponse</code>,它们的命令组成如下：</li>
+<li>命令是通过reducer执行：每个命令都会触发一个单独的状态更新，对于message而言，它们是累加的</li>
+<li>对于非reducer状态字段，冲突时，外层优先</li>
+<li>可重试：如果外部中间件实现了可能导致多次调用<code>handler()</code>的逻辑，则丢弃先前调用的命令</li>
+</ul>
+<h4 id="创建中间件"><strong>创建中间件</strong></h4>
+<p>（1）使用装饰器封装函数，可<strong>快速创建单个hook</strong>的中间件，下为可供选择的装饰器：</p>
+<p><strong>Node-style</strong>：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://reference.langchain.com/python/langchain/agents/middleware/types/before_agent"><code>@before_agent</code></a>- 在代理启动前运行（每次调用运行一次）</li>
+<li><a target="_blank" rel="noopener" href="https://reference.langchain.com/python/langchain/agents/middleware/types/before_model"><code>@before_model</code></a>- 在每次模型调用之前运行</li>
+<li><a target="_blank" rel="noopener" href="https://reference.langchain.com/python/langchain/agents/middleware/types/after_model"><code>@after_model</code></a>- 在每次模型响应后运行</li>
+<li><a target="_blank" rel="noopener" href="https://reference.langchain.com/python/langchain/agents/middleware/types/after_agent"><code>@after_agent</code></a>- 在代理程序完成后运行（每次调用一次）
+<strong>Wrap-style</strong>：</li>
+<li><a target="_blank" rel="noopener" href="https://reference.langchain.com/python/langchain/agents/middleware/types/wrap_model_call"><code>@wrap_model_call</code></a>- 使用自定义逻辑包装每个模型调用</li>
+<li><a target="_blank" rel="noopener" href="https://reference.langchain.com/python/langchain/agents/middleware/types/wrap_tool_call"><code>@wrap_tool_call</code></a>- 使用自定义逻辑包装每个工具调用</li>
+</ul>
+<p><strong>Convenience：</strong></p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://reference.langchain.com/python/langchain/agents/middleware/types/dynamic_prompt"><code>@dynamic_prompt</code></a>- 生成动态系统提示</li>
+</ul>
+<p>（2）基于class的中间件，更适用于<strong>多个hook或配置的复杂中间件</strong>。可用于定义<strong>实现同步或异步实现</strong>的hook或在单个<strong>中间件组件中组合多个hook</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">class LoggingMiddleware(AgentMiddleware):</span><br><span class="line">    def before_model(self, state: AgentState, runtime: Runtime) -&gt; dict[str, Any] | None:</span><br><span class="line">        print(f&quot;About to call model with &#123;len(state[&#x27;messages&#x27;])&#125; messages&quot;)</span><br><span class="line">        return None</span><br><span class="line"></span><br><span class="line">    def after_model(self, state: AgentState, runtime: Runtime) -&gt; dict[str, Any] | None:</span><br><span class="line">        print(f&quot;Model returned: &#123;state[&#x27;messages&#x27;][-1].content&#125;&quot;)</span><br><span class="line">        return None</span><br></pre></td></tr></table></figure>
+<h4 id="自定义状态模式"><strong>自定义状态模式</strong></h4>
+<p>中间件可以使用自定义属性扩展代理的状态，这使得中间件能够：</p>
+<ul>
+<li><strong>跟踪执行过程中的状态</strong>：在生命周期中保持计数、标记和其他值的正常运行</li>
+<li><strong>在中间件之间共享数据</strong>：在不同hook中间件之间传递数据</li>
+<li><strong>应用横切关注点</strong>：不修改agent核心逻辑的情况下添加例如速率限制、情况追踪、用户上下文或审查日志等功能</li>
+<li><strong>做出条件决策</strong>：利用累计状态确定继续执行、跳转不同节点还是动态地修改行为</li>
+</ul>
+<h4 id="执行命令"><strong>执行命令</strong></h4>
+<p>使用多个中间件时，其运行如下：</p>
+<p><strong>Before hooks run in order:</strong></p>
+<ol>
+<li><code>middleware1.before_agent()</code></li>
+<li><code>middleware2.before_agent()</code></li>
+<li><code>middleware3.before_agent()</code></li>
+</ol>
+<p><strong>Agent loop starts</strong></p>
+<ol start="4">
+<li><code>middleware1.before_model()</code></li>
+<li><code>middleware2.before_model()</code></li>
+<li><code>middleware3.before_model()</code></li>
+</ol>
+<p><strong>Wrap hooks nest like function calls:</strong></p>
+<ol start="7">
+<li><code>middleware1.wrap_model_call()</code> → <code>middleware2.wrap_model_call()</code> → <code>middleware3.wrap_model_call()</code> → model</li>
+</ol>
+<p><strong>After hooks run in reverse order:</strong></p>
+<ol start="8">
+<li><code>middleware3.after_model()</code></li>
+<li><code>middleware2.after_model()</code></li>
+<li><code>middleware1.after_model()</code></li>
+</ol>
+<p><strong>Agent loop ends</strong></p>
+<ol start="11">
+<li><code>middleware3.after_agent()</code></li>
+<li><code>middleware2.after_agent()</code></li>
+<li><code>middleware1.after_agent()</code></li>
+</ol>
+<h4 id="Agent-jumps"><strong>Agent jumps</strong></h4>
+<p>为了提前结束中间件的运行，可以通过<code>@hook_config</code>添加一个伴随着<code>jump_to</code>的字典，可选jump标签有下：</p>
+<ul>
+<li>'end'：跳转到运行结束后（或第一个<code>after_agent</code>hook后）</li>
+<li>'tools'：跳转工具节点</li>
+<li>'model'：跳转model节点（或第一个<code>before_model</code>hook之后）</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">@after_model</span><br><span class="line">@hook_config(can_jump_to=[&quot;end&quot;])</span><br><span class="line">def check_for_blocked(state: AgentState, runtime: Runtime) -&gt; dict[str, Any] | None:</span><br><span class="line">    last_message = state[&quot;messages&quot;][-1]</span><br><span class="line">    if &quot;BLOCKED&quot; in last_message.content:</span><br><span class="line">        return &#123;</span><br><span class="line">            &quot;messages&quot;: [AIMessage(&quot;I cannot respond to that request.&quot;)],</span><br><span class="line">            &quot;jump_to&quot;: &quot;end&quot;</span><br><span class="line">        &#125;</span><br><span class="line">    return None</span><br></pre></td></tr></table></figure>
+<h4 id="中间件规范"><strong>中间件规范</strong></h4>
+<ol>
+<li>保持<strong>中间件的专注</strong>，每个中间件都做好一件事</li>
+<li>优雅地<strong>处理错误</strong>，不要让中间件错误导致代理崩溃</li>
+<li>使用<strong>合适的hook类型</strong>：</li>
+</ol>
+<ul>
+<li>用于顺序逻辑（日志记录、验证）的节点式</li>
+<li>控制流（重试、回退、缓存）的包装式</li>
+</ul>
+<ol start="4">
+<li>清楚的<strong>记录所有自定义状态</strong></li>
+<li>在集成之前，<strong>对中间件进行独立的单元测试</strong></li>
+<li>考虑执行顺序，将<strong>关键的中间件放在列表的最前面</strong></li>
+<li>尽可能<strong>使用内置中间件</strong></li>
+</ol>
+<h4 id="中间件的预定义参数"><strong>中间件的预定义参数</strong></h4>
+<ul>
+<li><strong><code>RunInput</code> / <code>Messages</code></strong>:
+<ul>
+<li><em>Definition</em>: The list of chat messages (Human, AI, System) being sent to the agent.</li>
+<li><em>Action</em>: You can modify, add, or remove messages here. For example, injecting a system prompt dynamically.</li>
+</ul>
+</li>
+<li><strong><code>ToolCalls</code></strong>:
+<ul>
+<li><em>Definition</em>: Requests made by the LLM to execute a specific tool (function).</li>
+<li><em>Action</em>: You can validate arguments, mock a response, or block a tool call if it looks dangerous.</li>
+</ul>
+</li>
+<li><strong><code>Context</code></strong> (or <code>Runtime</code>):
+<ul>
+<li><em>Definition</em>: A dictionary-like object storing state information throughout the agent's execution.</li>
+<li><em>Action</em>: Middleware can read/write data here to share information between different steps of the agent's workflow without passing it explicitly in the chat.</li>
+</ul>
+</li>
+</ul>
+<h2 id="Fronted"><strong>Fronted</strong></h2>
+<p><strong>概述</strong>：为使用该工具创建的代理构建丰富的交互式前端。这些模式涵盖了从基本信息渲染到高级工作流程的所有内容’</p>
+<h3 id="体系架构"><strong>体系架构</strong></h3>
+<p>通用架构：<code>creatAgent</code>后端通过hook将状态流式传输到<code>useStream</code>前端。
+后端<code>creatAgent</code>生成编译后的LangGraph图，并提供流式API。前端的<code>userStream</code>hook连接到该API，并提供响应式状态，可以通过任何框架渲染这些状态。</p>
+<p><code>userStream</code>适用于React、Vue、Svelte和Angular</p>
+<h2 id="Guardrails">Guardrails</h2>
+<p><strong>概述</strong>：防护机制通过在代理执行的关键节点验证和过滤内容，帮助构建安全合规的AI应用，可以检测敏感信息、强制执行内容策略、验证输出，并在不安全行为造成问题前阻止。</p>
+<h3 id="两种互补的实现防护措施的方法："><strong>两种互补的实现防护措施的方法</strong>：</h3>
+<ul>
+<li><strong>确定性护栏</strong>：<strong>基于规范逻辑的验证</strong>（例如正则、关键词匹配）。快速、结果可预测且成本高，但细微处理相对差</li>
+<li><strong>基于模型的护栏</strong>：<strong>使用LLM或分类器</strong>评估具有语义理解的内容。可捕捉到规则无法发现的细微问题，但速度较慢且成本更高</li>
+</ul>
+<h3 id="Built-in（内置）gurdrails"><strong>Built-in（内置）gurdrails</strong></h3>
+<p><strong>1.Pll dection</strong>
+LangChain提供了预定义的中间件以在交互中查看和提交个人认证信息。这个中间件可以查看正常的PLL类型（例如email、IP addresses）</p>
+<p>对于医疗保健、金融等有合规性要求的应用、需要清理日志的客户服务代理以及处理敏感用户数据的任何应用都很有帮助。</p>
+<p><strong>PII 中间件支持多种处理检测到的 PII 的策略：</strong></p>
+<table>
+<thead>
+<tr>
+<th>战略</th>
+<th>描述</th>
+<th>例子</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>redact</code></td>
+<td>替换为<code>[REDACTED_{PII_TYPE}]</code></td>
+<td><code>[REDACTED_EMAIL]</code></td>
+</tr>
+<tr>
+<td><code>mask</code></td>
+<td>部分模糊不清（例如，最后 4 位数字）</td>
+<td><code>****-****-****-1234</code></td>
+</tr>
+<tr>
+<td><code>hash</code></td>
+<td>替换为确定性哈希</td>
+<td><code>a8f5f167...</code></td>
+</tr>
+<tr>
+<td><code>block</code></td>
+<td>检测到异常时抛出异常</td>
+<td>抛出错误</td>
+</tr>
+</tbody>
+</table>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"> # Redact emails in user input before sending to model</span><br><span class="line"> PIIMiddleware(</span><br><span class="line">	&quot;email&quot;,</span><br><span class="line">	strategy=&quot;redact&quot;,</span><br><span class="line">	apply_to_input=True,</span><br><span class="line">),</span><br><span class="line"># Mask credit cards in user input</span><br><span class="line">PIIMiddleware(</span><br><span class="line">	&quot;credit_card&quot;,</span><br><span class="line">	strategy=&quot;mask&quot;,</span><br><span class="line">	apply_to_input=True,</span><br><span class="line">),</span><br><span class="line"># Block API keys - raise error if detected</span><br><span class="line">PIIMiddleware(</span><br><span class="line">	&quot;api_key&quot;,</span><br><span class="line">	detector=r&quot;sk-[a-zA-Z0-9]&#123;32&#125;&quot;,</span><br><span class="line">	strategy=&quot;block&quot;,</span><br><span class="line">	apply_to_input=True,</span><br><span class="line">),</span><br></pre></td></tr></table></figure>
+<p><strong>内置PLL类型和配置</strong>：</p>
+<ul>
+<li>email</li>
+<li>credit_card</li>
+<li>ip</li>
+<li>mac_addresss</li>
+<li>url</li>
+</ul>
+<p><strong>配置选项</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>范围</th>
+<th>描述</th>
+<th>默认</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>pii_type</code></td>
+<td>要检测的个人身份信息类型（内置或自定义）</td>
+<td>必需的</td>
+</tr>
+<tr>
+<td><code>strategy</code></td>
+<td>如何处理检测到的个人身份信息（<code>&quot;block&quot;</code>，，，<code>&quot;redact&quot;</code>）<code>&quot;mask&quot;``&quot;hash&quot;</code></td>
+<td><code>&quot;redact&quot;</code></td>
+</tr>
+<tr>
+<td><code>detector</code></td>
+<td>自定义检测器函数或正则表达式模式</td>
+<td><code>None</code>（使用内置函数）</td>
+</tr>
+<tr>
+<td><code>apply_to_input</code></td>
+<td>在模型调用之前检查用户消息</td>
+<td><code>True</code></td>
+</tr>
+<tr>
+<td><code>apply_to_output</code></td>
+<td>模型调用后检查 AI 消息</td>
+<td><code>False</code></td>
+</tr>
+<tr>
+<td><code>apply_to_tool_results</code></td>
+<td>执行后检查工具结果消息</td>
+<td><code>False</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="Human-in-the-loop（人机交互）"><strong>Human-in-the-loop（人机交互）</strong></h3>
 
                 
                 <p class="end">__END__</p>
@@ -591,9 +809,9 @@ middleware=[]     //注册中间件<br>
                         
                             <a href="/tags/web/">web</a>
                         
-                            <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%BF%9B%E9%98%B6/">计算机进阶</a>
-                        
                             <a href="/tags/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/">人工智能</a>
+                        
+                            <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%BF%9B%E9%98%B6/">计算机进阶</a>
                         
                     </div>
                 
