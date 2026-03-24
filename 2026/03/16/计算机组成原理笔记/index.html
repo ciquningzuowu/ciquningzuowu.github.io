@@ -76,58 +76,21 @@
         <div id="article">
             <div class="toc"></div>
             <div class="article-body">
-                <p><strong>概述图：</strong>
-<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/20260316152615889.png" alt=""></p>
+                <p><a target="_blank" rel="noopener" href="https://blog.csdn.net/haojie_duan/article/details/112739522?spm=1001.2014.3001.5501">csdn原文</a></p>
 <h2 id="一、概论">一、概论</h2>
-<h3 id="1-计算机系统的组成"><strong>1.计算机系统的组成</strong></h3>
-<p>早期的冯.诺依曼机体系：</p>
-<ul>
-<li>硬件系统由<strong>存储器</strong>，<strong>运算器</strong>，<strong>控制器</strong>，<strong>输出设备</strong>，<strong>输入设备</strong>组成。</li>
-<li>指令与数据以同等地位存于存储器，可按照地址访问</li>
-<li>指令和数据用二进制表示</li>
-<li>指令由操作码和地址码组成</li>
-<li>存储程序</li>
-<li>以运算器为中心</li>
-</ul>
-<h2 id="二、计算机的功能部件"><strong>二、计算机的功能部件</strong></h2>
-<h3 id="1-硬件"><strong>1.硬件</strong></h3>
-<p><img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/20260316153251886.png" alt="">
-输入输出设备不多记录，存储器分为<strong>主存储器</strong>和<strong>辅助存储器</strong>，区分处为<strong>是否能被CPU直接访问</strong>。辅助存储器的内容需要淡入主存储器中才能被CPU访问。
-主存储器的工作方式是<strong>按存储单元</strong>的地址进行存取，称为<strong>内容寻址的存储器</strong>。
-<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/20260316153931447.png" alt=""></p>
-<p><strong>控制器</strong>是计算机的指挥中心，现代计算机将运算器和控制器集成到一个芯片，即为中央处理器CPU。有程序计数器（CU），指令寄存器（IR），控制单元（CU）。
-<img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/20260316154154646.png" alt="">
-一般将<strong>运算器</strong>和<strong>控制器</strong>集成到同一个芯片上，称为中央处理器(CPU)。CPU和主存储器共同构成主机，而除主机外的其他硬件装置(外存、I/O设备等)统称为外部设备，简称外设。CPU与主存之间通过一组总线相连，总线中有地址、控制、和数据三组信号线</p>
-<h3 id="2-软件"><strong>2.软件</strong></h3>
-<ol>
-<li>计算机软件一般分为系统软件和应用软件。</li>
-</ol>
-<ul>
-<li>系统软件包括操作系统、数据库管理系统、语言处理系统（如编译器），分布式软件系统、网络软件系统、标准库系统、服务性系统。</li>
-<li>应用软件包括葛铮科学计算类程序、工程设计类程序，数据统计与处理程序</li>
-</ul>
-<ol start="2">
-<li>三个级别的语言
-（1）机器语言：二进制代码
-（2）汇编语言：英文单词以及缩写代替二级制代码，例如cmd
-（3）高级语言：c、c++、java等
-高级语言转换到汇编语言的过程叫做<strong>编译</strong>，由汇编语言转换到机器语言叫做<strong>汇编</strong>，边翻译边执行的叫做<strong>解析</strong>。</li>
-</ol>
-<h3 id="3-计算机的工作过程"><strong>3.计算机的工作过程</strong></h3>
-<ul>
-<li><strong>IR</strong>存放当下<strong>欲执行的指令</strong>；<strong>PC</strong>存放<strong>下一条指令的地址</strong></li>
-<li>MAR存放<strong>欲访问的存储单元地址</strong>；MDR存放<strong>从存储单元取来的数据</strong>。</li>
-<li>地址译码器是<strong>主存的构成部分，不属于CPU</strong>；地址寄存器虽然一般属于主存，但是现代计算机中绝大多数CPU内集成了地址寄存器。</li>
-<li>关于CPU存取速度的比较：寄存器（CPU内部）&gt; Cache(高速的SRAM) &gt; 内存 （SDRAM）</li>
-<li>首先PC将指令地址发送给MAR，MAR根据地址在存储体中找到指令数据存放在MDR中，之后MDR将指令存放在IR中，取指令结束，之后指令中的操作码进入CU中，地址码重复上述取指令步骤，将数据发送到ACC中，执行指令结束。注意区分指令和数据的依据:指令周期的不同阶段</li>
-</ul>
-<h3 id="4-计算机性能指标"><strong>4.计算机性能指标</strong></h3>
-<ul>
-<li><strong>机器字长</strong> 计算机能直接处理的二进制数据的位数，机器字长一般等于内部寄存器的大小，它决定了计算机的运算精度。</li>
-<li><strong>指令字长</strong> 一个指令字中包含的二进制代码的位数。</li>
-<li><strong>存储字长</strong> 一个存储单元存储的二进制代码的长度。等于MDR的位数， 它们都必须是字节的整数倍。</li>
-<li><strong>数据字长</strong> 数据总线一次能传送信息的位数，它可以不等于MDR的位数。</li>
-</ul>
+<p><img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/20260316152615889.png" alt=""></p>
+<h2 id="二、总线">二、总线</h2>
+<p><img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/20260323145633543.png" alt=""></p>
+<h2 id="三、存储系统">三、存储系统</h2>
+<p><img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/20260323153023104.png" alt=""></p>
+<h2 id="四、输入输出系统">四、输入输出系统</h2>
+<p><img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/20260323153136060.png" alt=""></p>
+<h2 id="五、计算机的运算">五、计算机的运算</h2>
+<p><img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/20260323153230492.png" alt=""></p>
+<h2 id="六、指令系统">六、指令系统</h2>
+<p><img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/20260323153311877.png" alt=""></p>
+<h2 id="七、中央处理器（CPU与控制单元）">七、中央处理器（CPU与控制单元）</h2>
+<p><img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/20260323153408620.png" alt=""></p>
 
                 
                 <p class="end">__END__</p>

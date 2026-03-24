@@ -9,7 +9,7 @@
     <meta http-equiv="Cache-Control" content="no-siteapp">
     <title>
         
-            归档
+            智能体工程笔记
         
     </title>
     <link rel="shortcut icon" href="#"/>
@@ -34,15 +34,38 @@
 <meta name="generator" content="Hexo 8.1.1"></head>
 <body>
     <a id="cover"></a>
-    <link type="text/css" rel="stylesheet" href="/css/archive.css">
+    <link type="text/css" rel="stylesheet" href="/css/post.css">
 <div id="header" class="header">
     <div class="vertical">
         <div class="inner">
             
-                <h1 class="header-subtitle">归档</h1>
+                <h1 class="header-subtitle">智能体工程笔记</h1>
                 <div class="header-subinfo">
-                    <p class="article-info-text Chinese"></p>
-                    <p class="article-info-text English"></p>                  
+                    <p class="article-info-text">
+                        <span>
+                            <i class="iconfont icon-time"></i> 发表时间：2026-03-22
+                        </span>
+                        
+                            
+                                <span id="/2026/03/22/智能体工程笔记/" class="leancloud_visitors" data-flag-title="智能体工程笔记">
+                                    <i class="iconfont icon-browse"></i> 阅读：<sapn class="leancloud-visitors-count"></span>
+                                </span>
+                            
+                            
+                                <span>
+                                    <i class="iconfont icon-interactive"></i> 评论：<span class="valine-comment-count" data-xid="/2026/03/22/智能体工程笔记/"></span>
+                                </span>
+                              
+                        
+                    </p>
+                    
+                    
+                        
+                            <span class="tag-color">人工智能</span>
+                        
+                            <span class="tag-color">计算机进阶</span>
+                        
+                    
                 </div>
             
         </div>
@@ -51,87 +74,90 @@
 </div>
 <div id="container">
     
-        
-            <!-- 归档页面、分类归档页面、标签归档页面 -->
-            <div class="articles">
-                <div class="articles-wrap">
-                    <span class="archive-move-on"></span>
-                    <span class="archive-counter">
+        <!-- 文章页面 -->
+        <div id="article">
+            <div class="toc"></div>
+            <div class="article-body">
+                <p><a target="_blank" rel="noopener" href="https://www.datawhale.cn/learn/content">原文网址</a></p>
+<h2 id="导论摘取">导论摘取</h2>
+<p><strong>提示词的本质</strong>：大语言模型本质上是概率预测机，生成式思维则是让我们学会用逻辑结构去&quot;收敛&quot;概率，通过提供清晰地大纲和约束缩减模型声测会给你的搜索空间，强制其在高质量的通道中运行，从而避免“幻觉和平庸输出”</p>
+<p><strong>锯齿状技术前沿</strong>：AI的能力边界并不规则，它可能在在一些人类认知为极难的任务上表现良好，超出专家水平，也可能在某些人类认为简单的任务上效果极差。需要甄别当下任务是处于ai能力前沿内部（高自动化）还是外部（必须由人类主导）</p>
+<p><strong>人机协作的四个阶段</strong>：</p>
+<ol>
+<li><strong>指令执行</strong>：输入明确指令与执行单一操作</li>
+<li><strong>辅助增强</strong>：主导工作流与补全/建议</li>
+<li><strong>协作共创</strong>：定义标准/审核与多轮对话/创意生成</li>
+<li><strong>智能编排</strong>：设定目标/验收结果与自主规划/工具调用</li>
+</ol>
+<p><strong>认知卸载与批判性思维的悖论</strong>：当AI能给出一个看似完美的答案时，学习者可能倾向于跳过验证与深思的环节，直接采纳。因此需要通过多模型交叉验证、溯源检查和逻辑一致性进行有效验证</p>
+<p><strong>传统知识工作的瓶颈</strong>：传统知识管理依靠静态文档库，知识固话在文档中，维护和更新需要巨大成本，因此往往落后于业务现实；传统检索依赖关键词匹配，且大量隐性知识（专家经验、直觉）无法有效文档化和检索；不同部门、系统间的数据难以互通，存在孤岛现象。而相比之下，生成式AI通过动态的知识管理，将“搜索-阅读-综合”的繁琐过程压缩到一次“提问-获取”的交互</p>
+<h2 id="一、从自然语言的混沌到认知工程的秩序">一、从自然语言的混沌到认知工程的秩序</h2>
+<p>大语言模型本质上是一个给予概率的下一次预测引擎，当我们向模型输入一个模糊指令时，实际是在近乎无限的解空间盲目采样。</p>
+<p>“<strong>结构化提示工程</strong>”本质上是通过引入特定的句法结构、逻辑约束、和认知框架使模型的概率分布向我们需要的高价值区域坍塌。</p>
+<p><strong>本章内容综述</strong>：</p>
+<ul>
+<li>并非写好依据Prompt而是设计一条完整的生成流程</li>
+<li>生成结果的稳定性来源于流程结构而非模型本身</li>
+<li>将任务拆解为<strong>输入-生成-评估-修订</strong></li>
+</ul>
+<p><strong>交互机制</strong>：
+注重甄别任务的能力，对于位于模型能力前沿内部的任务，，交互重点聚焦于指令的清晰度和格式规范；对于外部的任务，则转向过程控制，通过拆解任务、强制烦死以及多路径推理引导模型。</p>
+
+                
+                <p class="end">__END__</p>
+            </div>
+            <div class="article-footer">
+                <div class="suffix-box">
+    <div class="suffix-box-left">
+        <img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/星锑(1).jpg" alt="作吾">
+    </div>
+    <div class="suffix-box-right">
+        <span class="suffix-box-title">文章作者：</span>作吾
+        <br>
+        <span class="suffix-box-title">文章出处：</span><a href="/2026/03/22/%E6%99%BA%E8%83%BD%E4%BD%93%E5%B7%A5%E7%A8%8B%E7%AC%94%E8%AE%B0/" target="_blank">智能体工程笔记</a>
+        <br>
+        <span class="suffix-box-title">作者签名：</span>死人一个，在试图活着
+        <br>
+        <span class="suffix-box-title">关于主题：</span><a href="https://github.com/first19326/Hexo-LiveForCode" target="_blank">Hexo - Live For Code</a>
+        <br>
+        <span class="suffix-box-title">版权声明：</span>文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" title="BY-NC-SA" target="_blank">BY-NC-SA</a> 许可协议，转载请注明出处
+        <br>
+    </div>
+    <div style="clear: both;"></div>
+</div>
+                
+                
+                    <div class="tag">
+                        标签：
                         
-                            目前共计 29 篇日志，继续加油！
+                            <a href="/tags/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/">人工智能</a>
                         
-                    </span>
-                    
-                    
+                            <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%BF%9B%E9%98%B6/">计算机进阶</a>
                         
-                            <div class="archive-title">
-                                <h2 class="archive-year">2026</h2>
-                            </div>
-                            
-                           
-                        <div class="article">
-                            <div class="article-header">
-                                <h1 class="article-title"><a href="/2026/02/18/fastapi%E9%A1%B9%E7%9B%AE%E6%A0%87%E5%87%86/"><span></span></a></h1>
-                                <div class="article-meta">
-                                    <span class="article-time">02-18</span>
-                                </div>
-                            </div>
-                        </div>
+                    </div>
+                
+                <div class="article-prev-next">
                     
-                           
-                        <div class="article">
-                            <div class="article-header">
-                                <h1 class="article-title"><a href="/2026/02/08/LangChain%E3%80%90%E8%A7%86%E9%A2%91%E7%AC%94%E8%AE%B0%E3%80%91/"><span>LangChain【视频笔记】</span></a></h1>
-                                <div class="article-meta">
-                                    <span class="article-time">02-08</span>
-                                </div>
-                            </div>
-                        </div>
+                        <a href="/2026/03/23/%7B1CE87452-8F0A-4C6A-8295-B2057F346E79%7D.png/" class="prev-prefix">« </a> 上一篇：    <a href="/2026/03/23/%7B1CE87452-8F0A-4C6A-8295-B2057F346E79%7D.png/" title="发布于 2026-03-23 11:35"></a>
+                        <br>
                     
-                           
-                        <div class="article">
-                            <div class="article-header">
-                                <h1 class="article-title"><a href="/2026/02/05/sql%E8%AF%AD%E5%8F%A5/"><span>sql语句</span></a></h1>
-                                <div class="article-meta">
-                                    <span class="article-time">02-05</span>
-                                </div>
-                            </div>
-                        </div>
                     
-                           
-                        <div class="article">
-                            <div class="article-header">
-                                <h1 class="article-title"><a href="/2026/02/01/FastAPI%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"><span>FastAPI学习笔记</span></a></h1>
-                                <div class="article-meta">
-                                    <span class="article-time">02-01</span>
-                                </div>
-                            </div>
-                        </div>
-                    
-                           
-                        <div class="article">
-                            <div class="article-header">
-                                <h1 class="article-title"><a href="/2026/02/01/%E5%90%84%E7%A7%8D%E8%B5%84%E6%BA%90%E7%BD%91%E7%AB%99/"><span>各种资源网站</span></a></h1>
-                                <div class="article-meta">
-                                    <span class="article-time">02-01</span>
-                                </div>
-                            </div>
-                        </div>
-                    
-                           
-                        <div class="article">
-                            <div class="article-header">
-                                <h1 class="article-title"><a href="/2026/02/01/%E5%88%BB%E4%B8%8B%E7%9A%84%E8%AF%9D%E8%AF%AD%EF%BC%8C%E6%B5%AE%E4%B8%8A%E5%BF%83%E5%A4%B4%EF%BC%8C%E5%B0%86%E6%88%91%E7%9A%84%E6%84%9A%E8%A0%A2%EF%BC%8C%E5%BC%83%E7%BD%AE%E4%BA%8E%E6%AD%A4%E3%80%82/"><span>刻下的话语，浮上心头，将我的愚蠢，弃置于此。</span></a></h1>
-                                <div class="article-meta">
-                                    <span class="article-time">02-01</span>
-                                </div>
-                            </div>
-                        </div>
+                        <a href="/2026/03/19/2026-03-19/" class="next-prefix">» </a> 下一篇：    <a href="/2026/03/19/2026-03-19/" title="发布于 2026-03-19 09:54"></a>
                     
                 </div>
             </div>
             
+    <div class="article-comments">
         
+            <div class="comments-title">
+                评论列表
+            </div>
+        
+        <div class="comments-content"></div>
+    </div>
+    
+ 
+        </div>
     
 </div>
     <div id="footer">
@@ -169,7 +195,7 @@
                     
                         <li class=""><a href="/tag" class="" target="_self"><span class="iconfont icon-discount-fill"></span>标签</a></li>
                     
-                        <li class=" active "><a href="/archive" class="" target="_self"><span class="iconfont icon-calendar-fill"></span>归档</a></li>
+                        <li class=""><a href="/archive" class="" target="_self"><span class="iconfont icon-calendar-fill"></span>归档</a></li>
                     
                         <li class=""><a href="/donate" class="" target="_self"><span class="iconfont icon-heart-fill"></span>赞赏</a></li>
                     
