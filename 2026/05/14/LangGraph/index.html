@@ -1,0 +1,1574 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, shrink-to-fit=no">
+    <meta name="referrer" content="origin">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="Cache-Control" content="no-transform">
+    <meta http-equiv="Cache-Control" content="no-siteapp">
+    <title>
+        
+            
+        
+    </title>
+    <link rel="shortcut icon" href="#"/>
+    <!-- 字体预连接加速 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- 只加载必要字体 -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Playball&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <link type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/base.min.css">
+    <link type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/code.min.css">
+    <link rel="stylesheet" href="/css/custom.css">
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/js/jquery-3.4.1.min.js"></script>
+    <!-- 预加载关键JS -->
+    <link rel="preload" href="/js/index.js" as="script">
+<meta name="generator" content="Hexo 8.1.1"></head>
+<body>
+    <div id="page-cover"></div>
+
+    <link type="text/css" rel="stylesheet" href="/css/post.css">
+<div id="header" class="header">
+    <div class="vertical">
+        <div class="inner">
+            
+                <h1 class="header-subtitle"></h1>
+                <div class="header-subinfo">
+                    <p class="article-info-text">
+                        <span>
+                            <i class="iconfont icon-time"></i> 发表时间：2026-05-14
+                        </span>
+                    </p>
+                    
+                        
+                            <span class="tag-color">人工智能</span>
+                        
+                            <span class="tag-color">python</span>
+                        
+                    
+                </div>
+            
+        </div>
+    </div>
+    
+</div>
+
+<div id="container">
+    
+        <!-- 文章页面 -->
+        <div id="article">
+            <div class="toc"></div>
+            <div class="article-body">
+                <h2 id="强化内容">强化内容</h2>
+<p>持久执行、流式传输、人机交互</p>
+<ul>
+<li>langchain是代理框架：为模型、工具和代理循环提供抽象和集成</li>
+<li>langgraph是编排运行状态：持久执行、流式传输、人机交互、持久化</li>
+</ul>
+<h2 id="核心优势">核心优势</h2>
+<ul>
+<li>持久执行</li>
+<li>人机交互</li>
+<li>综合记忆</li>
+<li>langsmith调试</li>
+<li>生产就绪部署</li>
+</ul>
+<h2 id="两个基础体系">两个基础体系</h2>
+<h3 id="1-使用Graph-API">1.使用Graph API</h3>
+<p>定义模型节点与工具节点以及边函数，创建图对象，将前述对象全部注入后，调用.compile()方法将静态图转化为实际执行对象。全局通过state进行状态传递</p>
+<h3 id="2-使用函数式API">2.使用函数式API</h3>
+<p>函数式api中无需显示定义节点和边只需要在单个函数汇总编写标准控制流逻辑接口</p>
+<p>使用@task装饰器创建节点，使用@enterpoint创建代理（内部逻辑为接收模型返回的内容，然后进行模型回复中要进行的工具调用，并将工具结果与历史信息一并再次发送给模型，循环直至返回的xmessage里不再有工具调用请求，将所有的内容返回</p>
+<h2 id="LangGraph中的思考">LangGraph中的思考</h2>
+<p>用langgraph构建智能体时，首先将其划分为不同的节点，然后描述每个节点的决策和状态转还好你，最后，通过一个共享的可被所以节点读写的state连接不同的节点</p>
+<p>以下为大致的构建流程：</p>
+<h3 id="1-绘制工作流图">1.绘制工作流图</h3>
+<p>区分每个步骤，每一步都是一个节点，并简述这些步骤相互之间连接方式</p>
+<h3 id="2-确定每一步需要做什么">2.确定每一步需要做什么</h3>
+<p>确定每个节点进行的操作类型以及需要的上下文：</p>
+<ul>
+<li>LLM步骤：需要进行理解，分析，生成或进行推理决定</li>
+<li>Data步骤：需要从外部源获取信息</li>
+<li>Acction步骤：需要执行外部操作</li>
+<li>User input步骤：需要用户接入</li>
+</ul>
+<h3 id="3-设计state">3.设计state</h3>
+<p>state是用于追溯记忆的关键，需要存入state的信息可通过以下两个问题判断：</p>
+<ul>
+<li>是否该信息需要跨步骤存在</li>
+<li>能否从其他信息推导出它，能则不需要存储</li>
+</ul>
+<p>state保存的信息应尽量原始，而不是格式化后的文本：</p>
+<ul>
+<li>不同节点可以对同一个原始数据进行更适合该节点的格式化</li>
+<li>可以通过原始信息进行更好的调试</li>
+</ul>
+<h3 id="4-构建节点">4.构建节点</h3>
+<p>LangGraph中的一个节点实际就是一个获取当前state并返回更新后的state的python函数</p>
+<p>处理错误：</p>
+<table>
+<thead>
+<tr>
+<th>错误类型</th>
+<th>修理者</th>
+<th>策略</th>
+<th>使用情况</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>临时错误（网络问题、速率限制）</td>
+<td>系统自修复</td>
+<td>重试、重连接</td>
+<td></td>
+</tr>
+<tr>
+<td>LLM错误（工具失败、解析问题）</td>
+<td>LLM</td>
+<td>存储错误在state后返回</td>
+<td>LLM可以发现错误并调整</td>
+</tr>
+<tr>
+<td>用户可修正的错误（信息缺失、说明不清晰）</td>
+<td>使用者</td>
+<td>interrupt打断</td>
+<td></td>
+</tr>
+<tr>
+<td>重试后可恢复的问题</td>
+<td>开发者</td>
+<td>error_handler</td>
+<td>重试次数用尽后，运行恢复功能，更新状态并路由到补偿分支</td>
+</tr>
+<tr>
+<td>意外错误</td>
+<td>开发者</td>
+<td>向上冒泡</td>
+<td>调试未知问题</td>
+</tr>
+</tbody>
+</table>
+<h2 id="工作流和代理">工作流和代理</h2>
+<p>设置工作或代理需要模型支持结构化输出和工具调用的聊天模型。</p>
+<h3 id="工作流的实现">工作流的实现</h3>
+<p>langgraph的工作流有图形api和函数api两种实现。</p>
+<ol>
+<li>图形api实现主要是通过创建图、创建节点、创建关系、实例化图</li>
+<li>函数api实现主要与正常语句在语法上没有太大差别，主要是通过装饰器@task和装饰器@entrypoint进行异步并行自动编排和断点续传（当工作流因为崩溃、人工审核等中断后再次启动时，会依据保存在checkpointer中的状态在断掉的地方继续执行）。被修饰的函数会成为类似新进程的不会阻塞主进程的对象，需要调用.result方法才能获取执行结果</li>
+</ol>
+<h3 id="工作流的并行化（多节点向单节点输入）">工作流的并行化（多节点向单节点输入）</h3>
+<ol>
+<li>图形化api的工作流并行化主要是通过多个节点与同一个节点创建edge实现</li>
+<li>函数式api的工作流并行是通过在@entrypoint中不调用.resullt方法阻塞等待实现的</li>
+</ol>
+<h3 id="路由（单节点向多节点输入）">路由（单节点向多节点输入）</h3>
+<ol>
+<li>图形化api的路由实现并不复杂，只是通过add_conditional_edges方法擦混关键一对多关系，传入始节点、路由决策器函数（通过state进行判断，返回代表下一步方向的字符串）、路由节点的字典（将路由函数的返回内容映射到具体的节点）</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line">def llm_call_router(state: State):</span><br><span class="line">    &quot;&quot;&quot;Route the input to the appropriate node&quot;&quot;&quot;</span><br><span class="line"></span><br><span class="line">    # Run the augmented LLM with structured output to serve as routing logic</span><br><span class="line">    decision = router.invoke(</span><br><span class="line">        [</span><br><span class="line">            SystemMessage(</span><br><span class="line">                content=&quot;Route the input to story, joke, or poem based on the user&#x27;s request.&quot;</span><br><span class="line">            ),</span><br><span class="line">            HumanMessage(content=state[&quot;input&quot;]),</span><br><span class="line">        ]</span><br><span class="line">    )</span><br><span class="line"></span><br><span class="line">    return &#123;&quot;decision&quot;: decision.step&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"># Conditional edge function to route to the appropriate node</span><br><span class="line">def route_decision(state: State):</span><br><span class="line">    # Return the node name you want to visit next</span><br><span class="line">    if state[&quot;decision&quot;] == &quot;story&quot;:</span><br><span class="line">        return &quot;llm_call_1&quot;</span><br><span class="line">    elif state[&quot;decision&quot;] == &quot;joke&quot;:</span><br><span class="line">        return &quot;llm_call_2&quot;</span><br><span class="line">    elif state[&quot;decision&quot;] == &quot;poem&quot;:</span><br><span class="line">        return &quot;llm_call_3&quot;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"># Build workflow</span><br><span class="line">router_builder = StateGraph(State)</span><br><span class="line"></span><br><span class="line"># Add nodes</span><br><span class="line">router_builder.add_node(&quot;llm_call_1&quot;, llm_call_1)</span><br><span class="line">router_builder.add_node(&quot;llm_call_2&quot;, llm_call_2)</span><br><span class="line">router_builder.add_node(&quot;llm_call_3&quot;, llm_call_3)</span><br><span class="line">router_builder.add_node(&quot;llm_call_router&quot;, llm_call_router)</span><br><span class="line"></span><br><span class="line"># Add edges to connect nodes</span><br><span class="line">router_builder.add_edge(START, &quot;llm_call_router&quot;)</span><br><span class="line">router_builder.add_conditional_edges(</span><br><span class="line">    &quot;llm_call_router&quot;,</span><br><span class="line">    route_decision,</span><br><span class="line">    &#123;  # Name returned by route_decision : Name of next node to visit</span><br><span class="line">        &quot;llm_call_1&quot;: &quot;llm_call_1&quot;,</span><br><span class="line">        &quot;llm_call_2&quot;: &quot;llm_call_2&quot;,</span><br><span class="line">        &quot;llm_call_3&quot;: &quot;llm_call_3&quot;,</span><br><span class="line">    &#125;,</span><br><span class="line">)</span><br><span class="line">router_builder.add_edge(&quot;llm_call_1&quot;, END)</span><br><span class="line">router_builder.add_edge(&quot;llm_call_2&quot;, END)</span><br><span class="line">router_builder.add_edge(&quot;llm_call_3&quot;, END)</span><br><span class="line"></span><br><span class="line"># Compile workflow</span><br><span class="line">router_workflow = router_builder.compile()</span><br><span class="line"></span><br><span class="line"># Show the workflow</span><br><span class="line">display(Image(router_workflow.get_graph().draw_mermaid_png()))</span><br><span class="line"></span><br><span class="line"># Invoke</span><br><span class="line">state = router_workflow.invoke(&#123;&quot;input&quot;: &quot;Write me a joke about cats&quot;&#125;)</span><br><span class="line">print(state[&quot;output&quot;])</span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>函数式api的路由功能实现也是通过编写一个路由决策函数，并在调用@task函数前使用决策函数进行判断，然后通过python的基础逻辑分支控制进行实现</li>
+</ol>
+<h3 id="动态创建节点">动态创建节点</h3>
+<p>依旧使用add_conditional_edges设置下一节点，通过决策器决策需要创建多少新的工作节点，使用send功能创建多个执行任务，langgraph会将任务转为具体节点，并在最后通过增量更新机制将多个节点的结果汇总</p>
+<h3 id="评估器-优化器">评估器-优化器</h3>
+<p>使用优化器审查评估其的输出结果，如果评估器或人工认为响应需要改进，则提交反馈并重新生成相应，重复循环直至生成可接受的响应。这是用于任务有特定成功标准、需要迭代才能满足标准的情况</p>
+<h3 id="工具节点">工具节点</h3>
+<p>langgraph有预构建的工具节点ToolNode，能够自动处理并行工具执行、错误处理和状态注入</p>
+<h2 id="能力">能力</h2>
+<h3 id="持久化">持久化</h3>
+<p>langgraph内置了持久层没见过图状态保存为检查点，执行的每一步会保存图状态的快照，并将其组织成线程，这可以有效支持人机协作、对话式记忆、时间旅行调试和容错执行。</p>
+<ul>
+<li>人机协同需要再经过人工处理后能以中断时状态恢复执行</li>
+<li>记忆</li>
+<li>时间旅行：重放之前的图执行过程以查看和调试特定的图步骤</li>
+<li>容错：若果场任务在一个或多个节点发生故障，可以从最后一个成功步骤重新开始执行</li>
+</ul>
+<h3 id="核心概念">核心概念</h3>
+<ol>
+<li>线程：checkpointer保存不同线程的state时需要一个线程id来区分state是属于哪一个线程，这通常需要通过在调用时设置一个包含线程id的config字典来实现</li>
+<li>checkpointer：线程中某超级步骤的state的快照，由StateSnapshot对象表示</li>
+<li>super-steps：
+<ul>
+<li>核心在于“全局同步”与“版本更新”。每次检测阶段会检测所有满足运行条件的节点进行活化变为actie态，本次的所有运行节点即为一个超级步，langgraph会约束同一超级步内的所有节点的进程结束再结束本个超级步，然后重复检索所有已经满足运行条件的节点。</li>
+<li>如果某些节点的前置条件部分满足，则会处于等待状态（因此如果前置条件节点因为一些原因直接结束，如直接运行到end，则会导致该节点陷入死锁，所以需要确保一定会后传信息）。</li>
+<li>同一超级步内每个节点运行完时都会将结果写入checkpointer_writes表，这有助于当该超级步骤内的其他节点发生错误时已完成节点的结果不会丢失，再恢复时无需重新运行。</li>
+<li>超级步骤还会持久化节点的写入操作，这可以实现在故障时的容错，通过检索不完善的StateSnapshot，时间旅行即可只重新进行之未成功的任务</li>
+</ul>
+</li>
+<li>检查点命名空间：每个checkpointer都有一个命名空间字段，用于表示它属于哪个图或子图。
+<ul>
+<li>当命名空间为&quot;&quot;(空)时，说明它是属于最上层父图的checkpointer</li>
+<li>当期不为空时，格式为&quot;node_name:uuid&quot;,说明它是属于给定节点的子图，uuid则是用来唯一标识的（例如第几次调用等）使用|可以表示嵌套子图。</li>
+<li>通过RunableConfig的[&quot;configurable&quot;][&quot;checkpoint_ns&quot;]可以从节点内部访问命名空间</li>
+</ul>
+</li>
+<li>获取和更新状态：与已保存的图的state交互，需要通过线程标识符，通过graph.get_state(config)可以获取最新的节点的图state，这会与通过config中提供的线程id对应的最新的StateSnapshot对象（或者当提供了checkpointer的id时会直接返回与其关联的checkpointer）</li>
+</ol>
+<p>StateSnapshot字段：</p>
+<table>
+<thead>
+<tr>
+<th>field</th>
+<th>type</th>
+<th>description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>values</td>
+<td>dict</td>
+<td>checkpointer的state通道值</td>
+</tr>
+<tr>
+<td>next</td>
+<td>tuple</td>
+<td>下一个要执行的node，若为空则意味着已结束</td>
+</tr>
+<tr>
+<td>config</td>
+<td>dict</td>
+<td>包括thread_id,checkpoint_ns，checkpoint_id</td>
+</tr>
+<tr>
+<td>metadata</td>
+<td>dict</td>
+<td>执行的元数据，包括source（触发原因，包括input输入触发，loop循环触发，update人工干预更新触发），writes（节点输出表），step（超级步计数器）</td>
+</tr>
+<tr>
+<td>created_at</td>
+<td>str</td>
+<td>检查点的iso 8601时间戳</td>
+</tr>
+<tr>
+<td>parent_config</td>
+<td>dict|config</td>
+<td>前一个检查点的配置</td>
+</tr>
+<tr>
+<td>tasks</td>
+<td>tumple</td>
+<td>步骤要执行的任务的id，使用时为子图快照name</td>
+</tr>
+</tbody>
+</table>
+<h3 id="get-state-history">get state history</h3>
+<p>通过提供进程id和调用graph.get_state_history(config)可以获取图的完整的执行上下文历史，这会返回一个与提供的thread id对应的StateSnapshot列表对象（时间倒序排列）</p>
+<h3 id="重演">重演</h3>
+<p>从先前检查点的步骤再次执行。通过提供一个checkpoint_id来运行此checkpointer之后的node，跳过此检查点之前的node，</p>
+<h3 id="更新状态">更新状态</h3>
+<p>通过update_state方法可编辑state，这会创建一个包含更新值的新的checkpointer
+而不会修改原来的对象，这种修改方式是受归约函数约束的。</p>
+<p>通过制定as_node参数，可以让此次更新伪装为由某个节点发出的，这会影响下一步的行为</p>
+<h3 id="memory-store（长期记忆）">memory store（长期记忆）</h3>
+<ul>
+<li>state schema指定了在图的运行过程中会被填充的键值对，这在图的运行过程中可以传递信息，但是当需要跨thread传递信息时，则需要依靠store</li>
+<li>记忆通过元组划分命名空间，命名空间的长度和含义可以使任意的。</li>
+<li>使用store.put可以向命名空间存入记忆，需要提供命名空间（类似文件夹路径）、记忆的唯一标识（uuid）、记忆的内容三个参数</li>
+<li>使用store.search可以读取命名空间中的内容，该方法会返回指定命名空间下的内容列表</li>
+<li>命名空间下的每个记忆类型都是一个类，可以使用.dict方法进行访问，其字段包括value，key，namespace，created_at，updated_at</li>
+<li>使用list_namespace可以查找存在的命名空间，类似os.list，可通过前缀、后缀、目录深度三种方式查询</li>
+<li>store支持语义搜索，使用需要配置一个嵌入模型，指定需要嵌入的字段，然后即可在调用search时通过query参数实现语义查询</li>
+<li>在使用put存储记忆时可指定那些字段进行向量嵌入（向量嵌入是单个实体进行，而不是针对实体类型进行）</li>
+<li>langgraph-checkpoint-postgres为使用postgre数据库的checkpointer，包括PostgreSaver和AsyncPostgreSaver</li>
+<li>检查点接口：put（存储一次state），put_writes（记录不完整的临时改动），get_tumple（获取某次会话某刻的state），list（查看存储的state列表）</li>
+<li>序列化器：state中经常包含各种python对象（字典、列表、自定义dataclass、第三方库数据类型等），调用put存储是数据库并不能直接理解这些对象，序列化器可以将这些复杂的python数据打包成数据库能存储的统一格式（bytes），相应的，在使用get_tuple和list方法时也会自动解包这些bytes类型数据，将其还原为存储时的类型。默认的打包器为JsonPlllusSeriallizer。对于特殊的无法解析的特殊类型，可使用Python自带的pickle协议进行兜底打包，组织需要将打包器的pickle_fallback参数设置为True</li>
+<li>可以使用EncryptedSerializer.from_pycryptodome_aes序列化加密器对state进行静态加密（防止因数据库泄露导致数据泄露），使用方法为准备一个AES密匙环境变量LANGGRAPH_AES_KEY，序列化加密器会自动从环境变量读取该变量（或者手传key参数），然后将加密序列化器传递给checkpointer的serde参数，即可使所有使用.put传入的数据都会被自动加密</li>
+<li>序列化加密器的高级使用：可以通过LANGGRAPH_AES_JSON_KEYS环境变量配置对哪些json字段名进行加密</li>
+</ul>
+<h2 id="持久执行（Durable-Excution）">持久执行（Durable Excution）</h2>
+<p>本模块的持久执行不止意味记忆数据存储，还意味着进程中断后的无缝重新接续（这尤其体现在human-in-the-loop情景和长任务的interruption、error），通过保存已完成的任务，持久化执行使得一个进程可以直接从先前未进行的步骤重新开始（即使经过相当长的时间间隔后）</p>
+<p>langgraph内置的持久层为工作流提供持久执行，确保执行的每一步都被都会被持久化保存</p>
+<h3 id="Requirments">Requirments</h3>
+<ul>
+<li>在工作流中指定会保存工作流进程的checkpointer</li>
+<li>运行工作流式指定线程标识</li>
+</ul>
+<h3 id="确定性和一致性重放（Determinism-and-consistent-reply）">确定性和一致性重放（Determinism and consistent reply）</h3>
+<ul>
+<li>langgraph的接续并不是视频播放那样，在断点的代码部分继续进行，而是重放当前节点。所以需要将所有不确定性操作或应该避免次重复执行的操作封装在单独的task里以确保当工作流恢复执行时不会重复执行这些操作</li>
+<li>不确定操作举例：如果节点中有从数据库获取某个值，重新执行只会获取当前的正确值，但如果是获取一个随机数，第一遍时在断点之前给了一个随机数，第二遍又会给另一个随机数，对于用户，则是决断后原数据丢失，或者调用llm，llm的回答也具有随机性，随机操作如果重放会导致不同的结果</li>
+<li>避免重复执行操作举例：像是追加写入、删除等操作，如果出重复执行，会导致重复内容或操作对象已经无法进行操作等</li>
+<li>总结：保证当工作流失败进行重试时，效果与首次执行时相同</li>
+</ul>
+<h3 id="Durability-modes（持久模式）">Durability modes（持久模式）</h3>
+<p>Langgraph支持三种持久模式，可根据应用程序平衡性能和数据一致性。下为三种模式：</p>
+<ul>
+<li>exit：仅在图执行成功退出或认为中断时保存更改，这种模式对长时间运行的图能提供最佳性能，坏处是中间状态不会保存，无法从过程中的崩溃中回复</li>
+<li>async：执行下一步操作时异步进行持久化更改，这提供了良好的性能和持久性，但存在执行过程中崩溃则会无法写入刚刚完成的那一步检查点的风险（因为程序崩溃可能导致另一个异步写入上个节点状态的进程也崩溃）</li>
+<li>sync：langgraph在执行下一步之前同步持久化更改，代价是一定的开销</li>
+</ul>
+<h3 id="节点中使用任务（using-task-in-nodes）">节点中使用任务（using task in nodes）</h3>
+<p>如果一个节点包含多个操作，将每个操作转换为一个task比将操作重构为单独的节点更好，这可以保证前述的确定性与一致性，task对象的执行情况是会保存的</p>
+<h3 id="恢复工作流程（Resumeing-workflows）">恢复工作流程（Resumeing workflows）</h3>
+<ul>
+<li>可以使用interrupt函数暂停中断工作流然后发送Command对象来恢复执行</li>
+<li>发生异常后会自动从上次成功的checkpointer恢复工作流（需要提供线程标识符和None，None会让智能体意识到没有新输入，任务是继续之前的执行）</li>
+</ul>
+<h3 id="优雅暂停-drain">优雅暂停(drain)</h3>
+<p>可以在调用invoke和stream时传入RunControl控制器实例，这可以控制在超级步后暂停并保存好当前状态，只需要在任意一个线程中调用request_drain方法。这个操作会等待当前超级步结束再停止。使用inoke（None，config（带有thread_id））可恢复执行</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">from langgraph.runtime import RunControl</span><br><span class="line">from langgraph.errors import GraphDrained</span><br><span class="line"></span><br><span class="line">control = RunControl()</span><br><span class="line"></span><br><span class="line"># In a signal handler or supervisor:</span><br><span class="line"># control.request_drain(&quot;sigterm&quot;)</span><br><span class="line"></span><br><span class="line">try:</span><br><span class="line">    result = graph.invoke(inputs, config, control=control)</span><br><span class="line">except GraphDrained as e:</span><br><span class="line">    # The graph stopped early and saved a checkpoint.</span><br><span class="line">    # Resume later with the same config.</span><br><span class="line">    print(f&quot;Drained: &#123;e.reason&#125;&quot;)</span><br></pre></td></tr></table></figure>
+<h3 id="访问drain状态">访问drain状态</h3>
+<p>通过runtime可以访问，这可以用于当节点中有比较耗时的任务，并且检查到当前超级步后会停止，则会运行简化流程，快速出结果</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">from langgraph.runtime import Runtime</span><br><span class="line"></span><br><span class="line">async def my_node(state: State, runtime: Runtime) -&gt; State:</span><br><span class="line">    if runtime.drain_requested:</span><br><span class="line">        # Skip expensive work and return a minimal result</span><br><span class="line">        return &#123;&quot;status&quot;: &quot;skipped&quot;, &quot;reason&quot;: runtime.drain_reason&#125;</span><br><span class="line">    return &#123;&quot;status&quot;: await do_work()&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="drain使用示例">drain使用示例</h3>
+<p>在实际的服务器运维中（如 Docker、K8s），系统要关闭一个服务时，通常会先发送一个 <code>SIGTERM</code> 信号。可以将signal和control绑定（一旦信号被发送，绑定的就控制器对象就会收到信号），并处理引发的GraphDrained异常</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">import signal</span><br><span class="line">from langgraph.runtime import RunControl</span><br><span class="line">from langgraph.errors import GraphDrained</span><br><span class="line"></span><br><span class="line">control = RunControl()</span><br><span class="line">signal.signal(signal.SIGTERM, lambda *_: control.request_drain(&quot;sigterm&quot;))</span><br><span class="line"></span><br><span class="line">try:</span><br><span class="line">    result = graph.invoke(inputs, config, control=control)</span><br><span class="line">except GraphDrained as e:</span><br><span class="line">    log.info(&quot;graph drained: %s&quot;, e.reason)</span><br><span class="line">    # Resume on next startup with the same config</span><br></pre></td></tr></table></figure>
+<h2 id="容错性（fault-tolerance）">容错性（fault tolerance）</h2>
+<p>当节点发生故障，langgraph提供了三种可组合的响应机制：</p>
+<ul>
+<li>重试：根据异常类型和返回设置</li>
+<li>超时：限制单次请求持续时间</li>
+<li>错误处理：尝试次数用尽后运行恢复函数
+可以通过set_node_defaults对所有节点一次性配置这些机制，而无需在每次add_node调用时重复配置</li>
+</ul>
+<h3 id="重试策略">重试策略</h3>
+<p>add_node时设置retry_policy参数，传入重试器，可添加的参数包括以下：</p>
+<ul>
+<li>max_attemps：最大尝试次数</li>
+<li>initial_interval：第一次重试前的时间</li>
+<li>backoff_factor：每次重试时的乘数</li>
+<li>max_interval：两次重试之间的最大时间间隔</li>
+<li>jitter：添加随机抖动</li>
+<li>retry_on：发生哪些错误时重试</li>
+</ul>
+<h3 id="自定义重试逻辑（custom-retry-logic）">自定义重试逻辑（custom_retry_logic）</h3>
+<p>传递一个可调用对象处理各种异常类型，并使用default_retry_on进行默认执行</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">from langgraph.types import RetryPolicy, default_retry_on</span><br><span class="line"></span><br><span class="line">def custom_retry_on(exc: BaseException) -&gt; bool:</span><br><span class="line">    if isinstance(exc, MyCustomError):</span><br><span class="line">        return False</span><br><span class="line">    return default_retry_on(exc)</span><br><span class="line"></span><br><span class="line">builder.add_node(</span><br><span class="line">    &quot;call_api&quot;,</span><br><span class="line">    call_api,</span><br><span class="line">    retry_policy=RetryPolicy(max_attempts=3, retry_on=custom_retry_on),</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<h3 id="检查重试状态">检查重试状态</h3>
+<p>通过访问runtimexecution_infonode_attempt可以访问以下字段（即使没有设置重试策略也可访问execution，这种情况重试次数默认为）：</p>
+<ul>
+<li>node_attempt：当前尝试次数</li>
+<li>node_first_attempt_time：首次尝试的时间戳</li>
+<li>thread_id：当前执行线程的id</li>
+<li>run_id：当前执行的运行id</li>
+<li>checkpoint_id：当前的检查点id</li>
+<li>task_id：当前执行的任务id</li>
+</ul>
+<h3 id="超时策略">超时策略</h3>
+<p>add_node时设置timeout参数，可填入秒数、timedelta对象（datetime库中的对象，为时间长度）、TimeoutPolicy对象（可以设置节点实际执行的最长运行时间和等待下一步的最长空闲时间）。需要注意的是，超时策略仅可以为异步节点设置，同步节点如果被设置，运行时会报错</p>
+<h3 id="进度信号（progress-signals）">进度信号（progress signals）</h3>
+<p>默认情况下refresh_on为auto，节点运行监控时钟会在以下情况重置：</p>
+<ul>
+<li>state被写入</li>
+<li>流式输出模式时向外输出了字段</li>
+<li>子任务被调度</li>
+<li>运行时调用了runtime stream_writer</li>
+<li>所有回调事件，如llm输出token、工具调用、chain的开始和结束</li>
+</ul>
+<h3 id="以上策略可以使用-set-node-defaults设置模板">以上策略可以使用.set_node_defaults设置模板</h3>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line">from langgraph.errors import NodeError</span><br><span class="line">from langgraph.types import RetryPolicy, TimeoutPolicy</span><br><span class="line">from langgraph.graph import StateGraph, START</span><br><span class="line">from typing_extensions import TypedDict</span><br><span class="line"></span><br><span class="line">class State(TypedDict):</span><br><span class="line">    status: str</span><br><span class="line"></span><br><span class="line">def default_error_handler(state: State, error: NodeError) -&gt; State:</span><br><span class="line">    return &#123;&quot;status&quot;: f&quot;handled: &#123;error.error&#125;&quot;&#125;</span><br><span class="line"></span><br><span class="line">graph = (</span><br><span class="line">    StateGraph(State)</span><br><span class="line">    .set_node_defaults(</span><br><span class="line">        retry_policy=RetryPolicy(max_attempts=3),</span><br><span class="line">        error_handler=default_error_handler,</span><br><span class="line">        timeout=TimeoutPolicy(run_timeout=30),</span><br><span class="line">    )</span><br><span class="line">    .add_node(&quot;step_a&quot;, step_a)</span><br><span class="line">    .add_node(&quot;step_b&quot;, step_b)</span><br><span class="line">    .add_edge(START, &quot;step_a&quot;)</span><br><span class="line">    .compile()</span><br><span class="line">)from langgraph.errors import NodeError</span><br><span class="line">from langgraph.types import RetryPolicy, TimeoutPolicy</span><br><span class="line">from langgraph.graph import StateGraph, START</span><br><span class="line">from typing_extensions import TypedDict</span><br><span class="line"></span><br><span class="line">class State(TypedDict):</span><br><span class="line">    status: str</span><br><span class="line"></span><br><span class="line">def default_error_handler(state: State, error: NodeError) -&gt; State:</span><br><span class="line">    return &#123;&quot;status&quot;: f&quot;handled: &#123;error.error&#125;&quot;&#125;</span><br><span class="line"></span><br><span class="line">graph = (</span><br><span class="line">    StateGraph(State)</span><br><span class="line">    .set_node_defaults(</span><br><span class="line">        retry_policy=RetryPolicy(max_attempts=3),</span><br><span class="line">        error_handler=default_error_handler,</span><br><span class="line">        timeout=TimeoutPolicy(run_timeout=30),</span><br><span class="line">    )</span><br><span class="line">    .add_node(&quot;step_a&quot;, step_a)</span><br><span class="line">    .add_node(&quot;step_b&quot;, step_b)</span><br><span class="line">    .add_edge(START, &quot;step_a&quot;)</span><br><span class="line">    .compile()</span><br><span class="line">)from langgraph.errors import NodeError</span><br><span class="line">from langgraph.types import RetryPolicy, TimeoutPolicy</span><br><span class="line">from langgraph.graph import StateGraph, START</span><br><span class="line">from typing_extensions import TypedDict</span><br><span class="line"></span><br><span class="line">class State(TypedDict):</span><br><span class="line">    status: str</span><br><span class="line"></span><br><span class="line">def default_error_handler(state: State, error: NodeError) -&gt; State:</span><br><span class="line">    return &#123;&quot;status&quot;: f&quot;handled: &#123;error.error&#125;&quot;&#125;</span><br><span class="line"></span><br><span class="line">graph = (</span><br><span class="line">    StateGraph(State)</span><br><span class="line">    .set_node_defaults(</span><br><span class="line">        retry_policy=RetryPolicy(max_attempts=3),</span><br><span class="line">        error_handler=default_error_handler,</span><br><span class="line">        timeout=TimeoutPolicy(run_timeout=30),</span><br><span class="line">    )</span><br><span class="line">    .add_node(&quot;step_a&quot;, step_a)</span><br><span class="line">    .add_node(&quot;step_b&quot;, step_b)</span><br><span class="line">    .add_edge(START, &quot;step_a&quot;)</span><br><span class="line">    .compile()</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<h3 id="补充">补充</h3>
+<ul>
+<li>父图的设置不会被子图继承</li>
+<li>API式node设置这些策略的方式为@task的参数</li>
+<li>超时策略仅适用于一步操作</li>
+<li>error_handler本身如果发生错误会向上冒泡</li>
+</ul>
+<h2 id="事件流（Event-streaming）">事件流（Event streaming）</h2>
+<p><strong>概述</strong>：与invoke、stream并列的另一种方式，stream_events,会输出内部的详细运行信息，对于调试比较友好，以下为其可获取的字段 ：</p>
+<table>
+<thead>
+<tr>
+<th>Projection</th>
+<th>Use</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>stream</code></td>
+<td>Iterate every protocol event.（迭代每个事件循环）</td>
+</tr>
+<tr>
+<td><code>stream.messages</code></td>
+<td>Stream chat model messages and token deltas.（流式输出message和token增量）</td>
+</tr>
+<tr>
+<td><code>stream.values</code></td>
+<td>Iterate state snapshots and await the final value.（迭代每次节点更新后的完整状态快照）</td>
+</tr>
+<tr>
+<td><code>stream.output</code></td>
+<td>Await the final output.（等待并输出最终结果）</td>
+</tr>
+<tr>
+<td><code>stream.subgraphs</code></td>
+<td>Discover and observe nested graph executions.（发现和观察嵌套子图的执行）</td>
+</tr>
+<tr>
+<td><code>stream.interrupts</code></td>
+<td>Inspect human-in-the-loop interrupt payloads.（检查human-in-the-loop的interrupt载荷）</td>
+</tr>
+<tr>
+<td><code>stream.interrupted</code></td>
+<td>Check whether the run paused for human input.（检查运行是否因人工输入而暂停）</td>
+</tr>
+<tr>
+<td><code>stream.extensions</code></td>
+<td>Consume custom stream transformer projections.（使用自定义流转换器投影）</td>
+</tr>
+<tr>
+<td>使用asynciogather或stream自身的interleave方法可以混合输出以上字段</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2 id="流式（Streaming）">流式（Streaming）</h2>
+<table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://docs.langchain.com/oss/python/langgraph/streaming#graph-state">values</a></td>
+<td><a target="_blank" rel="noopener" href="https://reference.langchain.com/python/langgraph/types/ValuesStreamPart"><code>ValuesStreamPart</code></a></td>
+<td>Full state after each step.</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://docs.langchain.com/oss/python/langgraph/streaming#graph-state">updates</a></td>
+<td><a target="_blank" rel="noopener" href="https://reference.langchain.com/python/langgraph/types/UpdatesStreamPart"><code>UpdatesStreamPart</code></a></td>
+<td>State updates after each step. Multiple updates in the same step are streamed separately.</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://docs.langchain.com/oss/python/langgraph/streaming#llm-tokens">messages</a></td>
+<td><a target="_blank" rel="noopener" href="https://reference.langchain.com/python/langgraph/types/MessagesStreamPart"><code>MessagesStreamPart</code></a></td>
+<td>2-tuples of (LLM token, metadata) from LLM calls.</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://docs.langchain.com/oss/python/langgraph/streaming#custom-data">custom</a></td>
+<td><a target="_blank" rel="noopener" href="https://reference.langchain.com/python/langgraph/types/CustomStreamPart"><code>CustomStreamPart</code></a></td>
+<td>Custom data emitted from nodes via <a target="_blank" rel="noopener" href="https://reference.langchain.com/python/langgraph/config/get_stream_writer"><code>get_stream_writer</code></a>.（同步节点与langchain一样，需要传入writer对象）</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://docs.langchain.com/oss/python/langgraph/streaming#checkpoints">checkpoints</a></td>
+<td><a target="_blank" rel="noopener" href="https://reference.langchain.com/python/langgraph/types/CheckpointStreamPart"><code>CheckpointStreamPart</code></a></td>
+<td>Checkpoint events (same format as <code>get_state()</code>). Requires a checkpointer.</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://docs.langchain.com/oss/python/langgraph/streaming#tasks">tasks</a></td>
+<td><a target="_blank" rel="noopener" href="https://reference.langchain.com/python/langgraph/types/TasksStreamPart"><code>TasksStreamPart</code></a></td>
+<td>Task start/finish events with results and errors. Requires a checkpointer.</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://docs.langchain.com/oss/python/langgraph/streaming#debug">debug</a></td>
+<td><a target="_blank" rel="noopener" href="https://reference.langchain.com/python/langgraph/types/DebugStreamPart"><code>DebugStreamPart</code></a></td>
+<td>All available info — combines <code>checkpoints</code> and <code>tasks</code> with extra metadata.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="中断（Interrupts）">中断（Interrupts）</h2>
+<p><strong>动态中断补充</strong>：但图中存在多个中断点时（同一个超级步中不同分支触发），resume的返回格式为包含每个的中断处理的恢复字典</p>
+<p><strong>静态中断</strong>：调用graph.complie时设置节点，包括<code>interrupt_before</code>和<code>interrupt_after</code></p>
+<h2 id="时间旅行（time-drive）">时间旅行（time drive）</h2>
+<ul>
+<li><strong>Replay</strong>：从checkpoints重新执行</li>
+<li><strong>Fork</strong>：修改一个已存储的checkpoint创建新分支来探索可选路径</li>
+</ul>
+<h3 id="Replay">Replay</h3>
+<p>所谓的重放恢复执行，实际只是根据提供的的checkpoint_congfig，从指定checkpoint开始执行</p>
+<h3 id="Fork">Fork</h3>
+<p>从checkpoint创建一个新的分支，新分支的state会通过checkpoint链（parent、next）进行区分管理，使用方法为调用update_state创建更新一个state，然后invoke时使用该checkpoint的config并传入None为input就继续执行</p>
+<h3 id="as-node">as_node</h3>
+<p>调用update_state使用as_node可以传递本次更新是由那个节点发起的，这在以下三种情境中比较有效：</p>
+<ul>
+<li>并行分支（Parallel Branches）：因为超级步的缘故，无法确认最后一次更新是由谁发起的</li>
+<li>无执行历史（No Execution History）：新线程上无执行历史</li>
+<li>跳过节点：设置as_node为一个未执行的节点，会直接从后续节点进行运行，未执行的节点会被直接跳过（例如某个节点是用来产生注入中间值到state的，如果已经知道了确定的值，可以直接注入跳过该流程）</li>
+</ul>
+<h2 id="记忆（Memory）">记忆（Memory）</h2>
+<ul>
+<li>short_memory：checkpointer</li>
+<li>long_memory：store</li>
+</ul>
+<h3 id="Short-memory">Short_memory</h3>
+<ol>
+<li>注入InMemorySaver</li>
+<li>提供SQLSaver</li>
+</ol>
+<ul>
+<li>checkpointer会自动从父图传播到子图</li>
+</ul>
+<h3 id="Long-memory">Long_memory</h3>
+<ul>
+<li>注入InMemoryStore()</li>
+</ul>
+<h3 id="短期记忆管理策略">短期记忆管理策略</h3>
+<ol>
+<li>截断：移除焦躁的或保留最新的一定数量的message（注意裁剪是返回被裁剪后的消息列表，而不是对state中的message进行修改）
+通过统计消息历史中的词元数量等策略进行裁剪，并采用保留一定量词元等策略限制压缩程度。langgraph具有自带的裁剪函数工具：</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> langchain_core.messages.utils <span class="keyword">import</span> (</span><br><span class="line">    trim_messages,</span><br><span class="line">    count_tokens_approximately  </span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">call_model</span>(<span class="params">state: MessagesState</span>):</span><br><span class="line">    messages = trim_messages(</span><br><span class="line">        state[<span class="string">&quot;messages&quot;</span>],</span><br><span class="line">        strategy=<span class="string">&quot;last&quot;</span>,</span><br><span class="line">        token_counter=count_tokens_approximately,</span><br><span class="line">        max_tokens=<span class="number">128</span>,</span><br><span class="line">        start_on=<span class="string">&quot;human&quot;</span>,</span><br><span class="line">        end_on=(<span class="string">&quot;human&quot;</span>, <span class="string">&quot;tool&quot;</span>),</span><br><span class="line">    )</span><br><span class="line">    response = model.invoke(messages)</span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="string">&quot;messages&quot;</span>: [response]&#125;</span><br><span class="line"></span><br><span class="line">builder = StateGraph(MessagesState)</span><br><span class="line">builder.add_node(call_model)</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<p>Parameters</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>类型</th>
+<th>默认值</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>messages*</code></td>
+<td><code>Iterable[MessageLikeRepresentation]</code></td>
+<td>-</td>
+<td>要裁剪的消息列表</td>
+</tr>
+<tr>
+<td><code>max_tokens*</code></td>
+<td><code>int</code></td>
+<td>-</td>
+<td>裁剪后最大保留的 token 数</td>
+</tr>
+<tr>
+<td><code>token_counter*</code></td>
+<td><code>Callable</code></td>
+<td>-</td>
+<td>token 计数器函数</td>
+</tr>
+<tr>
+<td><code>strategy</code></td>
+<td><code>&quot;first&quot;</code> 或 <code>&quot;last&quot;</code></td>
+<td><code>&quot;last&quot;</code></td>
+<td>保留开头还是结尾</td>
+</tr>
+<tr>
+<td><code>allow_partial</code></td>
+<td><code>bool</code></td>
+<td><code>False</code></td>
+<td>是否允许截断单条消息</td>
+</tr>
+<tr>
+<td><code>end_on</code></td>
+<td><code>str</code> 或 <code>type</code></td>
+<td><code>None</code></td>
+<td>截断截止的消息类型</td>
+</tr>
+<tr>
+<td><code>start_on</code></td>
+<td><code>str</code> 或 <code>type</code></td>
+<td><code>None</code></td>
+<td>截断起始的消息类型</td>
+</tr>
+<tr>
+<td><code>include_system</code></td>
+<td><code>bool</code></td>
+<td><code>False</code></td>
+<td>是否保留 SystemMessage</td>
+</tr>
+<tr>
+<td><code>text_splitter</code></td>
+<td><code>Callable</code></td>
+<td><code>None</code></td>
+<td>消息分割器（allow_partial=True 时使用）</td>
+</tr>
+</tbody>
+</table>
+<ol start="2">
+<li>删除：从state中删除message
+使用方法：在add_node时传入reducer对象，后续使用RemoveMessage，在return时以BaseMessage对象的形式返回Remove操作</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> langchain.messages <span class="keyword">import</span> RemoveMessage  </span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">delete_messages</span>(<span class="params">state</span>):</span><br><span class="line">    messages = state[<span class="string">&quot;messages&quot;</span>]</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(messages) &gt; <span class="number">2</span>:</span><br><span class="line">        <span class="comment"># remove the earliest two messages</span></span><br><span class="line">        <span class="keyword">return</span> &#123;<span class="string">&quot;messages&quot;</span>: [RemoveMessage(<span class="built_in">id</span>=m.<span class="built_in">id</span>) <span class="keyword">for</span> m <span class="keyword">in</span> messages[:<span class="number">2</span>]]&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> langgraph.graph.message <span class="keyword">import</span> REMOVE_ALL_MESSAGES  </span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">delete_messages</span>(<span class="params">state</span>):</span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="string">&quot;messages&quot;</span>: [RemoveMessage(<span class="built_in">id</span>=REMOVE_ALL_MESSAGES)]&#125;</span><br></pre></td></tr></table></figure>
+<ol start="3">
+<li>总结：将较早期的message进行总结替换
+使用方法：为MessageState增加summary键</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">summarize_conversation</span>(<span class="params">state: State</span>):</span><br><span class="line"></span><br><span class="line">    <span class="comment"># First, we get any existing summary</span></span><br><span class="line">    summary = state.get(<span class="string">&quot;summary&quot;</span>, <span class="string">&quot;&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Create our summarization prompt</span></span><br><span class="line">    <span class="keyword">if</span> summary:</span><br><span class="line"></span><br><span class="line">        <span class="comment"># A summary already exists</span></span><br><span class="line">        summary_message = (</span><br><span class="line">            <span class="string">f&quot;This is a summary of the conversation to date: <span class="subst">&#123;summary&#125;</span>\n\n&quot;</span></span><br><span class="line">            <span class="string">&quot;Extend the summary by taking into account the new messages above:&quot;</span></span><br><span class="line">        )</span><br><span class="line"></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        summary_message = <span class="string">&quot;Create a summary of the conversation above:&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># Add prompt to our history</span></span><br><span class="line">    messages = state[<span class="string">&quot;messages&quot;</span>] + [HumanMessage(content=summary_message)]</span><br><span class="line">    response = model.invoke(messages)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Delete all but the 2 most recent messages</span></span><br><span class="line">    delete_messages = [RemoveMessage(<span class="built_in">id</span>=m.<span class="built_in">id</span>) <span class="keyword">for</span> m <span class="keyword">in</span> state[<span class="string">&quot;messages&quot;</span>][:-<span class="number">2</span>]]</span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="string">&quot;summary&quot;</span>: response.content, <span class="string">&quot;messages&quot;</span>: delete_messages&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>自定义策略</li>
+</ul>
+<h3 id="管理checkpoints">管理checkpoints</h3>
+<ul>
+<li>使用get_tuple(config)获取checkpointer，默认为获取最后一个，也可以提供checkpointer_id进行指定获取</li>
+<li>使用checkpointer.list(config)可以获取历史checkpointer</li>
+<li>使用checkpointer.delete_thread(thread_id = thread_id)可以删除指定线程的所有检查点</li>
+<li>使用数据库进行存储时需要使用.setup方法初始化表结构</li>
+</ul>
+<h2 id="子图（subgraphs）">子图（subgraphs）</h2>
+<p><strong>概述</strong>：将一个完整的图作为另一个图的节点使用，以下为该架构较为有用的情景：</p>
+<ul>
+<li>创建多智能体协作系统</li>
+<li>多个图中重用节点</li>
+<li>分布式开发</li>
+</ul>
+<h3 id="两种使用方式：">两种使用方式：</h3>
+<ol>
+<li>将子图作为节点：
+使用情景：父图和子图需要的state schema不同，需要包装函数将父状态映射到子图以及将子图输出映射回父状态</li>
+<li>在子图中调用另一个图：
+使用情景：父子图共享状态keys，不需要包装函数</li>
+</ol>
+<h3 id="子图实现">子图实现</h3>
+<ul>
+<li>将子图作为节点的实现方式仅仅是简单的在一个图的节点中调用另一个图（invoke、stream）</li>
+</ul>
+<h3 id="子图持久性">子图持久性</h3>
+<p>子图的持久性需要特别注意，可以通过调用.compile（）时设置checkpointer的参数为：</p>
+<ul>
+<li>Per-invocation（None）（default）： 每次调用时刷新并继承父图的checkpointer来支持单词调用中的interrupt和可持续化执行</li>
+<li>Per-thread（True）：同一线程中的调用会累积state，每次新调用会接续上次调用进行</li>
+<li>Stateless（False）：完全没有checkpointer，运行方式和普通函数相同，没有中断和持久化执行</li>
+</ul>
+<h3 id="状态化（stateful）">状态化（stateful）</h3>
+<p>状态化子图继承父图的checkpointer，这使得支持中断和持久化执行以及state审查。</p>
+<h3 id="三种模式">三种模式</h3>
+<ul>
+<li>
+<p>Per-invocation（default）：当每次对子图的调用都是独立的时（子代理不需要知道自己之前的运行消息），设置checkpointer为false或none。（仍然可以通过父图的checkpointer实现中断和持久化）</p>
+</li>
+<li>
+<p>Per-thread：当子代理需要记住之前的每次交互时，可以使用该模式</p>
+</li>
+<li>
+<p>Stateless：当需要子代理以类似普通函数的形式被调用的时候使用此模式</p>
+</li>
+</ul>
+<h3 id="子图流式输出">子图流式输出</h3>
+<p>要包含子图输出到流式输出中时，可以在父图的stream方法设置subgraphs选项为true
+,这会同时流式输出父图和所有子图的输出</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">for chunk in graph.stream(</span><br><span class="line">    &#123;&quot;foo&quot;: &quot;foo&quot;&#125;,</span><br><span class="line">    subgraphs=True,</span><br><span class="line">    stream_mode=&quot;updates&quot;,</span><br><span class="line">    version=&quot;v2&quot;,</span><br><span class="line">):</span><br><span class="line">    print(chunk[&quot;type&quot;])  # &quot;updates&quot;</span><br><span class="line">    print(chunk[&quot;ns&quot;])    # () for root, (&quot;node_2:&lt;task_id&gt;&quot;,) for subgraph</span><br><span class="line">    print(chunk[&quot;data&quot;])  # &#123;&quot;node_name&quot;: &#123;&quot;key&quot;: &quot;value&quot;&#125;&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="生产（Production）">生产（Production）</h2>
+<h3 id="文件结构：">文件结构：</h3>
+<p>my-app/
+├── my_agent # all project code lies within here
+│   ├── utils # utilities for your graph
+│   │   ├── <strong>init</strong>.py
+│   │   ├── <a target="_blank" rel="noopener" href="http://tools.py">tools.py</a> # tools for your graph
+│   │   ├── <a target="_blank" rel="noopener" href="http://nodes.py">nodes.py</a> # node functions for your graph
+│   │   └── <a target="_blank" rel="noopener" href="http://state.py">state.py</a> # state definition of your graph
+│   ├── <strong>init</strong>.py
+│   └── <a target="_blank" rel="noopener" href="http://agent.py">agent.py</a> # code for constructing your graph
+├── .env # environment variables
+├── requirements.txt # package dependencies
+└── langgraph.json # configuration file for LangGraph</p>
+<h2 id="调试">调试</h2>
+<p>可以通过graph.node访问测试单个节点</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">import pytest</span><br><span class="line"></span><br><span class="line">from typing_extensions import TypedDict</span><br><span class="line">from langgraph.graph import StateGraph, START, END</span><br><span class="line">from langgraph.checkpoint.memory import MemorySaver</span><br><span class="line"></span><br><span class="line">def create_graph() -&gt; StateGraph:</span><br><span class="line">    class MyState(TypedDict):</span><br><span class="line">        my_key: str</span><br><span class="line"></span><br><span class="line">    graph = StateGraph(MyState)</span><br><span class="line">    graph.add_node(&quot;node1&quot;, lambda state: &#123;&quot;my_key&quot;: &quot;hello from node1&quot;&#125;)</span><br><span class="line">    graph.add_node(&quot;node2&quot;, lambda state: &#123;&quot;my_key&quot;: &quot;hello from node2&quot;&#125;)</span><br><span class="line">    graph.add_edge(START, &quot;node1&quot;)</span><br><span class="line">    graph.add_edge(&quot;node1&quot;, &quot;node2&quot;)</span><br><span class="line">    graph.add_edge(&quot;node2&quot;, END)</span><br><span class="line">    return graph</span><br><span class="line"></span><br><span class="line">def test_individual_node_execution() -&gt; None:</span><br><span class="line">    # Will be ignored in this example</span><br><span class="line">    checkpointer = MemorySaver()</span><br><span class="line">    graph = create_graph()</span><br><span class="line">    compiled_graph = graph.compile(checkpointer=checkpointer)</span><br><span class="line">    # Only invoke node 1</span><br><span class="line">    result = compiled_graph.nodes[&quot;node1&quot;].invoke(</span><br><span class="line">        &#123;&quot;my_key&quot;: &quot;initial_value&quot;&#125;,</span><br><span class="line">    )</span><br><span class="line">    assert result[&quot;my_key&quot;] == &quot;hello from node1&quot;</span><br></pre></td></tr></table></figure>
+<h3 id="部分执行">部分执行</h3>
+<p>对于由大型图组成的代理，可能希望测试代理内部的部分执行路径，而不是端到端的整个流程。在某些情况下，将<a target="_blank" rel="noopener" href="https://docs.langchain.com/oss/python/langgraph/use-subgraphs">这些部分重构为子图</a>可能更符合语义，可以像往常一样单独调用这些子图。如果不想更改代理图的整体结构，可以使用 LangGraph 的持久化机制来模拟代理在所需部分开始之前暂停，并在所需部分结束时再次暂停的状态。步骤如下：</p>
+<ol>
+<li>使用检查点编译您的代理（内存中的检查点<a target="_blank" rel="noopener" href="https://reference.langchain.com/python/langgraph/checkpoints/#langgraph.checkpoint.memory.InMemorySaver"><code>InMemorySaver</code></a>足以进行测试）。</li>
+<li>调用代理的<a target="_blank" rel="noopener" href="https://docs.langchain.com/oss/python/langgraph/use-time-travel"><code>update_state</code></a>方法，并将参数设置为要开始测试的节点_之前的_<a target="_blank" rel="noopener" href="https://docs.langchain.com/oss/python/langgraph/use-time-travel#from-a-specific-node"><code>as_node</code></a>节点的名称。</li>
+<li><code>thread_id</code>使用与更新状态时相同的命令调用代理，并将<code>interrupt_after</code>参数设置为要停止的节点的名称。</li>
+</ol>
+<h2 id="向后兼容性（Backward-compatibility）">向后兼容性（Backward compatibility）</h2>
+<p>软件程序是不断变更升级的，变更升级时不可能将所有任务都结束然后用新程序覆盖，只能将其暂停，然后与新程序做兼容。以下为变更新程序时现需要注意的事：</p>
+<h3 id="技术兼容性：新代码必须能够加载并针对现有状态执行，旧版中断程序的完成是依靠state进行的，但是这里的state是中断时的程序（老版本的代码）存入的，如果新代码有逻辑改动，便会产生冲突：">技术兼容性：新代码必须能够加载并针对现有状态执行，旧版中断程序的完成是依靠state进行的，但是这里的state是中断时的程序（老版本的代码）存入的，如果新代码有逻辑改动，便会产生冲突：</h3>
+<ol>
+<li>恢复执行是依靠state中存储的next字段进行恢复，但是如果新程序的node名字发生改动甚至node被删除，则会出现之前中断的程序无法找到下一步有安排进行的节点</li>
+<li>state中的键在新程序中更换了键名，而下游或旧的检查点依然使用原名对该键进行访问</li>
+<li>state中新增了字段或更改了字段约束，例如新增不能为空的必填字段，但访问字段的程序并不在开头，而是在程序中间，导致前半段会因为state中的字段不能为空出错</li>
+</ol>
+<h3 id="一些推荐操作：">一些推荐操作：</h3>
+<ul>
+<li>新增字段使用Optional[.....]</li>
+<li>先添加新字段再删除旧字段，在弃用期对两者进行双写和路由，直到通过运行日志确认正在运行的线程已经不再依赖与旧的字段或节点后，将其删除</li>
+<li>保持节点对未知键的容错性，TypeDict运行时会忽略额外的键，因此除非节点中会显式读取缺失的键，否则不会触发旧版本代码的state异常</li>
+<li>使用time driver在新程序正式部署之前对流程进行抽查</li>
+<li>如果一个节点或键不会再被使用，那么运行完成的流程后，rutime和checkpointer中不会有相关的记录，可以通过这个确认是否已经可以摘除</li>
+</ul>
+<h3 id="业务兼容性">业务兼容性</h3>
+<p>有时程序更新没有错误，但是新图和旧图的运行逻辑不同，不希望让旧的中断状态在新的图逻辑运行，可以通过增加一个版本字段，根据state中储存的版本在node中增加处理逻辑，使得旧的state可以以旧的逻辑重新运行完</p>
+<h3 id="非确定性（Non-determinism）">非确定性（Non-determinism）</h3>
+<p>这条规则主要是为了处理interrupt和task，任务恢复执行时，会按顺序填入interrupt的值和task的运行状态（之前的超级步完成缓存记录），即如果在新程序中这两者发生了删减和顺序变换，就会使得对于interrupt值和task是否运行过状态的混乱</p>
+<h2 id="Graph-API与Function-API的选择">Graph API与Function API的选择</h2>
+<p><strong>概括</strong>：当您需要对工作流结构、复杂分支、并行处理或团队协作优势进行明确控制时，请选择<strong>Graph API 。<strong>如果您希望以最小的更改将 LangGraph 功能添加到现有代码中、拥有简单的线性工作流程或需要快速原型功能，请选择</strong>函数式 API 。</strong></p>
+<h3 id="Graph-API的优势情景：">Graph API的优势情景：</h3>
+<ul>
+<li>调试和文档的复杂工作流可视化</li>
+<li>跨多个节点共享数据的显式状态管理</li>
+<li>具有多个决策点的条件分支</li>
+<li>需要合并的并行执行路径</li>
+<li>团队协作中，视觉呈现有助于理解</li>
+</ul>
+<h3 id="Function-API的优势情景：">Function API的优势情景：</h3>
+<ul>
+<li>对代码修改较少，不会出现大幅重构的情况</li>
+<li>使用规范的控制流（if\else、循环、函数调用）</li>
+<li>函数的状态无需显式状态管理</li>
+<li>快速原型开发，减少样板代码</li>
+<li>线性工作流+简单分支逻辑</li>
+</ul>
+<h2 id="Graph-API的使用">Graph API的使用</h2>
+<h3 id="常用的State-Schema方式：">常用的State Schema方式：</h3>
+<ul>
+<li>TypeDict：轻量级，简单高效</li>
+<li>dataclass：支持默认值定义</li>
+<li>Pydantic：递归数据验证</li>
+</ul>
+<h3 id="多模式State">多模式State</h3>
+<p>使用StateGraph()初始化图时可以添加state、input_schema和output_schema，其中state为图运行过程中维护使用的scchema，input_schema为invoke输入时可以填充的，output_schema为输出时的schema</p>
+<h3 id="Reducers（归约器）">Reducers（归约器）</h3>
+<p>处理state中字段的添加逻辑，包括覆盖、追加等</p>
+<p>operator.add与add_message的区别：前者只能实现简单追加，后者则会根据id进行添加或覆盖</p>
+<h3 id="序列化（Serialization）">序列化（Serialization）</h3>
+<p>除了使用id进行管理，<code>add_message</code>还会在messages更新时尝试序列化和反序列化Langchain的Message对象。</p>
+<h3 id="MessagesState">MessagesState</h3>
+<p>一个官方提供的自带messages（带有add_messages归约器）的TypeDict</p>
+<h3 id="Node-caching（节点缓存）">Node caching（节点缓存）</h3>
+<p>add_node可以指定key_func（缓存策略）和ttl（缓存保留时间），对于命中缓存的相同输入可以直接返回</p>
+<h3 id="add-conditional-edge">add_conditional_edge</h3>
+<p>一个特殊用法：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">graph.add_conditional_edges(START, routing_function, &#123;True: &quot;node_b&quot;, False: &quot;node_c&quot;&#125;)</span><br></pre></td></tr></table></figure>
+<h3 id="Command">Command</h3>
+<ul>
+<li>update：进行state 更新</li>
+<li>goto：导航到特定特定节点</li>
+<li>graph：从子图跳转父图（在该参数填入Command.PARENT）</li>
+<li>resume：提供值进行interrupt恢复</li>
+</ul>
+<p>一些使用规则：</p>
+<ol>
+<li>节点中存在Command时，需要给节点函数指定目标节点的类型注解</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> typing <span class="keyword">import</span> <span class="type">Literal</span></span><br><span class="line"><span class="keyword">from</span> langgraph.types <span class="keyword">import</span> Command</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">my_node</span>(<span class="params">state: State</span>) -&gt; Command[<span class="type">Literal</span>[<span class="string">&quot;node_a&quot;</span>, <span class="string">&quot;node_b&quot;</span>]]:</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    返回类型注解告知 LangGraph：</span></span><br><span class="line"><span class="string">    - 当前节点可能路由到 node_a 或 node_b</span></span><br><span class="line"><span class="string">    - 用于图的渲染和静态分析</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">if</span> some_condition:</span><br><span class="line">        <span class="keyword">return</span> Command(goto=<span class="string">&quot;node_a&quot;</span>)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">return</span> Command(goto=<span class="string">&quot;node_b&quot;</span>)</span><br><span class="line">        </span><br><span class="line">        </span><br></pre></td></tr></table></figure>
+<p>作用：</p>
+<ul>
+<li>图渲染：生成可视化图时正确显示所有可能的路由</li>
+<li>静态验证：LangGraph编译时验证节点可达性</li>
+<li>类型安全：防止运行时路由到不存在的节点</li>
+</ul>
+<ol start="2">
+<li>
+<p>Command的goto产生的是动态边，不会影响静态边界（使用add_edge添加）的触发，因此尽量避免混用，否则会导致同时触发两条运行分支</p>
+</li>
+<li>
+<p>不可在invoke和stream时使用update参数，调用时传入Command不会导致从头开始而是从最新的checkpoint恢复执行，推荐使用updte_state和invoke时直接传入参数，然后按照归约器规则进行更新</p>
+</li>
+<li>
+<p>可以让tool节点返回Command以同时实现状态更新和动态路由，注意要避免混用，工具驱动的动态路由和静态边只使用一个</p>
+</li>
+</ol>
+<h3 id="递归限制（Recursion-limit）">递归限制（Recursion limit）</h3>
+<p>限制一次调用执行的超级步上限，通过config的recursion_limit参数设置</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">graph.invoke(</span><br><span class="line">    inputs,</span><br><span class="line">    config=&#123;</span><br><span class="line">        <span class="string">&quot;recursion_limit&quot;</span>: <span class="number">5</span>,           <span class="comment"># 独立配置</span></span><br><span class="line">        <span class="string">&quot;configurable&quot;</span>: &#123;</span><br><span class="line">            <span class="string">&quot;llm&quot;</span>: <span class="string">&quot;anthropic&quot;</span>          <span class="comment"># 用户自定义配置放在这里</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<h3 id="运行步数相关">运行步数相关</h3>
+<p>可以通过使用config参数（RunableConfig）获取各项配置参数，包括langgraph_step，也可以通过在state中添加一个RemainingSteps对象统计距离最大超级步数限制还有多少步</p>
+<p>两种处理逻辑：内部监控步数提前干预，外部捕获异常</p>
+<h3 id="defer">defer</h3>
+<p>在add_node时使用，用于解决一个超级步约束无法处理的问题，设置了defer的节点在图中有其他节点正在执行任务时不会执行，用于处理前置分支不止一条且长度不同的情况</p>
+<h2 id="Runtime">Runtime</h2>
+<p>Pregel管理实现了LangGraph的运行应用，使用setGraph或@enterpoint时会产生一个可以被输入invoke的Pregel实例。</p>
+<p><strong>概括</strong>：Pregel包括actors（node）和channels（state），actors从channels读写数据，</p>
+<h3 id="Actors">Actors</h3>
+<p>每个Actor都是一个PregelNone，从chnnel中读写数据，PregelNodes实现了LangChain的Runnable接口</p>
+<h3 id="Channels">Channels</h3>
+<p>用于连接actors，每个channel都有value type、update type、update function</p>
+<ul>
+<li>LastValue:默认通道类型，会存储最后写入的值，覆盖先前的值，用于将数据跨步骤传递</li>
+<li>Topic：可配置的发布、订阅通道，用于发送多个值或累计跨步骤的输出，可设置为去重或累计期间写入所有制</li>
+<li>BinaryOperatorAggregate：存储一个持久值，通过对当前值和每次update应用二元运算符更新（累加、累计）</li>
+<li>DeltaChannel(byte)：仅存储每个步骤的增量而不是完整的所有累计值</li>
+</ul>
+<h3 id="Bulk-Reducer">Bulk Reducer</h3>
+<p>DeltaChannel的reducer，接收当前state和所有来自当前step的writes队列</p>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th>普通 Reducer</th>
+<th>Bulk Reducer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>调用方式</strong></td>
+<td>每次更新调用一次</td>
+<td>一次接收所有更新</td>
+</tr>
+<tr>
+<td><strong>参数</strong></td>
+<td><code>(旧值, 新值)</code></td>
+<td><code>(旧值, [所有新值列表])</code></td>
+</tr>
+<tr>
+<td><strong>调用时机</strong></td>
+<td>写入时</td>
+<td>读取时</td>
+</tr>
+</tbody>
+</table>
+
+                
+                <p class="end">__END__</p>
+            </div>
+            <div class="article-footer">
+                <div class="suffix-box">
+    <div class="suffix-box-left">
+        <img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/星锑(1).jpg" alt="le">
+    </div>
+    <div class="suffix-box-right">
+        <span class="suffix-box-title">文章作者：</span>le
+        <br>
+        <span class="suffix-box-title">文章出处：</span><a href="/2026/05/14/LangGraph/" target="_blank"></a>
+        <br>
+        <span class="suffix-box-title">作者签名：</span>在代码中寻找意义，在文字中记录成长
+        <br>
+        <span class="suffix-box-title">关于主题：</span><a href="https://github.com/first19326/Hexo-LiveForCode" target="_blank">Hexo - Live For Code</a>
+        <br>
+        <span class="suffix-box-title">版权声明：</span>文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" title="BY-NC-SA" target="_blank">BY-NC-SA</a> 许可协议，转载请注明出处
+        <br>
+    </div>
+    <div style="clear: both;"></div>
+</div>
+                
+                
+                    <div class="tag">
+                        标签：
+                        
+                            <a href="/tags/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/">人工智能</a>
+                        
+                            <a href="/tags/python/">python</a>
+                        
+                    </div>
+                
+                <div class="article-prev-next">
+                    
+                        <a href="/2026/05/17/How%20to%20fix%20your%20entire%20life%20in%201%20day/" class="prev-prefix">« </a> 上一篇：    <a href="/2026/05/17/How%20to%20fix%20your%20entire%20life%20in%201%20day/" title="发布于 2026-05-17 02:25"></a>
+                        <br>
+                    
+                    
+                        <a href="/2026/05/13/Logging%E5%BA%93/" class="next-prefix">» </a> 下一篇：    <a href="/2026/05/13/Logging%E5%BA%93/" title="发布于 2026-05-13 08:24">Logging库</a>
+                    
+                </div>
+            </div>
+            <!-- 评论功能已禁用 -->
+
+        </div>
+    
+</div>
+    <div id="footer">
+    <div><span class='face'>ღゝ◡╹)ノ♡</span></div><div>le的避难所 - 用心记录每一次成长</div><div>&copy; 2020-<%= new Date().getFullYear() %> le. All Rights Reserved.</div>
+</div>
+    <div id="sidebar">
+    <div class="menu-wrap" style="display:none;">
+        
+            <div class="menu-notice">
+                <span class="iconfont icon-notice"></span>
+                <div class="notice">
+                    <span>技术笔记 | AI学习 | 随想杂谈</span>
+                </div>
+            </div>
+        
+        <nav class="menu">
+            <div class="menu-introduce"> 
+                <div class="introduce-avatar">
+                    <img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/星锑(1).jpg">
+                </div> 
+                <div class="introduce-info"> 
+                    <div class="introduce-user">
+                        
+                            <a href="https://github.com/ciquningzuowu" target="_blank"><span>le</span></a>
+                        
+                    </div>
+                </div> 
+            </div> 
+            <div class="menu-list">
+                <ul>
+                    
+                        <li class=""><a href="/" class="" target="_self"><span class="iconfont icon-home-fill"></span>首页</a></li>
+                    
+                        <li class=""><a href="/tag" class="" target="_self"><span class="iconfont icon-discount-fill"></span>标签</a></li>
+                    
+                        <li class=""><a href="/archive" class="" target="_self"><span class="iconfont icon-calendar-fill"></span>归档</a></li>
+                    
+                        <li class=""><a href="/donate" class="" target="_self"><span class="iconfont icon-heart-fill"></span>赞赏</a></li>
+                    
+                        <li class=""><a href="/about" class="" target="_self"><span class="iconfont icon-about-fill"></span>关于</a></li>
+                    
+                        <li class=""><a href="/atom.xml" class="" target="_blank"><span class="iconfont icon-rss"></span>订阅</a></li>
+                    
+                        <li class=""><a href="/music" class="" target="_self"><span class="iconfont icon-music"></span>音乐</a></li>
+                    
+                        <li class=""><a href="javascript:;" class="search" target="_self"><span class="iconfont icon-search-menu"></span>搜索</a></li>
+                    
+                        <li class=""><a href="/friend" class="" target="_self"><span class="iconfont icon-link"></span>友情链接</a></li>
+                    
+                </ul> 
+            </div> 
+            <div class="menu-link">
+                <div class="box">
+                    <div class="image-box"></div>
+                </div>
+                
+                    <a name="知乎" href="https://www.zhihu.com/people/68-21-24-64-57-17" class="" target="_blank" data=""><span class="iconfont icon-zhihu"></span></a>
+                
+                    <a name="QQ" href="javascript:;" class="image" target="_self" data="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/900cbf5ad084f3cc39ab371ba026d318.jpg"><span class="iconfont icon-qq"></span></a>
+                
+                    <a name="微信" href="javascript:;" class="" target="_self" data="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/5739108c740d75e5fc2a723c80efdadf.jpg"><span class="iconfont icon-wechat"></span></a>
+                
+                    <a name="GitHub" href="https://github.com/ciquningzuowu" class="" target="_blank" data=""><span class="iconfont icon-github"></span></a>
+                
+            </div> 
+        </nav>
+        <button class="menu-button-close"></button>
+        <div class="morph-shape" id="morph-shape" data-morph-open="M-7.312,0H15c0,0,66,113.339,66,399.5C81,664.006,15,800,15,800H-7.312V0z;M-7.312,0H100c0,0,0,113.839,0,400c0,264.506,0,400,0,400H-7.312V0z">
+            <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 100 800" preserveAspectRatio="none">
+                <path d="M-7.312,0H0c0,0,0,113.839,0,400c0,264.506,0,400,0,400h-7.312V0z"/>
+            </svg>
+        </div>
+    </div>
+    <button class="menu-button-open">MENU</button>
+    <div class="menu-cover"></div>
+</div>
+    <link type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/search.min.css">
+<script type="text/javascript" src="https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/js/iscroll.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/js/instantsearch.min.js"></script>
+<div class="search-window">
+    <div class="search-content">
+        <div class="search-content-icon">
+            <i class="iconfont icon-search"></i>
+        </div>
+        <div id="search-input" class="search-input"></div>
+    </div>
+
+    <div class="search-scroll">
+        <div class="search-result">
+            <div id="search-stats" class="search-stats"></div>
+            <div id="search-hits"></div>
+            <div id="search-pagination" class="search-pagination"></div>
+        </div>
+    </div>
+
+    <span class="search-close-icon">
+        <i class="iconfont icon-close"></i>
+    </span>
+</div>
+    <!-- 搜索悬浮按钮 -->
+    <div class="search-float-btn" onclick="document.querySelector('.search').click()">
+        <i class="iconfont icon-search-menu"></i>
+    </div>
+    <div id="tools">
+    <div class="progressbar-top"></div>
+    
+    <div class="aplayer"></div>
+    <link type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/APlayer.min.css">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/js/APlayer.min.js"></script>
+    <script type="text/javascript">
+        const aplayer = new APlayer({
+            container: document.querySelector(".aplayer"),
+            fixed: true,
+            autoplay: false,
+            loop: "all",
+            order: "random",
+            preload: "auto",
+            volume: 0.67,
+            mutex: true,
+            lrcType: 0,
+            audio: [
+                
+                    {
+                        name: "我的音乐1",
+                        artist: "艺术家",
+                        cover: "/music/cover/default.jpg",
+                        url: "/music/song/your-music.mp3",
+                        lrc: ""
+                    },
+                
+                    {
+                        name: "我的音乐2",
+                        artist: "艺术家",
+                        cover: "/music/cover/default.jpg",
+                        url: "/music/song/your-music2.mp3",
+                        lrc: ""
+                    },
+                
+            ]
+        });
+        
+        // 音乐播放控制
+        var musicPlaying = false;
+        function toggleMusic() {
+            if (musicPlaying) {
+                aplayer.pause();
+                document.getElementById('music-control').querySelector('span').textContent = '播放';
+                musicPlaying = false;
+            } else {
+                aplayer.play();
+                document.getElementById('music-control').querySelector('span').textContent = '暂停';
+                musicPlaying = true;
+            }
+        }
+        
+        // 监听播放状态
+        aplayer.on('play', function() {
+            musicPlaying = true;
+            var btn = document.getElementById('music-control');
+            if (btn) btn.querySelector('span').textContent = '暂停';
+        });
+        aplayer.on('pause', function() {
+            musicPlaying = false;
+            var btn = document.getElementById('music-control');
+            if (btn) btn.querySelector('span').textContent = '播放';
+        });
+    </script>
+    <!-- 音乐播放控制按钮 -->
+    <div id="music-control" class="music-control-btn" onclick="toggleMusic()">
+        <i class="iconfont icon-music-fill"></i>
+        <span>播放</span>
+    </div>
+
+
+    <div class="wrap-right">
+    <div class="wrap-right-hide">
+         <div class="wrap-right-button favorites">
+            <div class="iconbox" switch="false">
+                <span class="iconfont icon-favorites"></span>
+            </div>
+            <span class="icontext">关注</span>
+         </div>
+        <div class="wrap-right-button search">
+            <div class="iconbox">
+                <span class="iconfont icon-search-menu"></span>
+            </div>
+            <span class="icontext">搜索</span>
+        </div>
+        <div class="wrap-right-button menu-button">
+            <div class="iconbox">
+                <span class="iconfont icon-menu"></span>
+            </div>
+            <span class="icontext">菜单</span>
+        </div>
+        <div class="wrap-right-button mode">
+            <div class="light">
+                <div class="iconbox">
+                    <span class="iconfont icon-daymode"></span>
+                </div>
+                <span class="icontext">浅色模式</span>
+            </div>
+            <div class="dark">
+                <div class="iconbox">
+                    <span class="iconfont icon-nightmode-fill"></span>
+                </div>
+                <span class="icontext">深色模式</span>
+            </div>
+        </div>
+        <div class="wrap-right-button bottom">
+            <div class="iconbox">
+                <span class="iconfont icon-top"></span>
+            </div>
+            <span class="icontext">跳至底部</span>
+        </div>
+    </div>
+    <div class="wrap-right-show">
+        <div class="wrap-right-button set">
+            <div class="iconbox">
+                <span class="iconfont icon-setting"></span>
+            </div>
+            <span class="icontext">设置</span>
+        </div>
+        <div class="wrap-right-button top">
+            <div class="iconbox">
+                <span class="iconfont icon-top"></span>
+            </div>
+            <span class="icontext">返回顶部</span>
+        </div>
+    </div>
+</div>
+    <div class="loading"></div>
+</div>
+    <script>
+    window.config = {
+        GitHubUserName     : "ciquningzuowu",
+        GitHubRepositories : "Hexo-LiveForCode",
+
+        User             : "le",
+        UserAvatar       : "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/星锑(1).jpg",
+        WebsiteStartDate : "2020-01-01",
+        Home             : "https://github.com/ciquningzuowu",
+
+        WebsiteTitleBlur         : "le的避难所",
+        WebsiteTitleBlurTimeOut  : 500,
+        WebsiteTitleFocus        : "(*´∇｀*) 欢迎回来! le",
+        WebsiteTitleFocusTimeOut : 1000,
+        WebsiteFavicon           : {
+            light : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/image/website/logo/logo.png",
+            dark  : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/image/website/logo/logo-dark.png"
+        },
+
+        ProgressBar : {
+            id       : "topProgressBar",
+            color    : "#77B6FF",
+            height   : "2px",
+            duration : 0.2
+        },
+
+        Loading: {
+            rebound : {
+                tension  : 16,
+                friction : 5
+            },
+            spinner : {
+                id     : "spinner",
+                radius : 90,
+                sides  : 3,
+                depth  : 4,
+                colors : {
+                    background : "#F0F0F0",
+                    stroke     : "#272633",
+                    base       : "",
+                    child      : "#272633"
+                },
+                alwaysForward : true,
+                restAt        : 0.5,
+                renderBase    : false
+            }
+        },
+
+        HomeHeaderAnimationRendered : false,
+        HomeHeaderAnimation         : {
+            radius      : 15,
+            density     : 0.2,
+            color       : "rgba(255, 255, 255, .2)",
+            clearOffset : 0.3
+        },
+
+        BackAnimationRendered          : false,
+        IEBrowserBackAnimationRendered : false,
+        BackAnimation                  : {
+            colorSaturation  : "60%",
+            colorBrightness  : "50%",
+            colorAlpha       : 0.5,
+            colorCycleSpeed  : 5,
+            verticalPosition : "random",
+            horizontalSpeed  : 200,
+            ribbonCount      : 3,
+            strokeSize       : 0,
+            parallaxAmount   : -0.2,
+            animateSections  : true
+        },
+
+        HomeHeaderImage : [
+            
+                "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/a4863ae3f3a94c91a57a0ce7f964361c.png",
+            
+                "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/20260729144639240.png",
+            
+                "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/20260729145504803.png",
+            
+                "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/20260729145811449.png",
+            
+        ],
+        HomeBannerText  : "To sing for me and groove to my own cadence.",
+
+        ArticleHeaderImage : [
+            
+                "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/be363b330560be6bf3be34652df12416.png",
+            
+                "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/2000c499998b2d13ad5b1472d81a946d.jpg",
+            
+                "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/2083a4acab3ebf454002a766f5dff5dc.jpg",
+            
+                "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/20260729145213392.png",
+            
+        ],
+
+        OtherBannerText : "Grow on My Time",
+
+        Error : {
+            icon    : "icon-swimming",
+            title   : "PAGE NOT FOUND",
+            content : [
+                
+                    "很抱歉，您访问的页面不存在！",
+                
+                    "可能是输入地址有误或该地址已变更。",
+                
+            ],
+            buttons : [
+                
+                    {
+                        icon  : "icon-home",
+                        text  : "返回首页",
+                        href  : "/",
+                        class : ""
+                    },
+                
+            ]
+        },
+
+        MenuNotice : {
+            enable : true,
+            notice : "技术笔记 | AI学习 | 随想杂谈",
+            speed  : 20
+        },
+        MenuList : [
+            
+                {
+                    name   : "首页",
+                    icon   : "icon-home-fill",
+                    href   : "/",
+                    type   : "index",
+                    class  : "",
+                    target : "_self"
+                },
+            
+                {
+                    name   : "标签",
+                    icon   : "icon-discount-fill",
+                    href   : "/tag",
+                    type   : "tag",
+                    class  : "",
+                    target : "_self"
+                },
+            
+                {
+                    name   : "归档",
+                    icon   : "icon-calendar-fill",
+                    href   : "/archive",
+                    type   : "archive",
+                    class  : "",
+                    target : "_self"
+                },
+            
+                {
+                    name   : "赞赏",
+                    icon   : "icon-heart-fill",
+                    href   : "/donate",
+                    type   : "donate",
+                    class  : "",
+                    target : "_self"
+                },
+            
+                {
+                    name   : "关于",
+                    icon   : "icon-about-fill",
+                    href   : "/about",
+                    type   : "about",
+                    class  : "",
+                    target : "_self"
+                },
+            
+                {
+                    name   : "订阅",
+                    icon   : "icon-rss",
+                    href   : "/atom.xml",
+                    type   : "",
+                    class  : "",
+                    target : "_blank"
+                },
+            
+                {
+                    name   : "音乐",
+                    icon   : "icon-music",
+                    href   : "/music",
+                    type   : "music",
+                    class  : "",
+                    target : "_self"
+                },
+            
+                {
+                    name   : "搜索",
+                    icon   : "icon-search-menu",
+                    href   : "javascript:;",
+                    type   : "",
+                    class  : "search",
+                    target : "_self"
+                },
+            
+                {
+                    name   : "友情链接",
+                    icon   : "icon-link",
+                    href   : "/friend",
+                    type   : "friend",
+                    class  : "",
+                    target : "_self"
+                },
+            
+        ],
+        MenuLink : [
+            
+                
+                    {
+                        name   : "知乎",
+                        icon   : "icon-zhihu",
+                        href   : "https://www.zhihu.com/people/68-21-24-64-57-17",
+                        class  : "",
+                        target : "_blank",
+                        image  : ""
+                    },
+                
+                    {
+                        name   : "QQ",
+                        icon   : "icon-qq",
+                        href   : "javascript:;",
+                        class  : "image",
+                        target : "_self",
+                        image  : "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/900cbf5ad084f3cc39ab371ba026d318.jpg"
+                    },
+                
+                    {
+                        name   : "微信",
+                        icon   : "icon-wechat",
+                        href   : "javascript:;",
+                        class  : "",
+                        target : "_self",
+                        image  : "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/5739108c740d75e5fc2a723c80efdadf.jpg"
+                    },
+                
+                    {
+                        name   : "GitHub",
+                        icon   : "icon-github",
+                        href   : "https://github.com/ciquningzuowu",
+                        class  : "",
+                        target : "_blank",
+                        image  : ""
+                    },
+                
+            
+        ],
+
+        FooterStyle : 2,
+        BottomText  : "<div><span class='face'>ღゝ◡╹)ノ♡</span></div><div>le的避难所 - 用心记录每一次成长</div><div>&copy; 2020-<%= new Date().getFullYear() %> le. All Rights Reserved.</div>",
+
+        ConsoleList : [
+            
+                
+                    [
+                        
+                            
+                                "Based on cnblogs theme SimpleMemory.",
+                            
+                                "",
+                            
+                        
+                    ],
+                
+                    [
+                        
+                            
+                                "SimpleMemory Author:",
+                            
+                                "BNDong",
+                            
+                        
+                    ],
+                
+                    [
+                        
+                            
+                                "Theme:",
+                            
+                                "LiveForCode",
+                            
+                        
+                    ],
+                
+            
+        ],
+
+        FontIconExtend : "",
+
+        Donate : {
+            paypal  : "",
+            bitcoin : "",
+            alipay  : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/image/donate/alipay.png",
+            wechat  : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/image/donate/wechat.png"
+        },
+
+        Search : {
+            applicationID : "010C3EANT8",
+            apiKey        : "c7abab9f11b79102b9aff7fe6d41447d",
+            indexName     : "Notes",
+            hits          : {
+                page : 10
+            },
+            labels        : {
+                placeholder : "搜索",
+                empty       : "未发现与 「${query}」 相关的内容",
+                stats       : "${hits} 条相关条目，使用了 ${time} 毫秒",
+            }
+        }, 
+
+        Comment : {
+            switch : false,
+            type   : "Valine",
+        },
+
+        Waline : {
+            el              : ".comments-content",
+            serverURL       : "",
+            path            : window.location.pathname,
+            meta            : "['nick', 'mail', 'link']",
+            requiredMeta    : "['nick', 'mail']",
+            pageSize        : 10,
+            lang            : "zh-cn",
+            locale: {
+                admin       : "博主",
+                anonymous   : "匿名用户",
+                sofa        : "快来做第一个评论的人吧 ~",
+                placeholder : "留下一丝足迹......",
+            },
+            dark            : "html[color-scheme='dark']",
+            search          : false,
+            pageview        : true,
+            comment         : true,
+            copyright       : false,
+        },
+
+        Valine : {
+            el             : ".comments-content",
+            appId          : "srhKtvWPQTWYKh3qX8G8M7v0-gzGzoHsz",
+            appKey         : "8uVSP1q6UlALVC5igYfIfv2h",
+            serverURLs     : "",
+            placeholder    : "留下一丝足迹......",
+            avatar         : "mm",
+            meta           : "nick,mail,link",
+            requiredFields : "nick,mail",
+            pageSize       : 5,
+            lang           : "zh-cn",
+            visitor        : true,
+            enableQQ       : true
+        },
+
+        Tocbot : {
+            switch                : true,
+            tocSelector           : ".toc",
+            contentSelector       : ".article-body",
+            headingSelector       : "h1, h2, h3, h4, h5",
+            headingsOffset        : 0,
+            scrollSmooth          : true,
+            scrollSmoothOffset    : -5,
+            positionFixedSelector : ".toc",
+            positionFixedClass    : "toc-fixed",
+            fixedSidebarOffset    : "",
+        },
+
+        Require : {
+            baseUrl     : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/js/",
+            waitSeconds : 100
+        },
+
+        Music : {
+            type : "APlayer"
+        },
+        APlayer : {
+            container : ".aplayer",
+            fixed     : true,
+            autoplay  : false,
+            loop      : "all",
+            order     : "random",
+            preload   : "auto",
+            volume    : 0.67,
+            mutex     : true,
+            lrcType   : 0,
+            audio     : [
+                
+                    {
+                        name   : "我的音乐1",
+                        artist : "艺术家",
+                        cover  : "/music/cover/default.jpg",
+                        url    : "/music/song/your-music.mp3",
+                        lrc    : ""
+                    },
+                
+                    {
+                        name   : "我的音乐2",
+                        artist : "艺术家",
+                        cover  : "/music/cover/default.jpg",
+                        url    : "/music/song/your-music2.mp3",
+                        lrc    : ""
+                    },
+                
+            ]
+        },
+        Meting : {
+            api      : "https://api.i-meto.com/meting/api",
+            id       : "18197301188", 
+            lrcshow  : false, 
+            server   : "netease", 
+            type     : "playlist", 
+            fixed    : true, 
+            autoplay : true, 
+            loop     : "all", 
+            order    : "random", 
+            preload  : "auto", 
+            volume   : 0.67, 
+            mutex    : true
+        },
+
+        Mouse : {
+            enable  : true,
+            options : {
+                size  : 6,
+                sizeF : 24
+            }
+        },
+
+        LazyLoad : {
+            default : "/image/website/lazyload.svg"
+        },
+  
+        Style : {
+            aplayer          : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/APlayer.min.css",
+            archive          : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/archive.min.css",
+            base             : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/base.min.css",
+            clipboard        : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/clipboard.min.css",
+            code             : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/code.min.css",
+            donate           : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/donate.min.css",
+            fancybox         : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/jquery.fancybox.min.css",
+            footer           : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/footer.min.css",
+            iconfont         : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/iconfont/iconfont.min.css",
+            index            : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/index.min.css",
+            menuBubble       : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/menu-bubble.min.css",
+            mouse            : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/mouse.min.css",
+            page             : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/page.min.css",
+            post             : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/post.min.css",
+            search           : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/search.min.css",
+            tocbot           : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/tocbot.min.css",
+            valine           : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/valine.min.css",
+            waline           : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/waline.css",
+            walineCustom     : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/waline-custom.css"
+        },
+
+        Script: {
+            aplayer          : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/js/APlayer.min.js",
+            config           : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/js/require.config.min.js",
+            index            : "/js/index.js",
+            instantSearch    : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/js/instantsearch.min.js",
+            iscroll          : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/js/iscroll.min.js",
+            jQuery           : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/js/jquery-3.4.1.min.js",
+            loading          : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/js/loading.min.js",
+            meting           : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/js/Meting.min.js",
+            require          : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/js/require.min.js",
+            waline           : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/js/waline.mjs",
+            pageview         : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/js/pageview.mjs",
+            comment          : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/js/comment.mjs",
+        },
+
+        Font: {
+            LongCang    : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/font/LongCang.min.css",
+            Monda       : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/font/Monda.min.css",
+            NotoSansSC  : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/font/NotoSansSC.min.css",
+            NotoSerifSC : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/font/NotoSerifSC.min.css",
+            Playball    : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/font/Playball.min.css",
+            PTMono      : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/font/PTMono.min.css",
+            Roboto      : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/font/Roboto.min.css",
+            RobotoSlab  : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/font/RobotoSlab.min.css",
+            Rosario     : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/font/Rosario.min.css",
+            UbuntuMono  : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/font/UbuntuMono.min.css"
+        },
+
+        Suffix : {
+            about : "在代码中寻找意义，在文字中记录成长"
+        },
+            
+        Theme : {
+            url  : "https://github.com/first19326/Hexo-LiveForCode",
+            name : "Hexo - Live For Code"
+        }  
+    };
+</script>
+    <script type="text/javascript" src="/js/index.js"></script>
+</body>
+</html>

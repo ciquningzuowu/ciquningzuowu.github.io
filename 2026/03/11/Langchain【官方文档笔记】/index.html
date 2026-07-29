@@ -1,0 +1,1924 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, shrink-to-fit=no">
+    <meta name="referrer" content="origin">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="Cache-Control" content="no-transform">
+    <meta http-equiv="Cache-Control" content="no-siteapp">
+    <title>
+        
+            Langchain【官方文档笔记】
+        
+    </title>
+    <link rel="shortcut icon" href="#"/>
+    <!-- 字体预连接加速 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- 只加载必要字体 -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Playball&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <link type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/base.min.css">
+    <link type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/code.min.css">
+    <link rel="stylesheet" href="/css/custom.css">
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/js/jquery-3.4.1.min.js"></script>
+    <!-- 预加载关键JS -->
+    <link rel="preload" href="/js/index.js" as="script">
+<meta name="generator" content="Hexo 8.1.1"></head>
+<body>
+    <div id="page-cover"></div>
+
+    <link type="text/css" rel="stylesheet" href="/css/post.css">
+<div id="header" class="header">
+    <div class="vertical">
+        <div class="inner">
+            
+                <h1 class="header-subtitle">Langchain【官方文档笔记】</h1>
+                <div class="header-subinfo">
+                    <p class="article-info-text">
+                        <span>
+                            <i class="iconfont icon-time"></i> 发表时间：2026-03-11
+                        </span>
+                    </p>
+                    
+                        
+                            <span class="tag-color">人工智能</span>
+                        
+                            <span class="tag-color">python</span>
+                        
+                            <span class="tag-color">计算机进阶</span>
+                        
+                    
+                </div>
+            
+        </div>
+    </div>
+    
+</div>
+
+<div id="container">
+    
+        <!-- 文章页面 -->
+        <div id="article">
+            <div class="toc"></div>
+            <div class="article-body">
+                <h2 id="核心组件">核心组件</h2>
+<h3 id="创建代理"><strong>创建代理</strong></h3>
+<p><strong>1. creat_agent</strong>(
+model=&quot; &quot;,    //模型设置,包括模型标识符（支持自主推理，可模糊填入）、api_key、模型引入地址等<br>
+tools=[],         //注册关联工具<br>
+system_prompt=&quot; &quot;,     //系统提示词，自主编写的文本对象<br>
+context_schema=Context,   //上下文管理器，需引入<br>
+response_format=ToolStrategy(ResponseFormat_class),       //响应格式，需自主创建模型并引入ToolStrategy管理<br>
+checkpointer=checkpointer ,   //短期记忆管理器，需引入<br>
+middleware=[]     //注册中间件<br>
+）</p>
+<p><strong>2.使用提供程序包初始化model</strong><br>
+例如Langchain_openai中的ChatOpenAI函数，不同的模型初始化函数的可选参数存在不同</p>
+<p><strong>3.动态模型</strong><br>
+使用@wrap_model_call装饰器创建的中间件可以在请求中修改模型，引用该装饰器的函数可以使用request.override(model=model)方法临时改变此次响应调用的模型</p>
+<p>创建的代理可以自动管理调用工具以及使用提示词</p>
+<h3 id="工具"><strong>工具</strong></h3>
+<p><strong>概述：</strong> 赋予智能体执行特殊操作的能力，具有连续调用、并行调用、重试和错误处理、跨工具调用功能。智能体遵循ReAct（推理+行动）模式，在简短的推理步骤和有针对性的工具调用之间交替进行，并将由此产生的观察结果输入到后续决策中。
+<strong>1.静态工具</strong><br>
+使用@tool装饰器创建函数，在创建代理时定义，且整个过程中保持不变。工具函数的编写需要在函数首行添加“”“ tool prompt ”“” 进行描述来让调用工具的模型能够确切理解该工具的用处。</p>
+<p><strong>2.动态工具</strong></p>
+<p><strong>概述：</strong> 动态工具指在运行时调整可用的工具集，而不是预先定义所有工具。初始化代理时，注册过多的工具模会使模型过载增加错误，注册过少则会限制功能。可通过身份验证状态、用户权限、功能标志、对话阶段等调整可用工具集。</p>
+<p><strong>处理方法：</strong><br>
+通过 <strong>@wrap_tool_call</strong> 创建中间件进行工具添加，可添加提示词，除方便开发人员识别外，可以被高级中间件技术管理选择调用（注册管理调用中间件的agent）</p>
+<p><strong>（1）筛选预注册工具</strong></p>
+<ul>
+<li>完成特定对话里程碑后启用高级工具</li>
+<li>根据用户偏好、应用商店中的功能标志筛选工具</li>
+<li>运行时上下文中的用户权限筛选</li>
+</ul>
+<p><strong>（2）运行时工具注册</strong><br>
+模型已部署时的添加方法，与上似乎区别不大（个人观点）</p>
+<p><strong>（3）初始全部注册，使用中间件在调用时筛选runtime中的tool_call需要的工具进行保留</strong></p>
+<p><strong>3.工具错误处理</strong></p>
+<p><strong>概述：</strong> 可通过 <strong>@wrap_tool_call</strong> 装饰器创建中间件，提示词设置为当出现工具运行错误时调用，返回错误信息给代理进行处理。</p>
+<h3 id="系统提示"><strong>系统提示</strong></h3>
+<p><strong>概述：</strong> 提示词，指示智能体身份功能等信息，如：“You are a helpful assistant for prefessional. Be concise and accurate.Accurately respond to absolutely certain information.”</p>
+<p><strong>1.基础格式</strong><br>
+可接受 <strong>str</strong> 和 <strong>SystemMessage</strong> 对象（后者可以更好地控制提示结构）。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">system_prompt=SystemMessage(  </span><br><span class="line">        content=[  </span><br><span class="line">            &#123;  </span><br><span class="line">                &quot;type&quot;: &quot;text&quot;,  </span><br><span class="line">                &quot;text&quot;: &quot;You are an AI assistant tasked with analyzing literary works.&quot;,  </span><br><span class="line">            &#125;,  </span><br><span class="line">            &#123;  </span><br><span class="line">                &quot;type&quot;: &quot;text&quot;,  </span><br><span class="line">                &quot;text&quot;: &quot;&lt;the entire contents of &#x27;Pride and Prejudice&#x27;&gt;&quot;,  </span><br><span class="line">                &quot;cache_control&quot;: &#123;&quot;type&quot;: &quot;ephemeral&quot;&#125;  </span><br><span class="line">            &#125;  </span><br><span class="line">        ]  </span><br><span class="line">    )</span><br></pre></td></tr></table></figure>
+<p><strong>2.动态系统提示</strong><br>
+<strong>@dynamic_prompt</strong> 可创建根据模型请求生成系统提示的中间件。例如根据用户身份，可添加f&quot;{base_prompt} Provide detailed technical responses.&quot;或f&quot;{base_prompt} Explain concepts simply and avoid jargon.&quot;，使用return返回最终的提示词。</p>
+<h3 id="结构化输出"><strong>结构化输出</strong></h3>
+<p><strong>1.常规方法</strong><br>
+使用 <strong>ToolStrategy</strong> 修饰BaseModel对象生成一个输出结构对象，传入模型初始化时的response_format参数。</p>
+<p><strong>2.提供者策略</strong><br>
+<strong>ProviderStrategy</strong> 使用模型提供商的原生化结构化输出功能，该方法较为可靠，但仅适用于支持原生结构化输出的提供商。</p>
+<h3 id="记忆"><strong>记忆</strong></h3>
+<p><strong>概述：</strong> 代理会通过 <strong>message</strong> 自动维护对话历史记录，存储在message中的信息可以视为智能体的短期记忆，也可以通过配置进行自定义状态方案。</p>
+<p><strong>1.通过中间件自定义状态（首选）</strong><br>
+（1）定义继承AgentState类的对象，添加各种属性。（例如: user_preferences: dict,custom_context: any）<br>
+（2）使用创建继承AgentMiddleware对象的类，在其中创建AgentState实例为属性，包含其他属性，可重写before_model等方法，最后将其添加到模型初始化时的Middleware注册表。</p>
+<p><strong>2.更改state_schema参数</strong><br>
+初始化代理时将设定好的AgentState对象作为state_schema参数的值。</p>
+<h3 id="流媒体"><strong>流媒体</strong></h3>
+<p><strong>概述：</strong> 当代理程序执行多个步骤时需要一定时间，微课显示中间的进度，我们可以试试回传信息。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">for chunk in agent.steam( 请求信息（invoke传啥这里传啥），stema_mode等其它参数 )：</span><br><span class="line">	# Each chunk contains the full state at that point</span><br><span class="line">	pass</span><br></pre></td></tr></table></figure>
+<h3 id="中间件"><strong>中间件</strong></h3>
+<p>用法：</p>
+<ul>
+<li>在调用模型之前处理状态（例如，消息修剪、上下文注入）</li>
+<li>修改或验证模型的响应（例如，防护措施、内容过滤）</li>
+<li>使用自定义逻辑处理工具执行错误</li>
+<li>基于状态或上下文实现动态模型选择</li>
+<li>添加自定义日志记录、监控或分析功能</li>
+</ul>
+<h2 id="二、model（搞半天原来还要自己拼）">二、model（搞半天原来还要自己拼）</h2>
+<p><strong>概述：</strong> <strong>语言学习模型（LLM）</strong> 除文本生成外，还具有工具调用、结构化输出、多模态、推理。本部分为开发调试时所用技术。</p>
+<h3 id="基础用法"><strong>基础用法</strong></h3>
+<p>1.创建代理时动态指定模型<br>
+2.直接在代理循环之外调用模型执行任务</p>
+<h3 id="初始化模型"><strong>初始化模型</strong></h3>
+<p>最简单的方法：init_chat_model(&quot;model_name&quot;)</p>
+<h3 id="参数"><strong>参数</strong></h3>
+<ul>
+<li>model：模型标识，不只是让你看，需要模糊匹配模型的名字以供识别对接什么模型</li>
+<li>api_key: 你自己注册的端口，消耗你自己花钱买的token，一点也不重要，注册了先发给我（doge）</li>
+<li>temperature: 模型输出的随机性，数值越高，响应的创造性越高（同时出错率也更高）</li>
+<li>max_tokens: 限制模型响应时最大输出token量，防止token浪费</li>
+<li>timeout: 等待响应时间限制</li>
+<li>max_retries: 出现网络问题等时的最大重复尝试次数</li>
+</ul>
+<h3 id="调用"><strong>调用</strong></h3>
+<p>使用invoke传入dict对象（包含human_message等信息），传入时可以包含config设置本次调用的临时配置。</p>
+<h3 id="流式"><strong>流式</strong></h3>
+<p>调用.stream()会返回一个迭代器，他会在生成过程中实时输出数据块，可通过循环实时处理每个数据块。（这里的迭代器更接近async操作，不断重复进行获取直至响应输出结束）。</p>
+<p>将获取的所有数据块按时间顺序组合即为本次对话得到的完整响应。</p>
+<h3 id="批"><strong>批</strong></h3>
+<p><strong>概述:</strong> 将一系列独立的模型请求批量处理，由于可以并行处理，可以显著提高性能并降低成本。调用方式与invoke、stream相同。最终同时返回多份响应，可用for进行遍历。
+（可以使用 <strong>batch_as_completed</strong> 实现每个输入生成后立刻返回）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">responses = model.batch([  </span><br><span class="line">    &quot;Why do parrots have colorful feathers?&quot;,  </span><br><span class="line">    &quot;How do airplanes fly?&quot;,  </span><br><span class="line">    &quot;What is quantum computing?&quot;  </span><br><span class="line">])</span><br></pre></td></tr></table></figure>
+<h3 id="工具调用"><strong>工具调用</strong></h3>
+<p><strong>概述：</strong> 要使你定义的工具可供模型使用，必须使用绑定方法 <strong>bind_tools</strong> 将它们绑定。该方法<strong>返回的是新的model对象</strong>，而不是向源对象添加工具，原因为langchain主要通过链式组合（例如在中间件中会临时添加工具和更改模型等）和配置叠加，如果直接修改源对象，可能导致链条断掉或混乱，且该方法只是复制了配置字典和工具的应用，创建新模型的代价并不大。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">#工具执行循环：</span><br><span class="line"></span><br><span class="line"># Step 1: Model generates tool calls</span><br><span class="line"># 该体系创建的模型无法直接调用工具，只能识别到，调用invoke会返回提取的信息和调用工具的清单</span><br><span class="line"></span><br><span class="line">messages = [&#123;&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;What&#x27;s the weather in Boston?&quot;&#125;]</span><br><span class="line">ai_msg = model_with_tools.invoke(messages)</span><br><span class="line">messages.append(ai_msg)</span><br><span class="line"></span><br><span class="line"># Step 2: Execute tools and collect results</span><br><span class="line"># 该阶段为实际调用清单中的工具生成调用结果并注入messages</span><br><span class="line"></span><br><span class="line">for tool_call in ai_msg.tool_calls:</span><br><span class="line">    # Execute the tool with the generated arguments</span><br><span class="line">    tool_result = get_weather.invoke(tool_call)</span><br><span class="line">    messages.append(tool_result)</span><br><span class="line"></span><br><span class="line"># Step 3: Pass results back to model for final response</span><br><span class="line"># 最后将注入工具调用结果的messages提交给模型，生成最终的响应</span><br><span class="line"></span><br><span class="line">final_response = model_with_tools.invoke(messages)</span><br><span class="line">print(final_response.text)</span><br><span class="line"></span><br><span class="line"># &quot;The current weather in Boston is 72°F and sunny.&quot;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h3 id="结构化输出-2"><strong>结构化输出</strong></h3>
+<p><strong>概述：</strong> 声明并编写response结构，使用<strong>model.with_structed_output</strong> (response_class,//add &quot; <strong>method=&quot;json_schema&quot;,</strong> &quot;when use JSON Schema ),该方法 <strong>返回的是新的model对象</strong>。</p>
+<p><strong>支持的模型：（可存在嵌套结构）</strong></p>
+<ul>
+<li>Pydantic中的 <strong>BaseModel模型类</strong> ，功能丰富，包含字段验证、描述和嵌套结构。</li>
+<li>typing_extensions中的 <strong>TypeDict类</strong> ，相较Pydantic更简单，适合不需要运行时的验证。</li>
+<li><strong>JSON Schema</strong> 可以实现最大程度的控制和互操作性，不过存在编写相较前两者较麻烦的缺点</li>
+</ul>
+<h3 id="高级主题（感觉这里的翻译并不准确，原文为-Advanced-topics-）"><strong>高级主题</strong>（感觉这里的翻译并不准确，原文为 <strong>Advanced topics</strong> ）</h3>
+<p><strong>概述：</strong> LangChain的 <strong>.profile方法</strong> 支持定义一个功能和特性字典（可限定例如最大输入、是否允许图像数据、是否可调用工具等属性）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">model.profile </span><br><span class="line">&#123; </span><br><span class="line">	&quot;max_input_tokens&quot;: 400000, </span><br><span class="line">	&quot;image_inputs&quot;: True, </span><br><span class="line">	&quot;reasoning_output&quot;: True, </span><br><span class="line">	&quot;tool_calling&quot;: True, </span><br><span class="line">	 ... </span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<h3 id="多模态"><strong>多模态</strong></h3>
+<p><strong>概述：</strong> 模型处理并返回非文本数据（images，audio，studio）</p>
+<p><strong>推理</strong></p>
+<p><strong>概述：</strong> 许多模型能够进行多步骤推理得出结论。若底层模型支持，可以将这个推理过程展现出来，以便更好地理解模型是如何得出最终答案的。（<strong>.stream()</strong> 方法）</p>
+<h3 id="token监测"><strong>token监测</strong></h3>
+<p><strong>概述：</strong> 可注册上下文管理器 <strong>UsageMetadataCallbackHandler</strong> 对模型使用的token进行监测。</p>
+<h2 id="三、message">三、message</h2>
+<p><strong>概述：</strong> 模型的基本上下文单元，代表模型的输入输出，鞋带与LLM交互时的获取对话状态所需的内容和元数据。</p>
+<p>message是包含以下内容的对象：</p>
+<ul>
+<li>角色——system，user</li>
+<li>内容——消息的实际内容，text，image，studio等</li>
+<li>元数据——响应信息、消息ID、令牌使用状况等</li>
+</ul>
+<h3 id="基本用法"><strong>基本用法</strong></h3>
+<ol>
+<li>创建消息对象并在调用时传给模型。</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">from langchain.messages import HumanMessage, AIMessage, SystemMessage</span><br><span class="line"></span><br><span class="line">message= … …</span><br><span class="line"></span><br><span class="line">response = model.invoke(messages)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>字典格式传入</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">messages = [ </span><br><span class="line">&#123;&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;You are a poetry expert&quot;&#125;, </span><br><span class="line">&#123;&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Write a haiku about spring&quot;&#125;, </span><br><span class="line">&#123;&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;Cherry blossoms bloom...&quot;&#125; </span><br><span class="line">] </span><br><span class="line"></span><br><span class="line">response = model.invoke(messages)</span><br></pre></td></tr></table></figure>
+<h3 id="消息类型"><strong>消息类型</strong></h3>
+<ul>
+<li>系统消息——告诉模型如何运行，并为交互提供上下文</li>
+<li>人类消息——代表用户输入以及与模型的交互</li>
+<li>AI消息——模型生成的响应，包括文本内容、工具调用和元数据</li>
+<li>工具消息——表示工具调用的输出</li>
+</ul>
+<ol>
+<li>
+<p>系统消息（ <strong>SystemMessage</strong> ）</p>
+<p>初始指令，用于启动模型的行为，可以用于设定基调、定义模型的角色并建立相应准则。</p>
+</li>
+<li>
+<p>人类信息（ <strong>HumanMessage</strong>）</p>
+<p>代表用户输入与交互。可以包含text、image、studio、file等多模态内容。包括常规文本并可包含消息元数据（例如用户名字id等）。</p>
+</li>
+<li>
+<p>人工智能信息（ <strong>AIMessage</strong>）</p>
+<p>模型调用的输出，可包含多模态数据、工具调用和特定于提供商的元数据。提供商对消息类型的权重不同，这意味着又是手动创建一个新的AIMessage对象并插入消息历史记录中会很有帮助。</p>
+</li>
+<li>
+<p>工具调用</p>
+<p>模型调用工具时，调用信息会包含在AIMessage中（调用响应体的 <strong>.tool_call属性</strong> 获取）。其他类似推理和引用的结构化数据也可以出现。除此之外，AIMessage中也可以保存令牌计数和其他使用元数据。（调用响应体的 <strong>.usage_metadata属性</strong> 获取）</p>
+<p>对于支持工具调用的模型，AIMessage可以包含工具信息。工具消息用于将单次工具执行的结果传递回模型。（个人不是太明白这种方式的意义）</p>
+</li>
+</ol>
+<h3 id="消息内容"><strong>消息内容</strong></h3>
+<p><strong>概述：</strong> 消息具有content弱类型属性，支持字符串和无类型对象列表（例如字典）。这使得Langchain能直接支持提供者原生结构，例如多模态内容。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">from langchain.messages import HumanMessage  </span><br><span class="line">  </span><br><span class="line"># String content  </span><br><span class="line">human_message = HumanMessage(&quot;Hello, how are you?&quot;)  </span><br><span class="line">  </span><br><span class="line"># Provider-native format (e.g., OpenAI)  </span><br><span class="line">human_message = HumanMessage(content=[  </span><br><span class="line">    &#123;&quot;type&quot;: &quot;text&quot;, &quot;text&quot;: &quot;Hello, how are you?&quot;&#125;,  </span><br><span class="line">    &#123;&quot;type&quot;: &quot;image_url&quot;, &quot;image_url&quot;: &#123;&quot;url&quot;: &quot;https://example.com/image.jpg&quot;&#125;&#125;  </span><br><span class="line">])  </span><br><span class="line">  </span><br><span class="line"># List of standard content blocks  </span><br><span class="line">human_message = HumanMessage(content_blocks=[  </span><br><span class="line">    &#123;&quot;type&quot;: &quot;text&quot;, &quot;text&quot;: &quot;Hello, how are you?&quot;&#125;,  </span><br><span class="line">    &#123;&quot;type&quot;: &quot;image&quot;, &quot;url&quot;: &quot;https://example.com/image.jpg&quot;&#125;,  </span><br><span class="line">])</span><br></pre></td></tr></table></figure>
+<p><strong>标准内容块:</strong> LangChain为消息提供了一种跨提供商通用的标准表示形式，消息对象实现了一个content_block属性，该属性会将 <strong>content</strong> 特性解析为标准的、类型安全的表示形式。</p>
+<h3 id="内容块引用">**内容块引用</h3>
+<table>
+<thead>
+<tr>
+<th>块类型（主）</th>
+<th>块类型（次）</th>
+<th>参数</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>核</td>
+<td>文本内容块</td>
+<td>type:string  //类型<br><br>text:string   //内容<br><br>annotations:object() //注释  <br><br>extras:object  //额外</td>
+</tr>
+<tr>
+<td></td>
+<td>推理内容块</td>
+<td>type:string  //类型<br><br>reasoning:string  //推导<br><br>extras:object   //额外</td>
+</tr>
+<tr>
+<td>多模态</td>
+<td>图片、音频、视频、文件内容</td>
+<td>type:string  //类型<br><br>url：string  //网址<br><br>ID:string  //内容块的标识</td>
+</tr>
+<tr>
+<td>工具调用</td>
+<td>工具调用</td>
+<td>type:string  //类型<br><br>name:string  //工具名<br><br>args:dict  //参数<br><br>id:string  //工具的唯一标识符</td>
+</tr>
+<tr>
+<td></td>
+<td>工具调用快</td>
+<td>type:string  //tool_call_chunk<br><br>name:string  //工具名<br><br>args:string  //参数<br><br>id:string  //工具标识<br><br>index：index|string  //数据块在数据流中的位置<br></td>
+</tr>
+<tr>
+<td></td>
+<td>调用失败记录</td>
+<td>type:string  //invaild_tool_call<br><br>name:string  //工具名<br><br>args:object  //参数<br><br>error:string //错误描述</td>
+</tr>
+</tbody>
+</table>
+<h2 id="三、tools">三、tools</h2>
+<h3 id="基本工具定义"><strong>基本工具定义</strong></h3>
+<p><strong>概述：</strong> 使用 <strong>@tool装饰器</strong> 创建工具，被修饰函数的文档字符会成为工具的描述，帮助模型理解何时使用该工具。工具函数参数的类型提示是必需的，这定义了工具的输入模式，调用工具时会一句类型提示生成message。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">class input_method(BaseModel):</span><br><span class="line">	&quot;&quot;&quot;description&quot;&quot;&quot;</span><br><span class="line">	arg1:str=Field(......)</span><br><span class="line">	arg2:Literal[&quot;string1&quot;,&quot;string2&quot;]=Field(</span><br><span class="line">	defult=False.</span><br><span class="line">	descriotion=&quot;......&quot;</span><br><span class="line">	)</span><br><span class="line"></span><br><span class="line">@tool(&quot;name for invoke&quot;,description=&quot;Performs arithmetic calculations.&quot;,args_schema=input_method)</span><br><span class="line">def function(arg:str) -&gt; str:</span><br><span class="line">	&quot;&quot;&quot;role of this function&quot;&quot;&quot;</span><br><span class="line">	pass</span><br></pre></td></tr></table></figure>
+<h3 id="访问上下文"><strong>访问上下文</strong></h3>
+<table>
+<thead>
+<tr>
+<th>component</th>
+<th>description</th>
+<th>call on</th>
+<th>update</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>State</strong></td>
+<td>短期记忆</td>
+<td><code>runtime.state</code></td>
+<td><code>return Command(update={&quot;key&quot;,value})</code></td>
+</tr>
+<tr>
+<td><strong>Context</strong></td>
+<td>调用时传递的不可变配置</td>
+<td><code>runtime.context</code></td>
+<td>该内容不可变</td>
+</tr>
+<tr>
+<td><strong>Store</strong></td>
+<td>长期记忆</td>
+<td><code>runtime.store</code></td>
+<td>automatic generation<br></td>
+</tr>
+<tr>
+<td><strong>Stream Writer</strong></td>
+<td>工具执行期间实时更新</td>
+<td><code>runtime.stream_writer</code></td>
+<td><code>writer=runtime.stream_writer</code><br><code>writer(f&quot;information&quot;)</code></td>
+</tr>
+<tr>
+<td><strong>Config</strong></td>
+<td><code>RunnableConfig</code>执行</td>
+<td></td>
+<td>只能临时改变</td>
+</tr>
+<tr>
+<td><strong>Tool Call ID</strong></td>
+<td>当期那工具调用唯一标识符</td>
+<td><code>tool_call[&quot;id&quot;]</code></td>
+<td>该内容不可变</td>
+</tr>
+</tbody>
+</table>
+<h2 id="四、short-memory">四、short memory</h2>
+<p><strong>概述:</strong> 短期记忆可以让应用程序记住单个线程或对话的先前交互，最常见的形式是对话历史。<code>model</code>通过<code>message</code>接受上下文信息，包括系统信息和用户信息。由于上下文窗口有限，许多应用可以通过一些技术来益处或者以往过时的信息。</p>
+<h3 id="基础使用"><strong>基础使用</strong></h3>
+<p>创建代理时指定<code>checkpointer</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">from langchain.agents import create_agent </span><br><span class="line">from langgraph.checkpoint.memory import InMemorySaver </span><br><span class="line"></span><br><span class="line">agent = create_agent( &quot;gpt-5&quot;, </span><br><span class="line">	tools=[get_user_info], </span><br><span class="line">	checkpointer=InMemorySaver(), </span><br><span class="line">	)</span><br></pre></td></tr></table></figure>
+<h3 id="生产环境"><strong>生产环境</strong></h3>
+<p><code>checkpointer</code>为开发阶段使用的对象，只能在程序运行期间存储短期记忆，生产环境中使用<code>PostgoresSaver</code>，该对象可将上下文记忆存储进<code>postgresql</code>数据库.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">from langgraph.checkpoint.postgres import PostgresSaver</span><br></pre></td></tr></table></figure>
+<h3 id="自定义代理内存"><strong>自定义代理内存</strong></h3>
+<p><strong>概述：</strong> 默认情况下，代理使用密匙<code>AgentState</code>管理短期记忆，特别是对话历史记录<code>message</code>。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">from langchain.agents import create_agent, AgentState</span><br><span class="line">from langgraph.checkpoint.memory import InMemorySaver</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">class CustomAgentState(AgentState):</span><br><span class="line">    user_id: str</span><br><span class="line">    preferences: dict</span><br><span class="line"></span><br><span class="line">agent = create_agent(</span><br><span class="line">    &quot;gpt-5&quot;,</span><br><span class="line">    tools=[get_user_info],</span><br><span class="line">    state_schema=CustomAgentState,</span><br><span class="line">    checkpointer=InMemorySaver(),</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<h3 id="消息清理"><strong>消息清理</strong></h3>
+<ol>
+<li><strong>修剪消息</strong></li>
+</ol>
+<p>要在代理中清理消息历史记录，需使用@before_model中间件装饰器，在调用代理前修剪消息。以下为保留最开始时的原始信息与最新的三条信息。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">@before_model</span><br><span class="line">def trim_messages(state: AgentState, runtime: Runtime) -&gt; dict[str, Any] | None:</span><br><span class="line">    &quot;&quot;&quot;Keep only the last few messages to fit context window.&quot;&quot;&quot;</span><br><span class="line">    messages = state[&quot;messages&quot;]</span><br><span class="line"></span><br><span class="line">    if len(messages) &lt;= 3:</span><br><span class="line">        return None  # No changes needed</span><br><span class="line"></span><br><span class="line">    first_msg = messages[0]</span><br><span class="line">    recent_messages = messages[-3:] if len(messages) % 2 == 0 else messages[-4:]</span><br><span class="line">    new_messages = [first_msg] + recent_messages</span><br><span class="line"></span><br><span class="line">    return &#123;</span><br><span class="line">        &quot;messages&quot;: [</span><br><span class="line">            RemoveMessage(id=REMOVE_ALL_MESSAGES),</span><br><span class="line">            *new_messages</span><br><span class="line">        ]</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>
+<p><strong>删除消息</strong>
+使用<code>RemoveMessage</code>并指定要删除信息的id，或者要删除内容的指令，如<code>REMOVE_ALL_MESSAGES</code>为全部删除。</p>
+</li>
+<li>
+<p><strong>消息摘要</strong>
+<strong>概述:</strong> 直接修剪或删除消息容易导致有效信息损失，因此需要采用更加复杂的方法。创建代理时向<code>middleware</code>参数中添加内置函数<code>SummarizationMiddleware</code>，可自动汇总消息历史记录。</p>
+</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">agent = create_agent(</span><br><span class="line">    model=&quot;gpt-4.1&quot;,</span><br><span class="line">    tools=[],</span><br><span class="line">    middleware=[</span><br><span class="line">        SummarizationMiddleware(</span><br><span class="line">            model=&quot;gpt-4.1-mini&quot;,</span><br><span class="line">            trigger=(&quot;tokens&quot;, 4000),</span><br><span class="line">            keep=(&quot;messages&quot;, 20)</span><br><span class="line">        )</span><br><span class="line">    ],</span><br><span class="line">    checkpointer=checkpointer,</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<h3 id="访问内存"><strong>访问内存</strong></h3>
+<ol>
+<li><strong>工具</strong>
+（1）<strong>使用工具访问短期记忆：</strong> 工具函数的参数部分添加<code>runtime:ToolRuntime</code>。可在函数体中访问runtime的属性以获取例如config，state等的信息。
+（2）<strong>从工具写入短期记忆：</strong> 可通过从工具返回状态更新的方式实现。</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">return Command(update=&#123;</span><br><span class="line">        &quot;user_name&quot;: name,</span><br><span class="line">        # update the message history</span><br><span class="line">        &quot;messages&quot;: [</span><br><span class="line">            ToolMessage(</span><br><span class="line">                &quot;Successfully looked up user information&quot;,</span><br><span class="line">                tool_call_id=runtime.tool_call_id</span><br><span class="line">            )</span><br><span class="line">        ]</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>提示词
+在中间件中访问短期记忆，需要在@`before_mode 阶段根据历史记录或自定义状态字段创建动态提示后返回新的系统提示词。</li>
+</ol>
+<h2 id="五、stream">五、stream</h2>
+<p><strong>概述：</strong> LangChain的流式系统允许将代理运行的实时反馈呈现给应用程序。具体有以下功能：</p>
+<ol>
+<li><strong>Sream agent progress</strong></li>
+<li><strong>Stream LLM tokens</strong></li>
+<li><strong>Stream thinking/reasoning tokens</strong></li>
+<li>**Stream custom updates</li>
+<li><strong>Stream multiple models</strong>: 可混合选择<code>updates</code>（返回state的更新）、<code>messages</code>（LLM token+元数据，模型的输出内容）、<code>custom</code>（任意用户数据）</li>
+</ol>
+<h3 id="流式进程"><strong>流式进程</strong></h3>
+<p>使用<code>stream</code> 或 <code>astream</code>方法并选择<code>stream_mode=&quot;updates(or other)&quot;</code>,这将在代理执行每个步骤后发送一个事件。例：</p>
+<ul>
+<li>LLM节点：带有工具调用请求的<code>AIMessage</code></li>
+<li>工具节点：带有执行结果的<code>ToolMessage</code></li>
+<li>LLM节点：最终响应结果</li>
+</ul>
+<h3 id="LLM-token"><strong>LLM token</strong></h3>
+<p>使用<code>stream_mode=&quot;messages&quot;</code>后可实时传输LLM生成的token。可访问可以查看流式工具调用和最终响应。</p>
+<h3 id="Custom-updates"><strong>Custom updates</strong></h3>
+<p>要在运行时更改stream模式，可以使用<code>get_stream_writer</code>,当stream模式为<code>custom</code>时，<code>writer</code>会立刻将内容返回而不需要等待整个响应流程结束，这可以用来返回类似&quot;程序正在思考中&quot;等过渡信息，且这个操作是进步进行的，不会显著影响主进程的运行。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">def get_weather(city: str) -&gt; str:</span><br><span class="line">    &quot;&quot;&quot;Get weather for a given city.&quot;&quot;&quot;</span><br><span class="line">    </span><br><span class="line">    writer = get_stream_writer()</span><br><span class="line">    </span><br><span class="line">    # stream any arbitrary data</span><br><span class="line">    </span><br><span class="line">    writer(f&quot;Looking up data for city: &#123;city&#125;&quot;)</span><br><span class="line">    writer(f&quot;Acquired data for city: &#123;city&#125;&quot;)</span><br><span class="line">    </span><br><span class="line">    return f&quot;It&#x27;s always sunny in &#123;city&#125;!&quot;</span><br></pre></td></tr></table></figure>
+<h3 id="Stream-multiple-modes"><strong>Stream multiple modes</strong></h3>
+<p>上述三种模式可混合使用。</p>
+<h2 id="六、structured-output">六、structured output</h2>
+<p><strong>概述：</strong> 允许自定义<strong>JSON对象</strong>、<strong>Pydantic models对象</strong>或直接用<strong>数据类对象</strong>作为格式输出限制。使用方式为在create_agent的response_format参数注册，且需注意的是，响应对象格式声明可以使用Union，即：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">def create_agent(</span><br><span class="line">    ...</span><br><span class="line">    response_format: Union[</span><br><span class="line">        ToolStrategy[StructuredResponseT],  # 调用工具进行结构输出</span><br><span class="line">        ProviderStrategy[StructuredResponseT], # 使用厂商原生输出结构</span><br><span class="line">        type[StructuredResponseT],  # 基于模型能力自动选择最优策略</span><br><span class="line">        None,  # 无特殊输出格式要求</span><br><span class="line">    ]</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h3 id="1-原生策略"><strong>1.原生策略</strong></h3>
+<p><strong>概述：</strong> 部分模型厂商支持通过API使用原生输出结构，一般来说，厂商提供的原生结构可使用的最可靠的方法。</p>
+<p><strong>使用</strong>：定义<code>ProvideStrategy类</code>，属性有下：</p>
+<ol>
+<li><strong>schema</strong>：支持<code>Pydantic models</code>（返回pydantic实例）、<code>Dataclasses</code>（返回带类型注解的python类）、<code>TyprdDict</code>（返回字典）、<code>Json Schema</code>（返回字典）</li>
+<li><strong>strict</strong>：是否启用严格的模式遵循，需注意仅部分厂商支持此功能</li>
+</ol>
+<h3 id="2-工具策略"><strong>2.工具策略</strong></h3>
+<p><strong>概述</strong>：对于不支持原生结构输出的模型，可以使用工具调用实现相同作用。这支持左右的模型使用。</p>
+<p><strong>使用</strong>：定义<code>ToolStrategy类</code>,属性有下：</p>
+<ol>
+<li><strong>schema</strong>：与原生策略大致相同，支持<code>Pydantic models</code>（返回pydantic实例）、<code>Dataclasses</code>（返回带类型注解的python类）、<code>TyprdDict</code>（返回字典）、<code>Json Schema</code>（返回字典），但额外可以使用<strong>Union types</strong>，模型会自动给予上下文选择最合适的结构。</li>
+<li><strong>tool_message_content</strong>：调用时会返回的工具消息的定义，如果不提供，默认返回结构化形影数据。</li>
+<li><strong>handle_errors</strong>：结构化输出验证失败的错误处理策略，默认为True
+<ul>
+<li><strong>True</strong>：默认错误模板捕获所有错误</li>
+<li><strong>str</strong>：自定义消息捕获所有错误</li>
+<li><strong>type[exceotion]</strong>：仅使用默认消息捕获此异常类型</li>
+<li><strong>tuple[type[Exception]]</strong>：仅捕获这些类型的异常，并使用默认消息</li>
+<li><strong>Callable[[Exception],str]</strong>：返回错误消息的自定义函数</li>
+<li><strong>False</strong>：不重试，让异常传播</li>
+</ul>
+</li>
+<li><strong>Custom tool message content</strong>：支持自定义工具消息内容，当调用工具结构化输出时会出现在会话历史中。</li>
+<li>**handleing errors：
+<strong>Error Handing</strong>：可设置当发生结构输出应用错误时的重试机制。
+<ul>
+<li><strong>Multiple structured outputs error</strong>：多重结构化输出错误，当模型错误的调用多个结构化输出工具时，代理会提供错误反馈。</li>
+<li><strong>Schema validation error</strong>：架构验证错误，当结构输出不匹配期望架构时，智能体会提供特定的错误反馈。自定义<code>handle_errprs属性</code>，</li>
+<li></li>
+</ul>
+</li>
+</ol>
+<p><code>handle_errors</code>参数可设置处理方式:</p>
+<ul>
+<li>一段让智能体识别怎么处理的字符串。</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ToolStrategy( </span><br><span class="line">schema=ProductRating, </span><br><span class="line">handle_errors=&quot;Please provide a valid rating between 1-5 and include a comment.&quot; )</span><br></pre></td></tr></table></figure>
+<ul>
+<li>仅处理一个或多个特定异常情况，仅在发生指定异常时会重试，其他所有情况下都会引发异常。</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ToolStrategy( </span><br><span class="line">schema=ProductRating, </span><br><span class="line">handle_errors=ValueError # Only retry on ValueError, raise others )</span><br></pre></td></tr></table></figure>
+<ul>
+<li>自定义错误处理函数</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">def custom_error_handler(error: Exception) -&gt; str:</span><br><span class="line">    if isinstance(error, StructuredOutputValidationError):</span><br><span class="line">        return &quot;There was an issue with the format. Try again.&quot;</span><br><span class="line">    elif isinstance(error, MultipleStructuredOutputsError):</span><br><span class="line">        return &quot;Multiple structured outputs were returned. Pick the most relevant one.&quot;</span><br><span class="line">    else:</span><br><span class="line">        return f&quot;Error: &#123;str(error)&#125;&quot;</span><br></pre></td></tr></table></figure>
+<h2 id="七、middleware">七、middleware</h2>
+<p><strong>概述</strong>：中间件提供了一种能更彻底的公职智能体内发行什么的方式，对一下场景较为有效：</p>
+<ul>
+<li>通过记录、分析和调试追溯agent行为</li>
+<li>改变提示词、工具选择以及输出格式</li>
+<li>添加重试、回退以及终止逻辑</li>
+<li>应用速率限制、防护措施和个人身份信息检测</li>
+</ul>
+<h3 id="1-代理循环"><strong>1.代理循环</strong></h3>
+<p><strong>概述</strong>：最简单的模型运行流程包括调用模型，让模型选择要执行的工具，然后在不再需要调用任何工具时结束。Middleware运行在智能体调用前、模型调用前、模型调用后、智能体调用后四个阶段，以及工具运行时前后的整个阶段。</p>
+<h3 id="2-预构建中间键"><strong>2.预构建中间键</strong></h3>
+<p><strong>概述</strong>：Langchain和Deep Agents（深度代理）提供了预创建的中间件以供日常情况使用，每个中间件都已准备投入生产并且为你的特定需要做贡献。</p>
+<p><strong>与中间商无关的中间件</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>Middleware</th>
+<th>Description</th>
+<th>options</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://reference.langchain.com/python/langchain/agents/middleware/summarization/SummarizationMiddleware"><code>SummarizationMiddleware</code></a></td>
+<td>接近消息数量上限时自动<strong>生成对话历史记录摘要</strong>，保留最近的消息同时压缩较早的上下文</td>
+<td>1. model <br>2. trigger：触发摘要的条件<br>3. keep：保持多少上下文大小<br>4. token_conter<br>5. summary_prompt：摘要的自定义提示模板<br>6. trim_tokens_to_summarize</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://reference.langchain.com/python/langchain/agents/middleware/human_in_the_loop/HumanInTheLoopMiddleware"><code>HumanInTheLoopMiddleware</code></a></td>
+<td><strong>工具调用前，暂停代理程序的执行，以便人工审批、编辑和拒绝这些调用</strong></td>
+<td>1. interrupt_on</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://reference.langchain.com/python/langchain/agents/middleware/model_call_limit/ModelCallLimitMiddleware"><code>ModelCallLimitMiddleware</code></a></td>
+<td><strong>限制模型调用次数</strong>以防止无限循环或过高的成本</td>
+<td>1. thread_limit<br>2. run_limit：调用次数限制<br>3. exit_behavior：end/error</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://reference.langchain.com/python/langchain/agents/middleware/tool_call_limit/ToolCallLimitMiddleware"><code>ToolCallLimitMiddleware</code></a></td>
+<td><strong>控制agent运行tool的数量</strong>，可全局限制或对特定工具限制</td>
+<td>1. tool_name<br>2. thread_limit：线程内所有运行工具的最大调用次数<br>3. run_limit：每次调用的最大工具调用次数<br>4. exit_behavier：达到限制时的行为，如显示错误信息，报错，终止执行</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://reference.langchain.com/python/langchain/agents/middleware/model_fallback/ModelFallbackMiddleware"><code>ModelFallbackMiddleware</code></a></td>
+<td>主模型失效时自动<strong>回退到备用模型</strong></td>
+<td>1. first_model：主模型<br>2. additional_models：备用模型</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://reference.langchain.com/python/langchain/agents/middleware/pii/PIIMiddleware"><code>PIIMiddleware</code></a></td>
+<td>使用可配置策略检测和<strong>处理对话中的个人身份信息</strong>（PII：（<strong>Personally Identifiable Information</strong>.））</td>
+<td>1. pii_type：检测的个人身份信息（PII）类型，可以使内置类型如email，也可以是自定义类型名称<br>2. strategy：如何检测：<br>- <code>'block'</code>- 检测到异常时抛出异常<br>- <code>'redact'</code>- 替换为<code>[REDACTED_{PII_TYPE}]</code><br>- <code>'mask'</code>- 部分遮盖（例如，<code>****-****-****-1234</code>）<br>- <code>'hash'</code>- 替换为确定性哈希<br>3. detector：自定义探测器函数或正则表达式模式<br>4. apply_to_input：是否在模型调用前检查用户信息<br>5. apply_to_output：是否在模型调用后检查AI信息<br>6. apply_to_tool_results：执行后检查工具消息结果消息<br><br></td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://reference.langchain.com/python/langchain/agents/middleware/todo/TodoListMiddleware"><code>TodoListMiddleware</code></a></td>
+<td>为代理<strong>配备任务规划和追踪功能</strong></td>
+<td>1. system_prompt：用于指导待办事项的使用<br>2. tool_description</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://reference.langchain.com/python/langchain/agents/middleware/tool_selection/LLMToolSelectorMiddleware"><code>LLMToolSelectorMiddleware</code></a></td>
+<td>使用LLM调用主模型之前智能的<strong>选择注入的工具</strong></td>
+<td>1. model<br>2. system_promopt<br>3. max_tools<br>4. always_include</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://reference.langchain.com/python/langchain/agents/middleware/tool_retry/ToolRetryMiddleware"><code>ToolRetryMiddleware</code></a></td>
+<td>使用可配置的指数退避算法自动<strong>重试失败的工具调用</strong></td>
+<td>0. max_retries<br>1. tools<br>2. retry_on：重试的异常类型元祖<br>3. on_failure：所有重试次数用尽时<br>4. backoff_factor：回退因子，每次重试等待initial_delay * (backoff_factor ** retry_number)<br>5. initial_delay：首次重试前的初始延迟时间<br>6. max_delay：重试之间的最大延迟时间<br>7. jitter：是否添加随机扰动<br></td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://reference.langchain.com/python/langchain/agents/middleware/model_retry/ModelRetryMiddleware"><code>ModelRetryMiddleware</code></a></td>
+<td>使用可配置的指数退避算法自动<strong>重试失败的模型调用</strong></td>
+<td>0. retry_on<br>1. on_failure<br>2. backoff_factor<br>3. initial_delay<br>4. max_delay<br>5. jitter</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://reference.langchain.com/python/langchain/agents/middleware/tool_emulator/LLMToolEmulator"><code>LLMToolEmulator</code></a></td>
+<td>使用LLM模拟工具执行过程进行测试，<strong>用AI生成的响应替换实际的工具调用</strong></td>
+<td>0. tools：模拟的工具列表<br>1. model<br></td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://reference.langchain.com/python/langchain/agents/middleware/context_editing/ContextEditingMiddleware"><code>ContextEditingMiddleware</code></a>：<a target="_blank" rel="noopener" href="https://reference.langchain.com/python/langchain/agents/middleware/context_editing/ClearToolUsesEdit"><code>ClearToolUsesEdit</code></a></td>
+<td>达到token限制时，<strong>清除较旧的工具调用输出管理对话上下文</strong>，同时保留最近的结果这有助于在包含大量工具调用的长时间对话中保持上下文窗口的可控性。</td>
+<td>0. edits：可应用策略列表<br>1. token_count_method：token计数方法<br>2. trigger：触发的token数量<br>3. clear_at_least：回收的最小令牌书<br>4. keep：必须保留的最新工具结果数量<br>5. clear_tool_inputs<br>6. exclude_tools：排除在外的工具名称列表<br>7. placeholder：占位符脚本，用于显示已清除的工具输出，将替换原始工具消息内容</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://reference.langchain.com/python/langchain/agents/middleware/shell_tool/ShellToolMiddleware"><code>ShellToolMiddleware</code></a></td>
+<td><strong>管理向代理公开持久化的shell</strong>（命令行）会话以执行命令</td>
+<td>0. workspace_root：会话基本目录<br>1. startup_commands：会话开始后按顺序执行的可选命令<br>2. shutdown_commands：会话关闭前执行的可选命令<br>3. execution_policy：执行策略控制超时、输出限制和资源配置：<br>- <code>HostExecutionPolicy</code>- 完全主机访问权限（默认）；最适合代理程序已在容器或虚拟机中运行的可信环境。<br>- <code>DockerExecutionPolicy</code>- 为每个代理运行启动一个独立的 Docker 容器，从而提供更强的隔离性<br>- <code>CodexSandboxExecutionPolicy</code>- 复用 Codex CLI 沙箱，以增加系统调用/文件系统限制<br>4. redaction_rules：可选地编辑规则，用于在将命令输出返回给模型之前对其进行清理<br>5. tool_description<br>6. shell_command：用于启动持久会话的可选shell可执行文件或参数序列<br>7. env：可选的环境变量，可提供给shell对话</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://reference.langchain.com/python/langchain/agents/middleware/file_search/FilesystemFileSearchMiddleware"><code>FilesystemFileSearchMiddleware</code></a></td>
+<td>在文件系统上**提供Glob（文件检索工具）和Grep（文件内容检索工具）**搜索工具</td>
+<td>0. root_path：搜索的根目录<br>1. use_ripgrep：是否使用ripgrep进行搜索<br>2. max_file_size_mb<br></td>
+</tr>
+<tr>
+<td>FilesystemMiddleware</td>
+<td>上下文工程是构建高效智能体的主要挑战之一，当使用返回可变长度结果的工具（例如web_search RAG）时，这一点尤其困难，过长的工具结果会迅速填满上下文窗口。出自Deep Agent该中间件提供了四种与短期记忆和长期记忆交互的工具：<br>- <code>ls</code>列出文件系统中的文件<br>- <code>read_file</code>读取整个文件或文件中指定数量的行<br>- <code>write_file</code>向文件系统写入一个新文件<br>- <code>edit_file</code>编辑文件系统中已存在的文件</td>
+<td>LangGraph内容，暂不补充</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://docs.langchain.com/oss/python/langchain/middleware/built-in#subagent">Subagent</a></td>
+<td>Add the ability to spawn subagents.</td>
+<td>LangGraph内容，暂不补充</td>
+</tr>
+</tbody>
+</table>
+<h3 id="3-自定义中间件"><strong>3.自定义中间件</strong></h3>
+<h4 id="Hook（拦截点）"><strong>Hook（拦截点）</strong></h4>
+<p><strong>概述</strong>：通过在代理执行流程的特定点运行<strong>拦截点（hook）</strong> 来构建自定义中间件。一下为两种运行agent时插入拦截点的方式：</p>
+<p><strong>（1）Node-style hooks：</strong>
+在执行节点使用，用于<strong>日志记录、验证和更新</strong>
+<strong>相关hook：</strong></p>
+<ul>
+<li><code>before_agent</code> - Before agent starts (once per invocation)</li>
+<li><code>before_model</code> - Before each model call</li>
+<li><code>after_model</code> - After each model response</li>
+<li><code>after_agent</code> - After agent completes (once per invocation)</li>
+</ul>
+<p><strong>（2）Wrap-style hooks</strong>
+拦截执行过程，并在调用处理程序时进行控制。可用于<strong>重试、缓存和转换</strong>
+<strong>相关hook：</strong></p>
+<ul>
+<li>wrap_model_call 每次模型调用前后</li>
+<li>wrap_tool_call 每次工具调用前后</li>
+</ul>
+<p>两种方式均可更新代理状态，机制也有所不同</p>
+<ul>
+<li>Node风格返回一个字典，使用图的reducer应用于代理状态。</li>
+<li>包装式拦截点对于模型调用返回<a target="_blank" rel="noopener" href="https://reference.langchain.com/python/langchain/agents/middleware/types/ExtendedModelResponse"><code>ExtendedModelResponse</code></a>和一个向模型响应中注入的命令。对于工具调用直接返回一个命令。
+<strong>（3）包含多个中间件的组合：</strong>
+当多个中间件返回<code>ExtendedModelResponse</code>,它们的命令组成如下：</li>
+<li>命令是通过reducer执行：每个命令都会触发一个单独的状态更新，对于message而言，它们是累加的</li>
+<li>对于非reducer状态字段，冲突时，外层优先</li>
+<li>可重试：如果外部中间件实现了可能导致多次调用<code>handler()</code>的逻辑，则丢弃先前调用的命令</li>
+</ul>
+<h4 id="创建中间件"><strong>创建中间件</strong></h4>
+<p>（1）使用装饰器封装函数，可<strong>快速创建单个hook</strong>的中间件，下为可供选择的装饰器：</p>
+<p><strong>Node-style</strong>：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://reference.langchain.com/python/langchain/agents/middleware/types/before_agent"><code>@before_agent</code></a>- 在代理启动前运行（每次调用运行一次）</li>
+<li><a target="_blank" rel="noopener" href="https://reference.langchain.com/python/langchain/agents/middleware/types/before_model"><code>@before_model</code></a>- 在每次模型调用之前运行</li>
+<li><a target="_blank" rel="noopener" href="https://reference.langchain.com/python/langchain/agents/middleware/types/after_model"><code>@after_model</code></a>- 在每次模型响应后运行</li>
+<li><a target="_blank" rel="noopener" href="https://reference.langchain.com/python/langchain/agents/middleware/types/after_agent"><code>@after_agent</code></a>- 在代理程序完成后运行（每次调用一次）
+<strong>Wrap-style</strong>：</li>
+<li><a target="_blank" rel="noopener" href="https://reference.langchain.com/python/langchain/agents/middleware/types/wrap_model_call"><code>@wrap_model_call</code></a>- 使用自定义逻辑包装每个模型调用</li>
+<li><a target="_blank" rel="noopener" href="https://reference.langchain.com/python/langchain/agents/middleware/types/wrap_tool_call"><code>@wrap_tool_call</code></a>- 使用自定义逻辑包装每个工具调用</li>
+</ul>
+<p><strong>Convenience：</strong></p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://reference.langchain.com/python/langchain/agents/middleware/types/dynamic_prompt"><code>@dynamic_prompt</code></a>- 生成动态系统提示</li>
+</ul>
+<p>（2）基于class的中间件，更适用于<strong>多个hook或配置的复杂中间件</strong>。可用于定义<strong>实现同步或异步实现</strong>的hook或在单个<strong>中间件组件中组合多个hook</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">class LoggingMiddleware(AgentMiddleware):</span><br><span class="line">    def before_model(self, state: AgentState, runtime: Runtime) -&gt; dict[str, Any] | None:</span><br><span class="line">        print(f&quot;About to call model with &#123;len(state[&#x27;messages&#x27;])&#125; messages&quot;)</span><br><span class="line">        return None</span><br><span class="line"></span><br><span class="line">    def after_model(self, state: AgentState, runtime: Runtime) -&gt; dict[str, Any] | None:</span><br><span class="line">        print(f&quot;Model returned: &#123;state[&#x27;messages&#x27;][-1].content&#125;&quot;)</span><br><span class="line">        return None</span><br></pre></td></tr></table></figure>
+<h4 id="自定义状态模式"><strong>自定义状态模式</strong></h4>
+<p>中间件可以使用自定义属性扩展代理的状态，这使得中间件能够：</p>
+<ul>
+<li><strong>跟踪执行过程中的状态</strong>：在生命周期中保持计数、标记和其他值的正常运行</li>
+<li><strong>在中间件之间共享数据</strong>：在不同hook中间件之间传递数据</li>
+<li><strong>应用横切关注点</strong>：不修改agent核心逻辑的情况下添加例如速率限制、情况追踪、用户上下文或审查日志等功能</li>
+<li><strong>做出条件决策</strong>：利用累计状态确定继续执行、跳转不同节点还是动态地修改行为</li>
+</ul>
+<h4 id="执行命令"><strong>执行命令</strong></h4>
+<p>使用多个中间件时，其运行如下：</p>
+<p><strong>Before hooks run in order:</strong></p>
+<ol>
+<li><code>middleware1.before_agent()</code></li>
+<li><code>middleware2.before_agent()</code></li>
+<li><code>middleware3.before_agent()</code></li>
+</ol>
+<p><strong>Agent loop starts</strong></p>
+<ol start="4">
+<li><code>middleware1.before_model()</code></li>
+<li><code>middleware2.before_model()</code></li>
+<li><code>middleware3.before_model()</code></li>
+</ol>
+<p><strong>Wrap hooks nest like function calls:</strong></p>
+<ol start="7">
+<li><code>middleware1.wrap_model_call()</code> → <code>middleware2.wrap_model_call()</code> → <code>middleware3.wrap_model_call()</code> → model</li>
+</ol>
+<p><strong>After hooks run in reverse order:</strong></p>
+<ol start="8">
+<li><code>middleware3.after_model()</code></li>
+<li><code>middleware2.after_model()</code></li>
+<li><code>middleware1.after_model()</code></li>
+</ol>
+<p><strong>Agent loop ends</strong></p>
+<ol start="11">
+<li><code>middleware3.after_agent()</code></li>
+<li><code>middleware2.after_agent()</code></li>
+<li><code>middleware1.after_agent()</code></li>
+</ol>
+<h4 id="Agent-jumps"><strong>Agent jumps</strong></h4>
+<p>为了提前结束中间件的运行，可以通过<code>@hook_config</code>添加一个伴随着<code>jump_to</code>的字典，可选jump标签有下：</p>
+<ul>
+<li>'end'：跳转到运行结束后（或第一个<code>after_agent</code>hook后）</li>
+<li>'tools'：跳转工具节点</li>
+<li>'model'：跳转model节点（或第一个<code>before_model</code>hook之后）</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">@after_model</span><br><span class="line">@hook_config(can_jump_to=[&quot;end&quot;])</span><br><span class="line">def check_for_blocked(state: AgentState, runtime: Runtime) -&gt; dict[str, Any] | None:</span><br><span class="line">    last_message = state[&quot;messages&quot;][-1]</span><br><span class="line">    if &quot;BLOCKED&quot; in last_message.content:</span><br><span class="line">        return &#123;</span><br><span class="line">            &quot;messages&quot;: [AIMessage(&quot;I cannot respond to that request.&quot;)],</span><br><span class="line">            &quot;jump_to&quot;: &quot;end&quot;</span><br><span class="line">        &#125;</span><br><span class="line">    return None</span><br></pre></td></tr></table></figure>
+<h4 id="中间件规范"><strong>中间件规范</strong></h4>
+<ol>
+<li>保持<strong>中间件的专注</strong>，每个中间件都做好一件事</li>
+<li>优雅地<strong>处理错误</strong>，不要让中间件错误导致代理崩溃</li>
+<li>使用<strong>合适的hook类型</strong>：</li>
+</ol>
+<ul>
+<li>用于顺序逻辑（日志记录、验证）的节点式</li>
+<li>控制流（重试、回退、缓存）的包装式</li>
+</ul>
+<ol start="4">
+<li>清楚的<strong>记录所有自定义状态</strong></li>
+<li>在集成之前，<strong>对中间件进行独立的单元测试</strong></li>
+<li>考虑执行顺序，将<strong>关键的中间件放在列表的最前面</strong></li>
+<li>尽可能<strong>使用内置中间件</strong></li>
+</ol>
+<h4 id="中间件的预定义参数"><strong>中间件的预定义参数</strong></h4>
+<ul>
+<li><strong><code>RunInput</code> / <code>Messages</code></strong>:
+<ul>
+<li><em>Definition</em>: The list of chat messages (Human, AI, System) being sent to the agent.</li>
+<li><em>Action</em>: You can modify, add, or remove messages here. For example, injecting a system prompt dynamically.</li>
+</ul>
+</li>
+<li><strong><code>ToolCalls</code></strong>:
+<ul>
+<li><em>Definition</em>: Requests made by the LLM to execute a specific tool (function).</li>
+<li><em>Action</em>: You can validate arguments, mock a response, or block a tool call if it looks dangerous.</li>
+</ul>
+</li>
+<li><strong><code>Context</code></strong> (or <code>Runtime</code>):
+<ul>
+<li><em>Definition</em>: A dictionary-like object storing state information throughout the agent's execution.</li>
+<li><em>Action</em>: Middleware can read/write data here to share information between different steps of the agent's workflow without passing it explicitly in the chat.</li>
+</ul>
+</li>
+</ul>
+<h2 id="八、Fronted"><strong>八、Fronted</strong></h2>
+<p><strong>概述</strong>：为使用该工具创建的代理构建丰富的交互式前端。这些模式涵盖了从基本信息渲染到高级工作流程的所有内容’</p>
+<h3 id="体系架构"><strong>体系架构</strong></h3>
+<p>通用架构：<code>creatAgent</code>后端通过hook将状态流式传输到<code>useStream</code>前端。
+后端<code>creatAgent</code>生成编译后的LangGraph图，并提供流式API。前端的<code>userStream</code>hook连接到该API，并提供响应式状态，可以通过任何框架渲染这些状态。</p>
+<p><code>userStream</code>适用于React、Vue、Svelte和Angular</p>
+<h2 id="九、Guardrails">九、Guardrails</h2>
+<p><strong>概述</strong>：防护机制通过在代理执行的关键节点验证和过滤内容，帮助构建安全合规的AI应用，可以检测敏感信息、强制执行内容策略、验证输出，并在不安全行为造成问题前阻止。</p>
+<h3 id="两种互补的实现防护措施的方法："><strong>两种互补的实现防护措施的方法</strong>：</h3>
+<ul>
+<li><strong>确定性护栏</strong>：<strong>基于规范逻辑的验证</strong>（例如正则、关键词匹配）。快速、结果可预测且成本高，但细微处理相对差</li>
+<li><strong>基于模型的护栏</strong>：<strong>使用LLM或分类器</strong>评估具有语义理解的内容。可捕捉到规则无法发现的细微问题，但速度较慢且成本更高</li>
+</ul>
+<h3 id="Built-in（内置）gurdrails"><strong>Built-in（内置）gurdrails</strong></h3>
+<p><strong>1.Pll dection</strong>
+LangChain提供了预定义的中间件以在交互中查看和提交个人认证信息。这个中间件可以查看正常的PLL类型（例如email、IP addresses）</p>
+<p>对于医疗保健、金融等有合规性要求的应用、需要清理日志的客户服务代理以及处理敏感用户数据的任何应用都很有帮助。</p>
+<p><strong>PII 中间件支持多种处理检测到的 PII 的策略：</strong></p>
+<table>
+<thead>
+<tr>
+<th>战略</th>
+<th>描述</th>
+<th>例子</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>redact</code></td>
+<td>替换为<code>[REDACTED_{PII_TYPE}]</code></td>
+<td><code>[REDACTED_EMAIL]</code></td>
+</tr>
+<tr>
+<td><code>mask</code></td>
+<td>部分模糊不清（例如，最后 4 位数字）</td>
+<td><code>****-****-****-1234</code></td>
+</tr>
+<tr>
+<td><code>hash</code></td>
+<td>替换为确定性哈希</td>
+<td><code>a8f5f167...</code></td>
+</tr>
+<tr>
+<td><code>block</code></td>
+<td>检测到异常时抛出异常</td>
+<td>抛出错误</td>
+</tr>
+</tbody>
+</table>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"> # Redact emails in user input before sending to model</span><br><span class="line"> PIIMiddleware(</span><br><span class="line">	&quot;email&quot;,</span><br><span class="line">	strategy=&quot;redact&quot;,</span><br><span class="line">	apply_to_input=True,</span><br><span class="line">),</span><br><span class="line"># Mask credit cards in user input</span><br><span class="line">PIIMiddleware(</span><br><span class="line">	&quot;credit_card&quot;,</span><br><span class="line">	strategy=&quot;mask&quot;,</span><br><span class="line">	apply_to_input=True,</span><br><span class="line">),</span><br><span class="line"># Block API keys - raise error if detected</span><br><span class="line">PIIMiddleware(</span><br><span class="line">	&quot;api_key&quot;,</span><br><span class="line">	detector=r&quot;sk-[a-zA-Z0-9]&#123;32&#125;&quot;,</span><br><span class="line">	strategy=&quot;block&quot;,</span><br><span class="line">	apply_to_input=True,</span><br><span class="line">),</span><br></pre></td></tr></table></figure>
+<p><strong>内置PLL类型和配置</strong>：</p>
+<ul>
+<li>email</li>
+<li>credit_card</li>
+<li>ip</li>
+<li>mac_addresss</li>
+<li>url</li>
+</ul>
+<p><strong>配置选项</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>范围</th>
+<th>描述</th>
+<th>默认</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>pii_type</code></td>
+<td>要检测的个人身份信息类型（内置或自定义）</td>
+<td>必需的</td>
+</tr>
+<tr>
+<td><code>strategy</code></td>
+<td>如何处理检测到的个人身份信息（<code>&quot;block&quot;</code>，，，<code>&quot;redact&quot;</code>）<code>&quot;mask&quot;``&quot;hash&quot;</code></td>
+<td><code>&quot;redact&quot;</code></td>
+</tr>
+<tr>
+<td><code>detector</code></td>
+<td>自定义检测器函数或正则表达式模式</td>
+<td><code>None</code>（使用内置函数）</td>
+</tr>
+<tr>
+<td><code>apply_to_input</code></td>
+<td>在模型调用之前检查用户消息</td>
+<td><code>True</code></td>
+</tr>
+<tr>
+<td><code>apply_to_output</code></td>
+<td>模型调用后检查 AI 消息</td>
+<td><code>False</code></td>
+</tr>
+<tr>
+<td><code>apply_to_tool_results</code></td>
+<td>执行后检查工具结果消息</td>
+<td><code>False</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="Human-in-the-loop（人机交互）"><strong>Human-in-the-loop（人机交互）</strong></h3>
+<p><strong>概述</strong>：LangChain预定义了执行敏感操作前人工审批的中间件。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">HumanInTheLoopMiddleware(</span><br><span class="line">            interrupt_on=&#123;</span><br><span class="line">                # Require approval for sensitive operations</span><br><span class="line">                &quot;send_email&quot;: True,</span><br><span class="line">                &quot;delete_database&quot;: True,</span><br><span class="line">                # Auto-approve safe operations</span><br><span class="line">                &quot;search&quot;: False,</span><br><span class="line">            &#125;</span><br><span class="line">        ),</span><br></pre></td></tr></table></figure>
+<h2 id="十、runtime">十、runtime</h2>
+<p><strong>概述</strong>：runtime对象<strong>包含了context、store（长期记忆）、stream writer。</strong></p>
+<ul>
+<li>在工具中使用<strong>ToolRuntime参数</strong>获取Runtime对象。（node_style hooks）</li>
+<li>在使用中间件中，可以通过访问<strong>ModelRequest对象</strong>的runtime属性获取。（wrap-style hooks）</li>
+</ul>
+<h2 id="十一、context-engineering（上下文工程）">十一、context engineering（上下文工程）</h2>
+<p><strong>概述</strong>：构建智能体最难的地方在于确保其可靠性，开发环境有效而生产环境失效常常发生。上下文工程是指<strong>以正确的格式提供正确的信息和工具</strong>，以便语言学习模型能够完成任务。</p>
+<p><strong>代理推导失败的两个主要原因</strong>：</p>
+<ul>
+<li>底层LLM功能不足</li>
+<li>正确的上下文没有传递给LLM
+往往导致问题的原因是第二个。</li>
+</ul>
+<h3 id="Agent微调点："><strong>Agent微调点：</strong></h3>
+<h4 id="1-可控制的context："><strong>1.可控制的context</strong>：</h4>
+<ul>
+<li><strong>Model Context</strong>：模型调用中包含哪些内容（指令、消息历史记录、工具、响应格式）</li>
+<li><strong>Tool Context</strong>：哪些工具可以访问和生成（state、store、io of runtime context）</li>
+<li><strong>Life-cycle Content</strong>：模型调用和工具调用之间会发生什么（摘要、防护措施、日志记录）</li>
+</ul>
+<h4 id="2-数据来源"><strong>2.数据来源</strong></h4>
+<ul>
+<li><strong>runtime</strong>：用户信息、身份权限、数据库连接等</li>
+<li><strong>state</strong>：当前信息、已上传文件、身份验证状态</li>
+<li><strong>store</strong>：用户偏好、提取的记忆、历史数据</li>
+</ul>
+<h4 id="3-模型上下文"><strong>3.模型上下文</strong></h4>
+<p><strong>System prompt</strong>：<strong>决定LLM的行为和功能</strong>
+<strong>Message</strong>：发送给LLm的提示信息，<strong>管理message</strong>至关重要
+<strong>Tool</strong>：使模型能与数据库、API和外部系统进行交互，工具的<strong>定义</strong>与<strong>选择方式</strong>非常重要。定义工具是每个工具都需要清晰的<strong>名称</strong>、<strong>描述</strong>、<strong>参数名称</strong>和<strong>参数描述</strong>。过多的工具会使得模型上下文过载，过少则会限制功能，<strong>通过动态工具选择，调整可用工具集</strong>
+<strong>Model</strong>：不同模型之间各有<strong>能力优势</strong>、<strong>成本</strong>和<strong>适用范围</strong>
+<strong>output struct</strong></p>
+<h4 id="4-工具上下文"><strong>4.工具上下文</strong></h4>
+<p>工具较为特殊，可以读出和覆写上下文</p>
+<h2 id="十二、模型上下文协议（MCP）">十二、模型上下文协议（MCP）</h2>
+<p><strong>概述</strong>：一种开放协议，规范了<strong>应用程序如何向语言学习模型（LLM）提供工具和上下文</strong>。LangChain可以使用<code>langchain-mcp-adapters</code>库使用MCP服务器上定义的工具。</p>
+<p><strong>访问多个mcp服务器</strong>：使用库中的<code>MultiServerMCPClient</code>对象创建客户端对象，在其中注入mcp服务器信息，使用await 进行工具获取，将生成的实例在creat_agent函数中注入。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">client = MultiServerMCPClient(</span><br><span class="line">        &#123;</span><br><span class="line">            &quot;math&quot;: &#123;</span><br><span class="line">                &quot;transport&quot;: &quot;stdio&quot;,  # Local subprocess communication</span><br><span class="line">                &quot;command&quot;: &quot;python&quot;,</span><br><span class="line">                # Absolute path to your math_server.py file</span><br><span class="line">                &quot;args&quot;: [&quot;/path/to/math_server.py&quot;],</span><br><span class="line">            &#125;,</span><br><span class="line">            &quot;weather&quot;: &#123;</span><br><span class="line">                &quot;transport&quot;: &quot;http&quot;,  # HTTP-based remote server</span><br><span class="line">                # Ensure you start your weather server on port 8000</span><br><span class="line">                &quot;url&quot;: &quot;http://localhost:8000/mcp&quot;,</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    )</span><br><span class="line"></span><br><span class="line">    tools = await client.get_tools()</span><br><span class="line">    agent = create_agent(</span><br><span class="line">        &quot;claude-sonnet-4-6&quot;,</span><br><span class="line">        tools  </span><br><span class="line">    )</span><br></pre></td></tr></table></figure>
+<h3 id="自定义server"><strong>自定义server</strong></h3>
+<p>使用fastmcp库可进行自定义mcp server，mcp支持不同的客户端-服务器通信传输机制</p>
+<h4 id="1-http"><strong>1.http</strong></h4>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">client = MultiServerMCPClient(</span><br><span class="line">    &#123;</span><br><span class="line">        &quot;weather&quot;: &#123;</span><br><span class="line">            &quot;transport&quot;: &quot;http&quot;,</span><br><span class="line">            &quot;url&quot;: &quot;http://localhost:8000/mcp&quot;,</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<p><code>langchain-mcp-adapters</code>底层使用了官方的<code>MCP SDK</code>，允许通过实现<code>httpx.Auth</code>接口提供自定义身份验证机制</p>
+<h4 id="2-stdio"><strong>2.stdio</strong></h4>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">client = MultiServerMCPClient(</span><br><span class="line">    &#123;</span><br><span class="line">        &quot;math&quot;: &#123;</span><br><span class="line">            &quot;transport&quot;: &quot;stdio&quot;,</span><br><span class="line">            &quot;command&quot;: &quot;python&quot;,</span><br><span class="line">            &quot;args&quot;: [&quot;/path/to/math_server.py&quot;],</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<p>client以子进程方式启动服务器，并通过标准输入/输出进行通信，适合本地工具和简单配置。</p>
+<h4 id="3-stateful-sessions"><strong>3.stateful sessions</strong></h4>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">client = MultiServerMCPClient(&#123;...&#125;)</span><br><span class="line"></span><br><span class="line"># Create a session explicitly</span><br><span class="line">async with client.session(&quot;server_name&quot;) as session:</span><br><span class="line">    # Pass the session to load tools, resources, or prompts</span><br><span class="line">    tools = await load_mcp_tools(session)</span><br><span class="line">    agent = create_agent(</span><br><span class="line">        &quot;anthropic:claude-3-7-sonnet-latest&quot;,</span><br><span class="line">        tools</span><br><span class="line">    )</span><br></pre></td></tr></table></figure>
+<p><code>MultiServerMCPClient</code>默认是无状态的，每次工具调用都会创建一个新的MCP会话，并在执行工具后清理。若需要控制MCP会话的生命周期，可以使用<code>client.session()</code>创建持久的<code>ClientSession</code></p>
+<h3 id="核心功能："><strong>核心功能</strong>：</h3>
+<p><strong>tool</strong>：MCP服务器可公开可执行函数，供LLM调用执行操作。LangChain将MCP工具转换为LangChain工具，可以直接在代理和工作流中使用</p>
+<p><strong>返回</strong>：</p>
+<ul>
+<li><strong>加载工具</strong>：使用client.get_tools()从mcp服务器<strong>检索工具</strong>并将其传递给代理</li>
+<li><strong>返回结构化内容</strong>：当MCP工具返回<strong>Content</strong>，适配器会在<code>MCPToolArtifact</code>中清洗处理它并作为工具产物返回它。可以使用<code>ToolMessage</code>对象的artifact字段获取此数据</li>
+<li><strong>多模态</strong>：MCP工具可以在响应中返回多模态内容，当MCP返回内容包含多种类型时，适配器会将其转换为LangChain的标准内容块<code>content_blocks</code>（dict），可以通过块的type键的值判断是何种类的数据。</li>
+<li><strong>资源</strong>：MCP服务器具有资源功能，可以返回数据，使用<code>client.get_resources(&quot;server&quot;)</code>可以从MCP服务器中获取资源。另一方式为使用<code>load_mcp_resources</code>并注入一个<strong>session对象</strong>直接执行 。</li>
+<li><strong>提示词</strong>：MCP服务器的提示词功能可以提供可重复利用的提示词模板，LangChain会将MCP提示词转换到message中。使用<code>client.get_prompt()</code>或<code>load_mcp_prompt()</code>可获取提示词数据。</li>
+</ul>
+<h3 id="高级功能"><strong>高级功能</strong></h3>
+<h4 id="1-工具拦截器："><strong>1.工具拦截器</strong>：</h4>
+<p><strong>概述</strong>：MCP服务器作为独立进程运行，无法访问例如上下文、代理状态等运行信息，但可以在MCP工具执行期间通过<strong>拦截器访问运行上下文</strong>弥补这一点。</p>
+<p>拦截器还提供了类似中间件的功能（<code>MCPToolCallRequest</code>），例如<strong>控制工具调用，包括修改请求、实现重试、动态添加表头，或者完全终止执行</strong>。通过<code>MCPToolCallRequest</code>的runtime字段，可以获取上下文内容。</p>
+<p><strong>状态更新和命令</strong>：
+<strong>概述</strong>：拦截器可以返回<code>Command</code>对象来更新代理状态或控制图的执行流程，实现切换代理、提前结束执行(<code>goto=&quot;__end__&quot;</code>)等功能。</p>
+<p><strong>定制拦截器</strong>：
+<strong>概述</strong>：拦截器是封装工具执行的异步函数，可以<strong>实现请求</strong>/<strong>响应修改</strong>、<strong>重试逻辑</strong>以及其他横切关注点，运行顺序遵循洋葱结构，列表中第一个拦截器位于最外层</p>
+<p>基本方式：
+拦截器接受一个请求和一个处理程序，可以在<strong>调用处理程序之前修改请求</strong>，<strong>在调用处理程序之后修改响应</strong>或跳过</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">from langchain_mcp_adapters.client import MultiServerMCPClient</span><br><span class="line">from langchain_mcp_adapters.interceptors import MCPToolCallRequest</span><br><span class="line"></span><br><span class="line">async def logging_interceptor(</span><br><span class="line">    request: MCPToolCallRequest,</span><br><span class="line">    handler,</span><br><span class="line">):</span><br><span class="line">    &quot;&quot;&quot;Log tool calls before and after execution.&quot;&quot;&quot;</span><br><span class="line">    print(f&quot;Calling tool: &#123;request.name&#125; with args: &#123;request.args&#125;&quot;)</span><br><span class="line">    result = await handler(request)</span><br><span class="line">    print(f&quot;Tool &#123;request.name&#125; returned: &#123;result&#125;&quot;)</span><br><span class="line">    return result</span><br><span class="line"></span><br><span class="line">client = MultiServerMCPClient(</span><br><span class="line">    &#123;&quot;math&quot;: &#123;&quot;transport&quot;: &quot;stdio&quot;, &quot;command&quot;: &quot;python&quot;, &quot;args&quot;: [&quot;/path/to/server.py&quot;]&#125;&#125;,</span><br><span class="line">    tool_interceptors=[logging_interceptor],</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<p>修改请求
+使用<code>request.override()</code><strong>创建一个修改后的新请求</strong>(不会修改原始请求)。可以使用<code>get_token_for_tool</code>获取请求的上下文。</p>
+<p>组合拦截器
+多个拦截器按照&quot;洋葱状&quot;顺序组合，注入<code>MultiSeverMCPClient</code>,按照注入顺序构成组合拦截器</p>
+<h4 id="日志监控"><strong>日志监控</strong></h4>
+<p><strong>概述</strong>：可<strong>监控长时间运行工具执行的进度更新信息</strong></p>
+<p><strong>获取进程信息</strong>：
+创建进程监控函数，注入<code>CallbackContext</code>对象(可通过该对象的<code>server_name</code>和<code>tool_name</code>属性<strong>获取正在运行的服务器名称和正在执行的工具名称</strong>)，然后将函数注入在<code>MulyiServerMCPClient</code>的<code>callbacks</code>方法的<code>on_progress</code>参数</p>
+<p><strong>记录日志</strong>：
+创建日志记录函数，注入<code>LoggingMessageNotificationParams</code>对象，然后将函数注入
+<code>MulyiServerMCPClient</code>的<code>callbacks</code>方法的<code>on_logging_progress</code>参数</p>
+<h4 id="主动与用户进行结构化交互"><strong>主动与用户进行结构化交互</strong></h4>
+<p>在mcp服务器工具中可以使用<code>ctx.elicit</code><strong>从用户获取额外信息</strong>，该函数效果为暂停进程并向用户发送一个明确的数据请求，这可以用来获取初始传入信息中缺失的信息，例如注册函数只收到了名字没收到年龄，可发送一次对年龄数据的获取请求到客户端</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">result = await ctx.elicit(</span><br><span class="line">        message=f&quot;Please provide details for &#123;name&#125;&#x27;s profile:&quot;,</span><br><span class="line">        schema=UserDetails,</span><br><span class="line">    )</span><br></pre></td></tr></table></figure>
+<p>可以注册回调函数<strong>处理<code>ElicitRequestParams</code></strong>（<code>elicit</code>函数发送的请求对象）,通过返回
+<code>ElicitResult</code>对象处理<code>ElicitRequestParams</code>请求,将函数注入<code>MulyiServerMCPClient</code>的<code>callbacks</code>方法的<code>on_elicitation</code>参数</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">async def on_elicitation(</span><br><span class="line">    mcp_context: RequestContext,</span><br><span class="line">    params: ElicitRequestParams,</span><br><span class="line">    context: CallbackContext,</span><br><span class="line">) -&gt; ElicitResult:</span><br><span class="line">    &quot;&quot;&quot;Handle elicitation requests from MCP servers.&quot;&quot;&quot;</span><br><span class="line">    # In a real application, you would prompt the user for input</span><br><span class="line">    # based on params.message and params.requestedSchema</span><br><span class="line">    return ElicitResult(</span><br><span class="line">        action=&quot;accept&quot;, # 该参数包含accept（用户输入有效）、decline（用户未提供所要求信息）、cancel（用户取消操作）三种行为</span><br><span class="line">        content=&#123;&quot;email&quot;: &quot;user@example.com&quot;, &quot;age&quot;: 25&#125;,</span><br><span class="line">    )</span><br></pre></td></tr></table></figure>
+<h2 id="十三、人机交互">十三、人机交互</h2>
+<p><strong>概述</strong>：人机交互中间件（<code>HumanInTheLoopMiddleware</code>）允许在代理工具调用中添加人工监督，当模型提出可能需要审核的操作时，中间件可以暂停执行并等待决策。可进行的操作有<strong>批准</strong>、<strong>修改</strong>、<strong>拒绝并给予反馈</strong>三种（可通过策略设置<code>interrupt_on</code>配置工具允许使用的策略）。</p>
+<p>参数有下：
+0. interrupt_on： 工具名</p>
+<ol>
+<li>description_prefix：操作请求的描述前缀</li>
+<li>allowed_decisions：三种操作的权限</li>
+<li>description：自定义描述</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">agent = create_agent(</span><br><span class="line">    model=&quot;gpt-4.1&quot;,</span><br><span class="line">    tools=[write_file_tool, execute_sql_tool, read_data_tool],</span><br><span class="line">    middleware=[</span><br><span class="line">        HumanInTheLoopMiddleware(</span><br><span class="line">            interrupt_on=&#123;</span><br><span class="line">                &quot;write_file&quot;: True,  # All decisions (approve, edit, reject) allowed</span><br><span class="line">                &quot;execute_sql&quot;: &#123;&quot;allowed_decisions&quot;: [&quot;approve&quot;, &quot;reject&quot;]&#125;,  # No editing allowed</span><br><span class="line">                # Safe operation, no approval needed</span><br><span class="line">                &quot;read_data&quot;: False,</span><br><span class="line">            &#125;,</span><br><span class="line">            # Prefix for interrupt messages - combined with tool name and args to form the full message</span><br><span class="line">            # e.g., &quot;Tool execution pending approval: execute_sql with query=&#x27;DELETE FROM...&#x27;&quot;</span><br><span class="line">            # Individual tools can override this by specifying a &quot;description&quot; in their interrupt config</span><br><span class="line">            description_prefix=&quot;Tool execution pending approval&quot;,</span><br><span class="line">        ),</span><br><span class="line">    ],</span><br><span class="line">    # Human-in-the-loop requires checkpointing to handle interrupts.</span><br><span class="line">    # In production, use a persistent checkpointer like AsyncPostgresSaver.</span><br><span class="line">    checkpointer=InMemorySaver(),</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<h3 id="响应中断"><strong>响应中断</strong></h3>
+<p><strong>概述</strong>：智能体进程会在任务结束或者引发中断时停止，可以在<code>interrupt_on</code>中设置中断条件，<strong>当工具调用满足条件时便会触发中断</strong>。在<code>version=&quot;v2&quot;</code>的情况下，会发生<code>GraphOutput</code>并且一个包含了待审查操作的<code>interrupts</code>对象会被输出。可将该对象提交给审核人员，然后根据审查结果恢复执行。</p>
+<h3 id="流式人机交互-LangGraph内容"><strong>流式人机交互</strong>(LangGraph内容)</h3>
+<p><strong>概述</strong>：通过使用<code>stream()</code>可以在agent运行以及处理终端时<strong>获取实时的最新信息</strong>。设置<code>version=&quot;v2&quot;</code>,<code>stream_mode=['updates', 'messages']</code>可用统一的v2模式同时流式获取agent进程以及LLM token</p>
+<h3 id="运行生命周期"><strong>运行生命周期</strong></h3>
+<p><strong>概述</strong>：<strong>after_model拦截点</strong>可以在<strong>模型之后、工具调用之前运行</strong>，这使得他可以在获得模型相应时通过上下文判断是否包含需要用户操作的工具，若存在则可以创建一个具有<code>action_requests</code>和<code>review_cnfigs</code>的<code>HITLRequest</code>类型并发起中断，然后依据<code>HITLResponse</code>执行同意、更改，或合成拒绝调用的ToolMessage并继续运行。</p>
+<h2 id="十四、多智能体">十四、多智能体</h2>
+<p><strong>概述</strong>：多智能体系统<strong>协调各个专门组件</strong>来处理复杂的工作流程。不过，单个智能体配备合适的（有时是动态的）工具和提示，通常也能取得类似的结果。主要应用场景有下:</p>
+<ul>
+<li><strong>上下文管理</strong></li>
+<li><strong>分布式开发</strong></li>
+<li><strong>并行化</strong></li>
+</ul>
+<p>当单个智能体拥有过多的tool并在使用选择时做出糟糕的决策，当任务需要具有广泛上下文的专业知识，或者需要强行执行顺序约束，只有在满足某些条件后才能解锁功能时，多智能体模式就显得尤为重要。<strong>多智能体设计的核心是上下文工程，通过上下文工程决定每个智能体能看到哪些信息。</strong></p>
+<p>下为构建多智能体系统的主要模式：</p>
+<ul>
+<li><strong>Subagents</strong>: 主代理协调各个子代理作为工具，所有路由通过主代理，由主代理决定何时以及如何调用每个子代理</li>
+<li><strong>Handoffs</strong>：行为根据状态动态变化。工具调用更新状态变量，从而触发路由或者配置更改、切换代理或调整当前代理的工具和提示</li>
+<li><strong>Skills</strong>: 按需加载专业提示和指示。单个代理始终保持控制，并根据需要从skill加载上下文</li>
+<li><strong>Router</strong>: 路由步骤对输入分类，并将其定向到一个或多个专门的代理。最终结果综合组成一个组合响应</li>
+<li><strong>Custom workflow</strong>:	使用<strong>LangGraph</strong>构建定制化的执行流程</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>模式</th>
+<th>分布式开发</th>
+<th>并行化</th>
+<th>Multi-hop</th>
+<th>用户直接交互</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://docs.langchain.com/oss/python/langchain/multi-agent/subagents"><strong>次级代理商</strong></a></td>
+<td>⭐⭐⭐⭐⭐</td>
+<td>⭐⭐⭐⭐⭐</td>
+<td>⭐⭐⭐⭐⭐</td>
+<td>⭐</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://docs.langchain.com/oss/python/langchain/multi-agent/handoffs"><strong>任务移交</strong></a></td>
+<td>-</td>
+<td>-</td>
+<td>⭐⭐⭐⭐⭐</td>
+<td>⭐⭐⭐⭐⭐</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://docs.langchain.com/oss/python/langchain/multi-agent/skills"><strong>技能</strong></a></td>
+<td>⭐⭐⭐⭐⭐</td>
+<td>⭐⭐⭐</td>
+<td>⭐⭐⭐⭐⭐</td>
+<td>⭐⭐⭐⭐⭐</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://docs.langchain.com/oss/python/langchain/multi-agent/router"><strong>路由器</strong></a></td>
+<td>⭐⭐⭐</td>
+<td>⭐⭐⭐⭐⭐</td>
+<td>-</td>
+<td>⭐⭐⭐</td>
+</tr>
+</tbody>
+</table>
+<p><strong>性能比较关键指标</strong>：</p>
+<ul>
+<li><strong>模型调用次数</strong>：调用次数越多，延迟越高，每次请求的API成本也越高</li>
+<li><strong>历史token量</strong>：使用的token量越多，除了处理成本较高，也会增加潜在的上下文压力</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>模式</th>
+<th>一次性</th>
+<th>重复请求</th>
+<th>多域</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://docs.langchain.com/oss/python/langchain/multi-agent/subagents"><strong>次级代理商</strong></a></td>
+<td>4次通话</td>
+<td>8 次通话（4+4）</td>
+<td>5 次调用，9000 个代币</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://docs.langchain.com/oss/python/langchain/multi-agent/handoffs"><strong>任务移交</strong></a></td>
+<td>3次通话</td>
+<td>5 次通话（3+2）</td>
+<td>7次以上通话，14000多个代币</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://docs.langchain.com/oss/python/langchain/multi-agent/skills"><strong>技能</strong></a></td>
+<td>3次通话</td>
+<td>5 次通话（3+2）</td>
+<td>3 次调用，15K 个代币</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://docs.langchain.com/oss/python/langchain/multi-agent/router"><strong>路由器</strong></a></td>
+<td>3次通话</td>
+<td>6 次通话（3+3）</td>
+<td>5 次调用，9000 个代币</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>优化</th>
+<th><a target="_blank" rel="noopener" href="https://docs.langchain.com/oss/python/langchain/multi-agent/subagents">次级代理商</a></th>
+<th><a target="_blank" rel="noopener" href="https://docs.langchain.com/oss/python/langchain/multi-agent/handoffs">交接</a></th>
+<th><a target="_blank" rel="noopener" href="https://docs.langchain.com/oss/python/langchain/multi-agent/skills">技能</a></th>
+<th><a target="_blank" rel="noopener" href="https://docs.langchain.com/oss/python/langchain/multi-agent/router">路由器</a></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>单次请求</td>
+<td></td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>重复请求</td>
+<td></td>
+<td>✅</td>
+<td>✅</td>
+<td></td>
+</tr>
+<tr>
+<td>并行执行</td>
+<td>✅</td>
+<td></td>
+<td></td>
+<td>✅</td>
+</tr>
+<tr>
+<td>大上下文领域</td>
+<td>✅</td>
+<td></td>
+<td></td>
+<td>✅</td>
+</tr>
+<tr>
+<td>简单、重点明确的任务</td>
+<td></td>
+<td></td>
+<td>✅</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="1-Subagents（次级代理商）"><strong>1.Subagents（次级代理商）</strong></h3>
+<p><strong>概述</strong>：中央主<a target="_blank" rel="noopener" href="https://docs.langchain.com/oss/python/langchain/agents">代理</a>（通常称为<strong>监督器</strong>）通过调用子代理作为<a target="_blank" rel="noopener" href="https://docs.langchain.com/oss/python/langchain/tools">工具</a>来协调它们。主代理决定调用哪个子代理、提供什么输入以及如何组合结果。子代理是无状态的——它们不记忆过去的交互，所有对话记忆都由主代理维护。</p>
+<p><strong>主要特征</strong>：</p>
+<ul>
+<li>集中控制：所有路由都通过主代理。</li>
+<li>没有直接的用户交互：子代理将结果返回给主代理，而不是用户</li>
+<li>通过工具调用子代理：子代理通过工具调用。</li>
+<li>并行执行：主智能体可以在单回合内调用多个子智能体。</li>
+</ul>
+<p><strong>应用场景</strong>：</p>
+<ul>
+<li>需要处理多个不同的域时（数据库、邮件）</li>
+<li>子代理不需要直接与用户进行交互</li>
+<li>集中式工作流程控制</li>
+</ul>
+<p><strong>基本实现</strong>：
+将<strong>子代理封装为一个工具</strong>，主代理可以调用该工具</p>
+<p><strong>一些关键点</strong>：</p>
+<ul>
+<li><strong>同步与异步</strong>：子代理的任务阻塞执行还是异步执行</li>
+<li><strong>工具模式</strong>：每个代理使用一个工具还是设置单个调度工具</li>
+<li><strong>指示子代理方式</strong>：系统提示、结构约束（json）与基于工具三种方式</li>
+<li><strong>子代理输入</strong>：仅传入查询或额外传入完整上下文</li>
+<li><strong>子代理输出</strong>：次级代理结果或完整上下文历史</li>
+</ul>
+<h3 id="2-Handoffs（任务移交）"><strong>2.Handoffs（任务移交）</strong></h3>
+<p><strong>概述</strong>：<strong>行为根据状态动态变化</strong>。核心机制为工具更新一个状态变量，系统读取该变量调整行为（如应用不同的配置或将请求路由到不同的代理）</p>
+<p><strong>主要特征</strong>：</p>
+<ul>
+<li><strong>状态驱动行为</strong>：基于状态变量（例如，<code>current_step</code>或<code>active_agent</code>）的行为改变</li>
+<li><strong>基于工具的转换</strong>：工具更新状态变量以在状态之间移动。</li>
+<li><strong>直接用户交互</strong>：每个状态的配置直接处理用户消息。</li>
+<li><strong>保持状态</strong>：状态在对话轮次中保持不变</li>
+</ul>
+<p><strong>应用场景</strong>：</p>
+<ul>
+<li>需要强制执行顺序约束</li>
+<li>客服人员需要不同状态下与用户直接对话、</li>
+<li>构建多阶段对话流程</li>
+</ul>
+<p><strong>基本实现</strong>：
+核心机制是<strong>一个工具，用于返回更新状态的<code>Command</code></strong> 触发进一步操作。通过给<code>ToolRuntime</code>设置参数（[工具执行时需要的静态上下文的数据类型(如特定的数据库连接)，特定状态参数(继承了<code>AgentState</code>的状态触发类，内含用于判断是否启用某些功能的字段)]）</p>
+<p><strong>多智能体子图</strong>(LangGraph内容)：
+图中的代理以独立节点的形式组成，可以通过<code>Command.PARENT</code>指定接下来要执行的节点
+(<strong>Graph内容，暂不详细记录</strong>)</p>
+<p><strong>上下文工程(LangGraph内容)</strong>
+<strong>概述</strong>：通过子图切换可以精确控制上下文的流通(<strong>Graph内容，暂不详细记录</strong>)</p>
+<p><strong>多智能体注意事项</strong></p>
+<ul>
+<li>上下文过滤系统：每个客户端接收到的上下文的完整性</li>
+<li>工具语义：是否仅更新路由状态，是否执行其他操作</li>
+<li>token效率：平衡上下文完整性和token成本。对话时间延长后，传递的上下文会增多，引发token成本问题</li>
+</ul>
+<h3 id="skill（技能）"><strong>skill（技能）</strong></h3>
+<p><strong>概述</strong>：技能框架中，专业能力被打爆成可调用的“技能”，用于增强智能体的行为。技能主要是由提示驱动的专业化能力。</p>
+<p><strong>主要特征</strong>：</p>
+<ul>
+<li>提示驱动型专业化：技能主要由特定提示定义。</li>
+<li>渐进式披露：技能根据上下文或用户需求逐步可用</li>
+<li>团块分布：不同团块可以独立发展和保持技能。</li>
+<li>轻量级组成：技能比完整的子代理更简单</li>
+<li>参考知识：技能可以参考脚本、模板和其他资源。</li>
+</ul>
+<p><strong>应用场景</strong>：
+需要具备多个专业技能的单个智能体，或不同团块需要独立开发相应能力。例如针对不同语言的编码助手、针对不同领域技能的知识库等</p>
+<p><strong>基本实现</strong>：
+在file或database中实现skill体，通过将其调用方式封装在工具中注入智能体。</p>
+<p><strong>扩展方式</strong>：</p>
+<ul>
+<li><strong>动态工具注册</strong>：与状态管理结合</li>
+<li><strong>层级式技能</strong>：树状结构定义技能，创建嵌套的专业划分支。例如加载”数据科学“后可以生成“pandas”、“可视化”、“统计分析”等子技能，从而实现领域知识的细粒度渐进式披露，这种方式可以将能力按逻辑分组，从而有助于管理大型技能知识库</li>
+<li><strong>参考信息感知</strong>：在技能的提示部分添加指向其他资源的信息，提供这些资源何时可以使用，这样可以增加智能体获取相关资源的方式。</li>
+</ul>
+<h3 id="4-router（路由）"><strong>4.router（路由）</strong></h3>
+<p><strong>概述</strong>：通过路由步骤对输入进行分类，将其定向至专门的代理。这对于处理多个高垂直行业知识时非常有用。</p>
+<p><strong>主要特征</strong>：</p>
+<ul>
+<li>路由器分解查询</li>
+<li>并行调用零个或多个专门代理。</li>
+<li>将结果综合成一个连贯的响应</li>
+</ul>
+<p><strong>基本实现</strong>：
+使用定向用于分析输入信息的LLM对输入信息进行分类总结，然后将分类后的信息块通过Send并行分发给对应的agent。</p>
+<p><strong>无状态vs有状态（是否保留之前请求的记忆和上下文）</strong>：</p>
+<ul>
+<li><em>例子</em>：用户问“今天天气如何？”，路由器判断这是“天气类”问题，分发给天气 Agent。下一秒用户问“那明天呢？”，如果路由器是无状态的，它可能忘了上一句是在问天气，可能会把“那明天呢？”错误地分发给通用聊天 Agent，因为它缺少上下文。</li>
+<li><em>例子</em>：用户问“今天天气如何？”，路由器分发给天气 Agent。用户接着问“那明天呢？”，<strong>有状态</strong>的路由器会读取之前的状态（知道刚才在聊天气），从而正确地将“那明天呢？”继续分发给天气 Agent，或者理解为“明天的天气”。</li>
+</ul>
+<p><strong>完整信息保持</strong>：
+如果你希望系统能记住之前的对话（即“有状态”），<strong>不要</strong>试图让路由器函数本身在内存中保存变量（因为路由器可能是无状态的、分布式的，重启就会丢失数据）。
+当路由器决定要把任务交给某个智能体（Agent）时，它的第一步动作是从刚才提到的持久化存储中<strong>读取</strong>相关的历史消息。</p>
+<h3 id="自定义工作流程（LangGrapg内容）"><strong>自定义工作流程（LangGrapg内容）</strong></h3>
+<p>暂不记录</p>
+<h2 id="十五、RAG">十五、RAG</h2>
+<p>LLM存在两个主要局限性：</p>
+<ul>
+<li>上下文有限-无法一次性摄取整个语料库</li>
+<li>静态知识库-训练数据冻结在某个时间点</li>
+</ul>
+<p>通过查询时抓取相关外部信息可以解决这个问题</p>
+<p><strong>构建知识库</strong>：
+知识库是指被用于检索过程中的文档库和结构化数据
+<a target="_blank" rel="noopener" href="https://docs.langchain.com/oss/python/langchain/knowledge-base">LangChain的语义搜索技术</a></p>
+<p><strong>从检索到RAG</strong>：
+检索使得LLM可以在运行时获取相关上下文，实际应用会更进一步：<strong>将检索与生成结合，生成给予上下文的答案</strong>，这便是<strong>RAG的核心思想</strong></p>
+<p><strong>检索管道</strong>：</p>
+<p><strong>构建模块</strong>：</p>
+<ul>
+<li><strong>文件加载器</strong>：从外部来源获取数据，返回标准化<code>Document</code>对象</li>
+<li><strong>文本切割器</strong>：将大型文档拆分成较小的块，以便可以单独检索并适应模型的上下文窗口</li>
+<li><strong>嵌入模型</strong>：将文本转换为信息向量</li>
+<li><strong>向量存储</strong>：存储信息向量</li>
+<li><strong>检索</strong></li>
+</ul>
+<p><strong>2-step RAG</strong>
+检索步骤始终在生成步骤之前执行。</p>
+<p><strong>Agentic RAG</strong>
+智能检索增强生成（RAG）结合了检索增强生成和基于智能体的推理的优势。</p>
+<p><strong>Hybrid RAG</strong>
+结合了两步 RAG 和代理 RAG 的特点，引入了查询预处理、检索验证和生成后检查等中间步骤：</p>
+<ul>
+<li><strong>查询优化</strong>：修改输入的问题以提高检索质量。这可能包括重写不清晰的查询、生成多个变体或使用更多上下文信息扩展查询。</li>
+<li><strong>检索验证</strong>：评估检索到的文档是否相关且充分。如果不符合要求，系统可能会优化查询并重新检索。</li>
+<li><strong>答案验证</strong>：检查生成的答案是否准确、完整，以及是否与原文内容一致。如有需要，系统可以重新生成或修改答案。</li>
+</ul>
+<h2 id="十六、长期记忆">十六、长期记忆</h2>
+<p><strong>概述</strong>：长期记忆可以跨线程一直存在，且可以随时调用。长期记忆的创建基于<code>LangGraph store</code>,能够将数据保存在按命名空间和键组织的JSON文档。</p>
+<p><strong>基本使用</strong>：
+注册<code>InMemoryStore()</code>对象后注入<code>create_agent</code>的<code>store</code>参数，后续可使用工具调用<code>runtime.store</code>进行读取与写入</p>
+<p><strong>存储</strong>：每个<code>namespace</code>都以自定义的命名空间（类似于文件夹）和唯一的<code>key</code>（类似于文件名）进行组织。命名空间通常包含用户或组织 ID 或其他标签，以便于组织信息。这种结构支持对内存进行层级组织。</p>
+
+                
+                <p class="end">__END__</p>
+            </div>
+            <div class="article-footer">
+                <div class="suffix-box">
+    <div class="suffix-box-left">
+        <img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/星锑(1).jpg" alt="le">
+    </div>
+    <div class="suffix-box-right">
+        <span class="suffix-box-title">文章作者：</span>le
+        <br>
+        <span class="suffix-box-title">文章出处：</span><a href="/2026/03/11/Langchain%E3%80%90%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3%E7%AC%94%E8%AE%B0%E3%80%91/" target="_blank">Langchain【官方文档笔记】</a>
+        <br>
+        <span class="suffix-box-title">作者签名：</span>在代码中寻找意义，在文字中记录成长
+        <br>
+        <span class="suffix-box-title">关于主题：</span><a href="https://github.com/first19326/Hexo-LiveForCode" target="_blank">Hexo - Live For Code</a>
+        <br>
+        <span class="suffix-box-title">版权声明：</span>文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" title="BY-NC-SA" target="_blank">BY-NC-SA</a> 许可协议，转载请注明出处
+        <br>
+    </div>
+    <div style="clear: both;"></div>
+</div>
+                
+                
+                    <div class="tag">
+                        标签：
+                        
+                            <a href="/tags/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/">人工智能</a>
+                        
+                            <a href="/tags/python/">python</a>
+                        
+                            <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%BF%9B%E9%98%B6/">计算机进阶</a>
+                        
+                    </div>
+                
+                <div class="article-prev-next">
+                    
+                        <a href="/2026/03/11/HTML%E9%80%9F%E8%AE%B0%E8%A1%A8/" class="prev-prefix">« </a> 上一篇：    <a href="/2026/03/11/HTML%E9%80%9F%E8%AE%B0%E8%A1%A8/" title="发布于 2026-03-11 07:52">HTML速记表</a>
+                        <br>
+                    
+                    
+                        <a href="/2026/03/06/%E6%99%BA%E8%83%BD%E4%BD%93%E9%A1%B9%E7%9B%AE%E6%96%87%E4%BB%B6%E6%A0%87%E6%B3%A8/" class="next-prefix">» </a> 下一篇：    <a href="/2026/03/06/%E6%99%BA%E8%83%BD%E4%BD%93%E9%A1%B9%E7%9B%AE%E6%96%87%E4%BB%B6%E6%A0%87%E6%B3%A8/" title="发布于 2026-03-06 05:37">项目文件标注</a>
+                    
+                </div>
+            </div>
+            <!-- 评论功能已禁用 -->
+
+        </div>
+    
+</div>
+    <div id="footer">
+    <div><span class='face'>ღゝ◡╹)ノ♡</span></div><div>le的避难所 - 用心记录每一次成长</div><div>&copy; 2020-<%= new Date().getFullYear() %> le. All Rights Reserved.</div>
+</div>
+    <div id="sidebar">
+    <div class="menu-wrap" style="display:none;">
+        
+            <div class="menu-notice">
+                <span class="iconfont icon-notice"></span>
+                <div class="notice">
+                    <span>技术笔记 | AI学习 | 随想杂谈</span>
+                </div>
+            </div>
+        
+        <nav class="menu">
+            <div class="menu-introduce"> 
+                <div class="introduce-avatar">
+                    <img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/星锑(1).jpg">
+                </div> 
+                <div class="introduce-info"> 
+                    <div class="introduce-user">
+                        
+                            <a href="https://github.com/ciquningzuowu" target="_blank"><span>le</span></a>
+                        
+                    </div>
+                </div> 
+            </div> 
+            <div class="menu-list">
+                <ul>
+                    
+                        <li class=""><a href="/" class="" target="_self"><span class="iconfont icon-home-fill"></span>首页</a></li>
+                    
+                        <li class=""><a href="/tag" class="" target="_self"><span class="iconfont icon-discount-fill"></span>标签</a></li>
+                    
+                        <li class=""><a href="/archive" class="" target="_self"><span class="iconfont icon-calendar-fill"></span>归档</a></li>
+                    
+                        <li class=""><a href="/donate" class="" target="_self"><span class="iconfont icon-heart-fill"></span>赞赏</a></li>
+                    
+                        <li class=""><a href="/about" class="" target="_self"><span class="iconfont icon-about-fill"></span>关于</a></li>
+                    
+                        <li class=""><a href="/atom.xml" class="" target="_blank"><span class="iconfont icon-rss"></span>订阅</a></li>
+                    
+                        <li class=""><a href="/music" class="" target="_self"><span class="iconfont icon-music"></span>音乐</a></li>
+                    
+                        <li class=""><a href="javascript:;" class="search" target="_self"><span class="iconfont icon-search-menu"></span>搜索</a></li>
+                    
+                        <li class=""><a href="/friend" class="" target="_self"><span class="iconfont icon-link"></span>友情链接</a></li>
+                    
+                </ul> 
+            </div> 
+            <div class="menu-link">
+                <div class="box">
+                    <div class="image-box"></div>
+                </div>
+                
+                    <a name="知乎" href="https://www.zhihu.com/people/68-21-24-64-57-17" class="" target="_blank" data=""><span class="iconfont icon-zhihu"></span></a>
+                
+                    <a name="QQ" href="javascript:;" class="image" target="_self" data="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/900cbf5ad084f3cc39ab371ba026d318.jpg"><span class="iconfont icon-qq"></span></a>
+                
+                    <a name="微信" href="javascript:;" class="" target="_self" data="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/5739108c740d75e5fc2a723c80efdadf.jpg"><span class="iconfont icon-wechat"></span></a>
+                
+                    <a name="GitHub" href="https://github.com/ciquningzuowu" class="" target="_blank" data=""><span class="iconfont icon-github"></span></a>
+                
+            </div> 
+        </nav>
+        <button class="menu-button-close"></button>
+        <div class="morph-shape" id="morph-shape" data-morph-open="M-7.312,0H15c0,0,66,113.339,66,399.5C81,664.006,15,800,15,800H-7.312V0z;M-7.312,0H100c0,0,0,113.839,0,400c0,264.506,0,400,0,400H-7.312V0z">
+            <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 100 800" preserveAspectRatio="none">
+                <path d="M-7.312,0H0c0,0,0,113.839,0,400c0,264.506,0,400,0,400h-7.312V0z"/>
+            </svg>
+        </div>
+    </div>
+    <button class="menu-button-open">MENU</button>
+    <div class="menu-cover"></div>
+</div>
+    <link type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/search.min.css">
+<script type="text/javascript" src="https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/js/iscroll.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/js/instantsearch.min.js"></script>
+<div class="search-window">
+    <div class="search-content">
+        <div class="search-content-icon">
+            <i class="iconfont icon-search"></i>
+        </div>
+        <div id="search-input" class="search-input"></div>
+    </div>
+
+    <div class="search-scroll">
+        <div class="search-result">
+            <div id="search-stats" class="search-stats"></div>
+            <div id="search-hits"></div>
+            <div id="search-pagination" class="search-pagination"></div>
+        </div>
+    </div>
+
+    <span class="search-close-icon">
+        <i class="iconfont icon-close"></i>
+    </span>
+</div>
+    <!-- 搜索悬浮按钮 -->
+    <div class="search-float-btn" onclick="document.querySelector('.search').click()">
+        <i class="iconfont icon-search-menu"></i>
+    </div>
+    <div id="tools">
+    <div class="progressbar-top"></div>
+    
+    <div class="aplayer"></div>
+    <link type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/APlayer.min.css">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/js/APlayer.min.js"></script>
+    <script type="text/javascript">
+        const aplayer = new APlayer({
+            container: document.querySelector(".aplayer"),
+            fixed: true,
+            autoplay: false,
+            loop: "all",
+            order: "random",
+            preload: "auto",
+            volume: 0.67,
+            mutex: true,
+            lrcType: 0,
+            audio: [
+                
+                    {
+                        name: "我的音乐1",
+                        artist: "艺术家",
+                        cover: "/music/cover/default.jpg",
+                        url: "/music/song/your-music.mp3",
+                        lrc: ""
+                    },
+                
+                    {
+                        name: "我的音乐2",
+                        artist: "艺术家",
+                        cover: "/music/cover/default.jpg",
+                        url: "/music/song/your-music2.mp3",
+                        lrc: ""
+                    },
+                
+            ]
+        });
+        
+        // 音乐播放控制
+        var musicPlaying = false;
+        function toggleMusic() {
+            if (musicPlaying) {
+                aplayer.pause();
+                document.getElementById('music-control').querySelector('span').textContent = '播放';
+                musicPlaying = false;
+            } else {
+                aplayer.play();
+                document.getElementById('music-control').querySelector('span').textContent = '暂停';
+                musicPlaying = true;
+            }
+        }
+        
+        // 监听播放状态
+        aplayer.on('play', function() {
+            musicPlaying = true;
+            var btn = document.getElementById('music-control');
+            if (btn) btn.querySelector('span').textContent = '暂停';
+        });
+        aplayer.on('pause', function() {
+            musicPlaying = false;
+            var btn = document.getElementById('music-control');
+            if (btn) btn.querySelector('span').textContent = '播放';
+        });
+    </script>
+    <!-- 音乐播放控制按钮 -->
+    <div id="music-control" class="music-control-btn" onclick="toggleMusic()">
+        <i class="iconfont icon-music-fill"></i>
+        <span>播放</span>
+    </div>
+
+
+    <div class="wrap-right">
+    <div class="wrap-right-hide">
+         <div class="wrap-right-button favorites">
+            <div class="iconbox" switch="false">
+                <span class="iconfont icon-favorites"></span>
+            </div>
+            <span class="icontext">关注</span>
+         </div>
+        <div class="wrap-right-button search">
+            <div class="iconbox">
+                <span class="iconfont icon-search-menu"></span>
+            </div>
+            <span class="icontext">搜索</span>
+        </div>
+        <div class="wrap-right-button menu-button">
+            <div class="iconbox">
+                <span class="iconfont icon-menu"></span>
+            </div>
+            <span class="icontext">菜单</span>
+        </div>
+        <div class="wrap-right-button mode">
+            <div class="light">
+                <div class="iconbox">
+                    <span class="iconfont icon-daymode"></span>
+                </div>
+                <span class="icontext">浅色模式</span>
+            </div>
+            <div class="dark">
+                <div class="iconbox">
+                    <span class="iconfont icon-nightmode-fill"></span>
+                </div>
+                <span class="icontext">深色模式</span>
+            </div>
+        </div>
+        <div class="wrap-right-button bottom">
+            <div class="iconbox">
+                <span class="iconfont icon-top"></span>
+            </div>
+            <span class="icontext">跳至底部</span>
+        </div>
+    </div>
+    <div class="wrap-right-show">
+        <div class="wrap-right-button set">
+            <div class="iconbox">
+                <span class="iconfont icon-setting"></span>
+            </div>
+            <span class="icontext">设置</span>
+        </div>
+        <div class="wrap-right-button top">
+            <div class="iconbox">
+                <span class="iconfont icon-top"></span>
+            </div>
+            <span class="icontext">返回顶部</span>
+        </div>
+    </div>
+</div>
+    <div class="loading"></div>
+</div>
+    <script>
+    window.config = {
+        GitHubUserName     : "ciquningzuowu",
+        GitHubRepositories : "Hexo-LiveForCode",
+
+        User             : "le",
+        UserAvatar       : "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/星锑(1).jpg",
+        WebsiteStartDate : "2020-01-01",
+        Home             : "https://github.com/ciquningzuowu",
+
+        WebsiteTitleBlur         : "le的避难所",
+        WebsiteTitleBlurTimeOut  : 500,
+        WebsiteTitleFocus        : "(*´∇｀*) 欢迎回来! le",
+        WebsiteTitleFocusTimeOut : 1000,
+        WebsiteFavicon           : {
+            light : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/image/website/logo/logo.png",
+            dark  : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/image/website/logo/logo-dark.png"
+        },
+
+        ProgressBar : {
+            id       : "topProgressBar",
+            color    : "#77B6FF",
+            height   : "2px",
+            duration : 0.2
+        },
+
+        Loading: {
+            rebound : {
+                tension  : 16,
+                friction : 5
+            },
+            spinner : {
+                id     : "spinner",
+                radius : 90,
+                sides  : 3,
+                depth  : 4,
+                colors : {
+                    background : "#F0F0F0",
+                    stroke     : "#272633",
+                    base       : "",
+                    child      : "#272633"
+                },
+                alwaysForward : true,
+                restAt        : 0.5,
+                renderBase    : false
+            }
+        },
+
+        HomeHeaderAnimationRendered : false,
+        HomeHeaderAnimation         : {
+            radius      : 15,
+            density     : 0.2,
+            color       : "rgba(255, 255, 255, .2)",
+            clearOffset : 0.3
+        },
+
+        BackAnimationRendered          : false,
+        IEBrowserBackAnimationRendered : false,
+        BackAnimation                  : {
+            colorSaturation  : "60%",
+            colorBrightness  : "50%",
+            colorAlpha       : 0.5,
+            colorCycleSpeed  : 5,
+            verticalPosition : "random",
+            horizontalSpeed  : 200,
+            ribbonCount      : 3,
+            strokeSize       : 0,
+            parallaxAmount   : -0.2,
+            animateSections  : true
+        },
+
+        HomeHeaderImage : [
+            
+                "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/a4863ae3f3a94c91a57a0ce7f964361c.png",
+            
+                "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/20260729144639240.png",
+            
+                "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/20260729145504803.png",
+            
+                "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/20260729145811449.png",
+            
+        ],
+        HomeBannerText  : "To sing for me and groove to my own cadence.",
+
+        ArticleHeaderImage : [
+            
+                "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/be363b330560be6bf3be34652df12416.png",
+            
+                "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/2000c499998b2d13ad5b1472d81a946d.jpg",
+            
+                "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/2083a4acab3ebf454002a766f5dff5dc.jpg",
+            
+                "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/20260729145213392.png",
+            
+        ],
+
+        OtherBannerText : "Grow on My Time",
+
+        Error : {
+            icon    : "icon-swimming",
+            title   : "PAGE NOT FOUND",
+            content : [
+                
+                    "很抱歉，您访问的页面不存在！",
+                
+                    "可能是输入地址有误或该地址已变更。",
+                
+            ],
+            buttons : [
+                
+                    {
+                        icon  : "icon-home",
+                        text  : "返回首页",
+                        href  : "/",
+                        class : ""
+                    },
+                
+            ]
+        },
+
+        MenuNotice : {
+            enable : true,
+            notice : "技术笔记 | AI学习 | 随想杂谈",
+            speed  : 20
+        },
+        MenuList : [
+            
+                {
+                    name   : "首页",
+                    icon   : "icon-home-fill",
+                    href   : "/",
+                    type   : "index",
+                    class  : "",
+                    target : "_self"
+                },
+            
+                {
+                    name   : "标签",
+                    icon   : "icon-discount-fill",
+                    href   : "/tag",
+                    type   : "tag",
+                    class  : "",
+                    target : "_self"
+                },
+            
+                {
+                    name   : "归档",
+                    icon   : "icon-calendar-fill",
+                    href   : "/archive",
+                    type   : "archive",
+                    class  : "",
+                    target : "_self"
+                },
+            
+                {
+                    name   : "赞赏",
+                    icon   : "icon-heart-fill",
+                    href   : "/donate",
+                    type   : "donate",
+                    class  : "",
+                    target : "_self"
+                },
+            
+                {
+                    name   : "关于",
+                    icon   : "icon-about-fill",
+                    href   : "/about",
+                    type   : "about",
+                    class  : "",
+                    target : "_self"
+                },
+            
+                {
+                    name   : "订阅",
+                    icon   : "icon-rss",
+                    href   : "/atom.xml",
+                    type   : "",
+                    class  : "",
+                    target : "_blank"
+                },
+            
+                {
+                    name   : "音乐",
+                    icon   : "icon-music",
+                    href   : "/music",
+                    type   : "music",
+                    class  : "",
+                    target : "_self"
+                },
+            
+                {
+                    name   : "搜索",
+                    icon   : "icon-search-menu",
+                    href   : "javascript:;",
+                    type   : "",
+                    class  : "search",
+                    target : "_self"
+                },
+            
+                {
+                    name   : "友情链接",
+                    icon   : "icon-link",
+                    href   : "/friend",
+                    type   : "friend",
+                    class  : "",
+                    target : "_self"
+                },
+            
+        ],
+        MenuLink : [
+            
+                
+                    {
+                        name   : "知乎",
+                        icon   : "icon-zhihu",
+                        href   : "https://www.zhihu.com/people/68-21-24-64-57-17",
+                        class  : "",
+                        target : "_blank",
+                        image  : ""
+                    },
+                
+                    {
+                        name   : "QQ",
+                        icon   : "icon-qq",
+                        href   : "javascript:;",
+                        class  : "image",
+                        target : "_self",
+                        image  : "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/900cbf5ad084f3cc39ab371ba026d318.jpg"
+                    },
+                
+                    {
+                        name   : "微信",
+                        icon   : "icon-wechat",
+                        href   : "javascript:;",
+                        class  : "",
+                        target : "_self",
+                        image  : "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/5739108c740d75e5fc2a723c80efdadf.jpg"
+                    },
+                
+                    {
+                        name   : "GitHub",
+                        icon   : "icon-github",
+                        href   : "https://github.com/ciquningzuowu",
+                        class  : "",
+                        target : "_blank",
+                        image  : ""
+                    },
+                
+            
+        ],
+
+        FooterStyle : 2,
+        BottomText  : "<div><span class='face'>ღゝ◡╹)ノ♡</span></div><div>le的避难所 - 用心记录每一次成长</div><div>&copy; 2020-<%= new Date().getFullYear() %> le. All Rights Reserved.</div>",
+
+        ConsoleList : [
+            
+                
+                    [
+                        
+                            
+                                "Based on cnblogs theme SimpleMemory.",
+                            
+                                "",
+                            
+                        
+                    ],
+                
+                    [
+                        
+                            
+                                "SimpleMemory Author:",
+                            
+                                "BNDong",
+                            
+                        
+                    ],
+                
+                    [
+                        
+                            
+                                "Theme:",
+                            
+                                "LiveForCode",
+                            
+                        
+                    ],
+                
+            
+        ],
+
+        FontIconExtend : "",
+
+        Donate : {
+            paypal  : "",
+            bitcoin : "",
+            alipay  : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/image/donate/alipay.png",
+            wechat  : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/image/donate/wechat.png"
+        },
+
+        Search : {
+            applicationID : "010C3EANT8",
+            apiKey        : "c7abab9f11b79102b9aff7fe6d41447d",
+            indexName     : "Notes",
+            hits          : {
+                page : 10
+            },
+            labels        : {
+                placeholder : "搜索",
+                empty       : "未发现与 「${query}」 相关的内容",
+                stats       : "${hits} 条相关条目，使用了 ${time} 毫秒",
+            }
+        }, 
+
+        Comment : {
+            switch : false,
+            type   : "Valine",
+        },
+
+        Waline : {
+            el              : ".comments-content",
+            serverURL       : "",
+            path            : window.location.pathname,
+            meta            : "['nick', 'mail', 'link']",
+            requiredMeta    : "['nick', 'mail']",
+            pageSize        : 10,
+            lang            : "zh-cn",
+            locale: {
+                admin       : "博主",
+                anonymous   : "匿名用户",
+                sofa        : "快来做第一个评论的人吧 ~",
+                placeholder : "留下一丝足迹......",
+            },
+            dark            : "html[color-scheme='dark']",
+            search          : false,
+            pageview        : true,
+            comment         : true,
+            copyright       : false,
+        },
+
+        Valine : {
+            el             : ".comments-content",
+            appId          : "srhKtvWPQTWYKh3qX8G8M7v0-gzGzoHsz",
+            appKey         : "8uVSP1q6UlALVC5igYfIfv2h",
+            serverURLs     : "",
+            placeholder    : "留下一丝足迹......",
+            avatar         : "mm",
+            meta           : "nick,mail,link",
+            requiredFields : "nick,mail",
+            pageSize       : 5,
+            lang           : "zh-cn",
+            visitor        : true,
+            enableQQ       : true
+        },
+
+        Tocbot : {
+            switch                : true,
+            tocSelector           : ".toc",
+            contentSelector       : ".article-body",
+            headingSelector       : "h1, h2, h3, h4, h5",
+            headingsOffset        : 0,
+            scrollSmooth          : true,
+            scrollSmoothOffset    : -5,
+            positionFixedSelector : ".toc",
+            positionFixedClass    : "toc-fixed",
+            fixedSidebarOffset    : "",
+        },
+
+        Require : {
+            baseUrl     : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/js/",
+            waitSeconds : 100
+        },
+
+        Music : {
+            type : "APlayer"
+        },
+        APlayer : {
+            container : ".aplayer",
+            fixed     : true,
+            autoplay  : false,
+            loop      : "all",
+            order     : "random",
+            preload   : "auto",
+            volume    : 0.67,
+            mutex     : true,
+            lrcType   : 0,
+            audio     : [
+                
+                    {
+                        name   : "我的音乐1",
+                        artist : "艺术家",
+                        cover  : "/music/cover/default.jpg",
+                        url    : "/music/song/your-music.mp3",
+                        lrc    : ""
+                    },
+                
+                    {
+                        name   : "我的音乐2",
+                        artist : "艺术家",
+                        cover  : "/music/cover/default.jpg",
+                        url    : "/music/song/your-music2.mp3",
+                        lrc    : ""
+                    },
+                
+            ]
+        },
+        Meting : {
+            api      : "https://api.i-meto.com/meting/api",
+            id       : "18197301188", 
+            lrcshow  : false, 
+            server   : "netease", 
+            type     : "playlist", 
+            fixed    : true, 
+            autoplay : true, 
+            loop     : "all", 
+            order    : "random", 
+            preload  : "auto", 
+            volume   : 0.67, 
+            mutex    : true
+        },
+
+        Mouse : {
+            enable  : true,
+            options : {
+                size  : 6,
+                sizeF : 24
+            }
+        },
+
+        LazyLoad : {
+            default : "/image/website/lazyload.svg"
+        },
+  
+        Style : {
+            aplayer          : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/APlayer.min.css",
+            archive          : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/archive.min.css",
+            base             : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/base.min.css",
+            clipboard        : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/clipboard.min.css",
+            code             : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/code.min.css",
+            donate           : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/donate.min.css",
+            fancybox         : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/jquery.fancybox.min.css",
+            footer           : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/footer.min.css",
+            iconfont         : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/iconfont/iconfont.min.css",
+            index            : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/index.min.css",
+            menuBubble       : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/menu-bubble.min.css",
+            mouse            : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/mouse.min.css",
+            page             : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/page.min.css",
+            post             : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/post.min.css",
+            search           : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/search.min.css",
+            tocbot           : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/tocbot.min.css",
+            valine           : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/valine.min.css",
+            waline           : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/waline.css",
+            walineCustom     : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/waline-custom.css"
+        },
+
+        Script: {
+            aplayer          : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/js/APlayer.min.js",
+            config           : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/js/require.config.min.js",
+            index            : "/js/index.js",
+            instantSearch    : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/js/instantsearch.min.js",
+            iscroll          : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/js/iscroll.min.js",
+            jQuery           : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/js/jquery-3.4.1.min.js",
+            loading          : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/js/loading.min.js",
+            meting           : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/js/Meting.min.js",
+            require          : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/js/require.min.js",
+            waline           : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/js/waline.mjs",
+            pageview         : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/js/pageview.mjs",
+            comment          : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/js/comment.mjs",
+        },
+
+        Font: {
+            LongCang    : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/font/LongCang.min.css",
+            Monda       : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/font/Monda.min.css",
+            NotoSansSC  : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/font/NotoSansSC.min.css",
+            NotoSerifSC : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/font/NotoSerifSC.min.css",
+            Playball    : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/font/Playball.min.css",
+            PTMono      : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/font/PTMono.min.css",
+            Roboto      : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/font/Roboto.min.css",
+            RobotoSlab  : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/font/RobotoSlab.min.css",
+            Rosario     : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/font/Rosario.min.css",
+            UbuntuMono  : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/font/UbuntuMono.min.css"
+        },
+
+        Suffix : {
+            about : "在代码中寻找意义，在文字中记录成长"
+        },
+            
+        Theme : {
+            url  : "https://github.com/first19326/Hexo-LiveForCode",
+            name : "Hexo - Live For Code"
+        }  
+    };
+</script>
+    <script type="text/javascript" src="/js/index.js"></script>
+</body>
+</html>
