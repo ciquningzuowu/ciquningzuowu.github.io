@@ -40,15 +40,13 @@ html {
 
 body {
     font-size: 1.4rem;
-	background-color: var(--background-color);
-    background-image: linear-gradient(135deg, var(--gradient-start) 0%, #FFF 25%, var(--gradient-end) 50%, #FFF 75%, var(--gradient-start) 100%);
-    background-size: 400% 400%;
+	background-color: transparent;
+    background-image: none;
     font-family: var(--font-family);
 	color: var(--text-color);
     -ms-overflow-style: none;
     overflow: -moz-scrollbars-none;
 	overflow-x: hidden;
-    animation: gradientShift 15s ease infinite;
 }
 
 @keyframes gradientShift {
@@ -390,35 +388,42 @@ mjx-container {
     animation: gradientShift 15s ease infinite;
 }
 
-/* 首页背景容器 - 滚动时保持可见 */
-#home-background {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100vh;
-    z-index: -1;
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    opacity: 0.6;
-    filter: blur(3px);
-    transition: opacity 0.3s ease;
+#page-cover {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	z-index: 0;
+	background-size: cover;
+	background-position: center center;
+	background-repeat: no-repeat;
+	filter: none;
+	transition: filter 0.5s ease;
 }
 
-#home-background::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(180deg, 
-        rgba(255, 228, 236, 0.3) 0%, 
-        rgba(255, 245, 247, 0.5) 30%,
-        rgba(255, 245, 247, 0.8) 70%,
-        rgba(255, 245, 247, 0.95) 100%
-    );
+#page-cover::after {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: rgba(255, 255, 255, 0.15);
+	backdrop-filter: blur(0px);
+	-webkit-backdrop-filter: blur(0px);
+	transition: backdrop-filter 0.5s ease, background 0.5s ease;
+}
+
+body.scrolled #page-cover {
+	filter: blur(15px);
+	transform: scale(1.05);
+}
+
+body.scrolled #page-cover::after {
+	backdrop-filter: blur(8px);
+	-webkit-backdrop-filter: blur(8px);
+	background: rgba(255, 255, 255, 0.5);
 }
 
 #header {
@@ -433,35 +438,8 @@ mjx-container {
 	background-position: center center;
 	background-repeat: no-repeat;
 	overflow: hidden;
-	z-index: 998;
+	z-index: 1;
 	box-shadow: 0 1px 2px rgba(150, 150, 150, .7);
-}
-
-#page-cover {
-	position: fixed;
-	top: 0;
-	left: 0;
-	right: 0;
-	bottom: 0;
-	z-index: -1;
-	background-size: cover;
-	background-position: center top;
-	background-repeat: no-repeat;
-}
-
-#page-cover::after {
-	content: '';
-	position: absolute;
-	top: 0;
-	left: 0;
-	right: 0;
-	bottom: 0;
-	background: linear-gradient(
-		to bottom,
-		rgba(255, 228, 236, 0.78) 0%,
-		rgba(255, 228, 236, 0.85) 30%,
-		rgba(255, 228, 236, 0.88) 100%
-	);
 }
 
 #container {
@@ -469,37 +447,38 @@ mjx-container {
 	max-width: 900px;
 	margin: 0 auto;
 	padding: 0 2rem 3rem;
-	background-color: var(--container-background-color);
-	background: linear-gradient(to bottom, var(--container-background-color) 0%, var(--container-background-color) 85%, transparent 100%);
-	backdrop-filter: blur(3px);
+	position: relative;
+	z-index: 1;
+	background: transparent;
 	-ms-text-overflow: ellipsis;
 	-o-text-overflow: ellipsis;
 	text-overflow: ellipsis;
-	position: relative;
 }
 
 #container::before {
-	content: '';
-	position: fixed;
-	top: 0;
-	left: 0;
-	right: 0;
-	bottom: 0;
-	background: inherit;
-	filter: blur(20px);
-	z-index: -1;
-	pointer-events: none;
+	content: none;
+}
+
+#article {
+	background: rgba(255, 255, 255, 0.82);
+	backdrop-filter: blur(12px);
+	-webkit-backdrop-filter: blur(12px);
+	border-radius: 16px;
+	padding: 2rem 2.5rem;
+	box-shadow: 0 4px 24px rgba(233, 30, 99, 0.06);
 }
 
 #footer {
 	position: relative;
 	min-height: 120px;
-	margin: 20vh 0 0 0;
+	margin: 0;
 	padding: 1.5rem 0;
 	text-align: center;
 	color: var(--footer-color);
 	font-size: 1.2rem;
-	line-height: 1.5
+	line-height: 1.5;
+	z-index: 1;
+}
 }
 
 
@@ -1223,9 +1202,8 @@ mjx-container {
 	}
 
 	:root:not([color-scheme]) body {
-		background-color: #1a1a2e;
-        background-image: linear-gradient(135deg, #1a1a2e 0%, #16213e 25%, #1a1a2e 50%, #16213e 75%, #1a1a2e 100%);
-        background-size: 400% 400%;
+		background-color: transparent;
+        background-image: none;
 	}
 
 	:root:not([color-scheme]) #header {
@@ -1233,20 +1211,26 @@ mjx-container {
 	}
 
 	:root:not([color-scheme]) #page-cover::after {
-		background: linear-gradient(
-			to bottom,
-			rgba(30, 30, 50, 0.75) 0%,
-			rgba(30, 30, 50, 0.82) 30%,
-			rgba(30, 30, 50, 0.85) 100%
-		);
+		background: rgba(26, 26, 46, 0.3);
 	}
-	
+
+	:root:not([color-scheme]) #header {
+		box-shadow: 0 1px 2px rgba(0, 0, 0, .2);
+	}
+
 	:root:not([color-scheme]) #container {
-		background-color: rgba(51, 51, 51, .9);
-		color: #BBBBBB;
-		box-shadow: 0 0 20px 10px rgba(0, 0, 0, .2)
+		background: transparent;
+		box-shadow: none;
 	}
-	
+
+	:root:not([color-scheme]) #article {
+		background: rgba(35, 35, 55, 0.82);
+		color: #BBBBBB;
+		backdrop-filter: blur(12px);
+		-webkit-backdrop-filter: blur(12px);
+		box-shadow: 0 4px 24px rgba(0, 0, 0, 0.25);
+	}
+
 	:root:not([color-scheme]) #footer {
 		color: #999999
 	}
@@ -1348,8 +1332,13 @@ mjx-container {
 	@media only screen and (max-width:720px) {
 			
 		:root:not([color-scheme]) #container {
-			background-color: rgba(51, 51, 51, 1);
-			box-shadow: unset
+			background: transparent;
+			box-shadow: none;
+		}
+
+		:root:not([color-scheme]) #article {
+			background: rgba(35, 35, 55, 0.9);
+			border-radius: 12px;
 		}
 	}
 }
@@ -1361,9 +1350,8 @@ mjx-container {
 }
 
 [color-scheme=dark] body {
-	background-color: #1a1a2e;
-    background-image: linear-gradient(135deg, #1a1a2e 0%, #16213e 25%, #1a1a2e 50%, #16213e 75%, #1a1a2e 100%);
-    background-size: 400% 400%;
+	background-color: transparent;
+    background-image: none;
 }
 
 [color-scheme=dark] #header {
@@ -1371,18 +1359,24 @@ mjx-container {
 }
 
 [color-scheme=dark] #page-cover::after {
-	background: linear-gradient(
-		to bottom,
-		rgba(30, 30, 50, 0.75) 0%,
-		rgba(30, 30, 50, 0.82) 30%,
-		rgba(30, 30, 50, 0.85) 100%
-	);
+	background: rgba(26, 26, 46, 0.3);
+}
+
+[color-scheme=dark] #header {
+	box-shadow: 0 1px 2px rgba(0, 0, 0, .2);
 }
 
 [color-scheme=dark] #container {
-	background-color: rgba(51, 51, 51, .9);
+	background: transparent;
+	box-shadow: none;
+}
+
+[color-scheme=dark] #article {
+	background: rgba(35, 35, 55, 0.82);
 	color: #BBBBBB;
-	box-shadow: 0 0 20px 10px rgba(0, 0, 0, .2)
+	backdrop-filter: blur(12px);
+	-webkit-backdrop-filter: blur(12px);
+	box-shadow: 0 4px 24px rgba(0, 0, 0, 0.25);
 }
 
 [color-scheme=dark] #footer {
@@ -1486,8 +1480,13 @@ mjx-container {
 @media only screen and (max-width:720px) {
 		
 	[color-scheme=dark] #container {
-		background-color: rgba(51, 51, 51, 1);
-		box-shadow: unset
+		background: transparent;
+		box-shadow: none;
+	}
+
+	[color-scheme=dark] #article {
+		background: rgba(35, 35, 55, 0.9);
+		border-radius: 12px;
 	}
 }
 

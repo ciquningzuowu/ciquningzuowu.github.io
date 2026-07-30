@@ -1,0 +1,451 @@
+/* 归档页面 - GitHub commit graph 风格时间线 */
+
+/* 主容器 */
+.commit-graph-container {
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 50px 20px 80px;
+}
+
+.commit-graph {
+    position: relative;
+}
+
+/* 年份区块 */
+.commit-year {
+    margin-bottom: 50px;
+    position: relative;
+}
+
+/* 年份标签 */
+.commit-year-label {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 20px;
+    padding-left: 70px;
+}
+
+.commit-year-text {
+    font-size: 1.6rem;
+    font-weight: 700;
+    font-family: 'Roboto Slab', 'Noto Serif SC', serif;
+    color: #1a1a1a;
+    letter-spacing: 2px;
+}
+
+.commit-year-count {
+    font-size: 0.9rem;
+    color: #888;
+    font-weight: 400;
+}
+
+/* 时间脊柱 - 左侧竖线 */
+.commit-spine {
+    position: relative;
+    padding-left: 28px;
+}
+
+.commit-spine::before {
+    content: '';
+    position: absolute;
+    left: 10px;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: linear-gradient(180deg,
+        transparent 0%,
+        rgba(233, 30, 99, 0.5) 15%,
+        rgba(233, 30, 99, 0.3) 50%,
+        rgba(233, 30, 99, 0.5) 85%,
+        transparent 100%);
+    border-radius: 1px;
+}
+
+/* 文章行 */
+.commit-row {
+    position: relative;
+    display: flex;
+    align-items: center;
+    margin-bottom: 16px;
+    opacity: 0;
+    transform: translateX(-20px);
+    transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+                transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.commit-row.visible {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* 节点 */
+.commit-node {
+    position: absolute;
+    left: -18px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 2;
+}
+
+.commit-dot {
+    width: 10px;
+    height: 10px;
+    background: #fff;
+    border: 2px solid #e91e63;
+    border-radius: 50%;
+    box-shadow: 0 0 0 3px rgba(233, 30, 99, 0.15);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    animation: dotPulse 2s ease-in-out infinite;
+}
+
+@keyframes dotPulse {
+    0%, 100% {
+        box-shadow: 0 0 0 3px rgba(233, 30, 99, 0.15);
+    }
+    50% {
+        box-shadow: 0 0 0 5px rgba(233, 30, 99, 0.08);
+    }
+}
+
+.commit-row:hover .commit-dot {
+    transform: scale(1.5);
+    border-color: #c2185b;
+    background: #e91e63;
+    box-shadow: 0 0 0 4px rgba(233, 30, 99, 0.3);
+    animation: none;
+}
+
+/* 内容卡片 */
+.commit-content {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 14px 20px;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    border-radius: 8px;
+    text-decoration: none !important;
+    transition: all 0.3s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.commit-content:hover {
+    background: #fff;
+    transform: translateX(6px);
+    border-color: rgba(233, 30, 99, 0.15);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.commit-content:hover .commit-title {
+    color: #e91e63;
+}
+
+.commit-content:hover .commit-date {
+    background: #e91e63;
+    color: #fff;
+}
+
+/* 日期 */
+.commit-date {
+    font-family: 'Roboto Mono', 'PT Mono', monospace;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #666;
+    background: rgba(0, 0, 0, 0.04);
+    padding: 4px 10px;
+    border-radius: 4px;
+    min-width: 50px;
+    text-align: center;
+    transition: all 0.25s ease;
+}
+
+/* 标题 */
+.commit-title {
+    flex: 1;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #1a1a1a;
+    transition: color 0.25s ease;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* 标签容器 */
+.commit-tags {
+    display: flex;
+    gap: 6px;
+    flex-shrink: 0;
+}
+
+/* 标签 */
+.commit-tag {
+    font-size: 0.72rem;
+    color: #666;
+    background: rgba(0, 0, 0, 0.04);
+    padding: 3px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+}
+
+/* 连接线 - 从节点到卡片 */
+.commit-row::before {
+    content: '';
+    position: absolute;
+    left: -18px;
+    top: 50%;
+    width: 18px;
+    height: 1px;
+    background: linear-gradient(90deg,
+        rgba(233, 30, 99, 0.4) 0%,
+        rgba(233, 30, 99, 0.2) 100%);
+    transform: translateY(-50%);
+    transition: all 0.3s ease;
+}
+
+.commit-row:hover::before {
+    background: linear-gradient(90deg,
+        #e91e63 0%,
+        rgba(233, 30, 99, 0.4) 100%);
+}
+
+/* 响应式 */
+@media only screen and (max-width: 768px) {
+    .commit-graph-container {
+        padding: 30px 12px 60px;
+    }
+
+    .commit-year {
+        margin-bottom: 40px;
+    }
+
+    .commit-year-label {
+        padding-left: 50px;
+    }
+
+    .commit-year-text {
+        font-size: 1.4rem;
+    }
+
+    .commit-spine {
+        padding-left: 22px;
+    }
+
+    .commit-spine::before {
+        left: 7px;
+    }
+
+    .commit-node {
+        left: -14px;
+    }
+
+    .commit-dot {
+        width: 8px;
+        height: 8px;
+    }
+
+    .commit-content {
+        padding: 12px 14px;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .commit-date {
+        font-size: 0.8rem;
+        padding: 3px 8px;
+        min-width: 48px;
+    }
+
+    .commit-title {
+        font-size: 0.95rem;
+        width: calc(100% - 60px);
+    }
+
+    .commit-tags {
+        margin-left: auto;
+    }
+
+    .commit-tag {
+        font-size: 0.68rem;
+    }
+
+    .commit-row::before {
+        left: -14px;
+        width: 14px;
+    }
+}
+
+@media only screen and (max-width: 480px) {
+    .commit-year-label {
+        padding-left: 40px;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .commit-spine {
+        padding-left: 18px;
+    }
+
+    .commit-spine::before {
+        left: 5px;
+    }
+
+    .commit-row {
+        flex-wrap: wrap;
+    }
+
+    .commit-title {
+        width: 100%;
+        margin-top: 6px;
+        white-space: normal;
+    }
+
+    .commit-tags {
+        width: 100%;
+        margin-top: 8px;
+    }
+}
+
+/* Dark Mode */
+@media (prefers-color-scheme: dark) {
+    :root:not([color-scheme]) .commit-spine::before {
+        background: linear-gradient(180deg,
+            transparent 0%,
+            rgba(255, 128, 171, 0.5) 15%,
+            rgba(255, 128, 171, 0.3) 50%,
+            rgba(255, 128, 171, 0.5) 85%,
+            transparent 100%);
+    }
+
+    :root:not([color-scheme]) .commit-year-text {
+        color: #e0e0e0;
+    }
+
+    :root:not([color-scheme]) .commit-dot {
+        background: #1a1a1a;
+        border-color: #FF80AB;
+        box-shadow: 0 0 0 3px rgba(255, 128, 171, 0.15);
+    }
+
+    :root:not([color-scheme]) .commit-row:hover .commit-dot {
+        background: #FF80AB;
+        border-color: #FF80AB;
+        box-shadow: 0 0 0 4px rgba(255, 128, 171, 0.3);
+    }
+
+    :root:not([color-scheme]) .commit-content {
+        background: rgba(30, 30, 45, 0.95);
+        border-color: rgba(255, 255, 255, 0.08);
+    }
+
+    :root:not([color-scheme]) .commit-content:hover {
+        background: rgba(40, 40, 55, 0.98);
+    }
+
+    :root:not([color-scheme]) .commit-date {
+        color: #aaa;
+        background: rgba(255, 255, 255, 0.06);
+    }
+
+    :root:not([color-scheme]) .commit-content:hover .commit-date {
+        background: #FF80AB;
+        color: #1a1a1a;
+    }
+
+    :root:not([color-scheme]) .commit-title {
+        color: #e0e0e0;
+    }
+
+    :root:not([color-scheme]) .commit-content:hover .commit-title {
+        color: #FF80AB;
+    }
+
+    :root:not([color-scheme]) .commit-tag {
+        background: rgba(255, 255, 255, 0.06);
+        color: #999;
+    }
+
+    :root:not([color-scheme]) .commit-row::before {
+        background: linear-gradient(90deg,
+            rgba(255, 128, 171, 0.4) 0%,
+            rgba(255, 128, 171, 0.2) 100%);
+    }
+
+    :root:not([color-scheme]) .commit-row:hover::before {
+        background: linear-gradient(90deg,
+            #FF80AB 0%,
+            rgba(255, 128, 171, 0.4) 100%);
+    }
+}
+
+[color-scheme=dark] .commit-spine::before {
+    background: linear-gradient(180deg,
+        transparent 0%,
+        rgba(255, 128, 171, 0.5) 15%,
+        rgba(255, 128, 171, 0.3) 50%,
+        rgba(255, 128, 171, 0.5) 85%,
+        transparent 100%);
+}
+
+[color-scheme=dark] .commit-year-text {
+    color: #e0e0e0;
+}
+
+[color-scheme=dark] .commit-dot {
+    background: #1a1a1a;
+    border-color: #FF80AB;
+    box-shadow: 0 0 0 3px rgba(255, 128, 171, 0.15);
+}
+
+[color-scheme=dark] .commit-row:hover .commit-dot {
+    background: #FF80AB;
+    border-color: #FF80AB;
+    box-shadow: 0 0 0 4px rgba(255, 128, 171, 0.3);
+}
+
+[color-scheme=dark] .commit-content {
+    background: rgba(30, 30, 45, 0.95);
+    border-color: rgba(255, 255, 255, 0.08);
+}
+
+[color-scheme=dark] .commit-content:hover {
+    background: rgba(40, 40, 55, 0.98);
+}
+
+[color-scheme=dark] .commit-date {
+    color: #aaa;
+    background: rgba(255, 255, 255, 0.06);
+}
+
+[color-scheme=dark] .commit-content:hover .commit-date {
+    background: #FF80AB;
+    color: #1a1a1a;
+}
+
+[color-scheme=dark] .commit-title {
+    color: #e0e0e0;
+}
+
+[color-scheme=dark] .commit-content:hover .commit-title {
+    color: #FF80AB;
+}
+
+[color-scheme=dark] .commit-tag {
+    background: rgba(255, 255, 255, 0.06);
+    color: #999;
+}
+
+[color-scheme=dark] .commit-row::before {
+    background: linear-gradient(90deg,
+        rgba(255, 128, 171, 0.4) 0%,
+        rgba(255, 128, 171, 0.2) 100%);
+}
+
+[color-scheme=dark] .commit-row:hover::before {
+    background: linear-gradient(90deg,
+        #FF80AB 0%,
+        rgba(255, 128, 171, 0.4) 100%);
+}

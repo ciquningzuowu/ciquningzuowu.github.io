@@ -172,10 +172,21 @@ function Base() {
         let homeScroll     = $('#container').offset().top,
             docScroll      = $(document).scrollTop(),
             scrollPercent  = tools.getScrollPercent(),
-            openButton     = $('.menu-button-open');         
-            
+            openButton     = $('.menu-button-open');
+
         // 设置滚动条
         progressBar.setProgress(scrollPercent);
+
+        // 非主页滚动时添加背景虚化效果
+        if ($('#container').hasClass('non-home-container')) {
+            if (docScroll > 100) {
+                $('body').addClass('scrolled');
+            } else {
+                $('body').removeClass('scrolled');
+            }
+        } else {
+            $('body').removeClass('scrolled');
+        }
 
         // 设置上下滚动
         if (temScroll < docScroll) { 
@@ -585,6 +596,17 @@ function Base() {
             $('#page-cover').css('background-image', 'url(' + randomImg + ')');
         }
 
+        // 设置首页卡片背景图
+        var cardImages = window.config.IndexCardBackgroundImage;
+        if (cardImages && cardImages.length > 0) {
+            // 为每个卡片随机分配一个背景图
+            $('.article-grid-card').each(function(index) {
+                var randomCardImg = cardImages[Math.floor(Math.random() * cardImages.length)];
+                // 使用 data 属性存储背景图 URL
+                $(this).find('.card-background').css('background-image', 'url(' + randomCardImg + ')');
+            });
+        }
+
         // 头图点击滚动到内容位置
         $('.scroll-down').click(function () {
             let endScroll = $('#container').offset().top; 
@@ -646,6 +668,18 @@ function Base() {
         if (articleImages && articleImages.length > 0) {
             var randomImg = articleImages[Math.floor(Math.random() * articleImages.length)];
             $('#page-cover').css('background-image', 'url(' + randomImg + ')');
+            // 设置背景为固定定位，使其成为全局背景
+            $('#page-cover').css({
+                'position': 'fixed',
+                'top': '0',
+                'left': '0',
+                'width': '100%',
+                'height': '100%',
+                'z-index': '-1',
+                'background-size': 'cover',
+                'background-position': 'center',
+                'background-repeat': 'no-repeat'
+            });
         }
 
         script.setLightBox();
@@ -658,12 +692,12 @@ function Base() {
 
         // 设置表格样式
         script.setTableStyle();
-        
+
         // 初始化文章目录位置
         timers.setTocTimer = window.setInterval( script.initToc, 1000 );
 
-        // 初始化赞赏模块
-        timers.setDonateTimer = window.setInterval( script.initDonate, 1000 );
+        // 初始化赞赏模块（已禁用）
+        // timers.setDonateTimer = window.setInterval( script.initDonate, 1000 );
     };
 
     /**

@@ -1,5 +1,202 @@
 /* Container CSS */
 
+/* 归档页面头部 */
+.archive-container .archive-header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding-bottom: 25px;
+    border-bottom: 2px solid rgba(233, 30, 99, 0.2);
+}
+
+.archive-container .archive-title {
+    font-size: 2.8rem;
+    font-family: 'Playball', cursive;
+    color: var(--primary-color, #E91E63);
+    margin: 0 0 10px 0;
+    border: none;
+}
+
+.archive-container .archive-count {
+    font-size: 1.4rem;
+    color: #888;
+    margin: 0;
+}
+
+/* 归档页面文章列表 */
+.archive-container .article-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.archive-container .article-item {
+    display: flex;
+    align-items: flex-start;
+    padding: 16px 20px;
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 12px;
+    border: 1px solid rgba(233, 30, 99, 0.1);
+    transition: all 0.3s ease;
+}
+
+.archive-container .article-item:hover {
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 4px 20px rgba(233, 30, 99, 0.12);
+    transform: translateX(8px);
+}
+
+.archive-container .article-time {
+    min-width: 100px;
+    text-align: center;
+    padding-right: 20px;
+    border-right: 2px solid rgba(233, 30, 99, 0.15);
+    margin-right: 20px;
+}
+
+.archive-container .article-time time {
+    font-size: 1.4rem;
+    font-weight: 500;
+    color: var(--primary-color, #E91E63);
+    font-family: 'Monda', monospace;
+}
+
+.archive-container .article-content {
+    flex: 1;
+}
+
+.archive-container .article-title {
+    margin: 0 0 8px 0;
+    border: none;
+}
+
+.archive-container .article-title a {
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: #333;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.archive-container .article-title a:hover {
+    color: var(--primary-color, #E91E63) !important;
+}
+
+.archive-container .article-excerpt {
+    font-size: 1.3rem;
+    color: #666;
+    margin: 0 0 10px 0;
+    line-height: 1.6;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.archive-container .article-meta {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.archive-container .article-category,
+.archive-container .article-tag {
+    font-size: 1.2rem;
+    color: #888;
+}
+
+.archive-container .article-category i,
+.archive-container .article-tag i {
+    margin-right: 4px;
+    color: var(--primary-color, #E91E63);
+}
+
+.archive-container .article-category a,
+.archive-container .article-tag a {
+    color: #666;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.archive-container .article-category a:hover,
+.archive-container .article-tag a:hover {
+    color: var(--primary-color, #E91E63) !important;
+}
+
+/* 响应式 */
+@media only screen and (max-width: 720px) {
+    .archive-container .article-item {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .archive-container .article-time {
+        border-right: none;
+        border-bottom: 1px solid rgba(233, 30, 99, 0.15);
+        padding-right: 0;
+        padding-bottom: 10px;
+        margin-right: 0;
+        min-width: auto;
+    }
+
+    .archive-container .article-title a {
+        font-size: 1.4rem;
+    }
+}
+
+/* Dark Mode */
+@media (prefers-color-scheme: dark) {
+    :root:not([color-scheme]) .archive-container .article-item {
+        background: rgba(35, 35, 55, 0.6);
+        border-color: rgba(255, 128, 171, 0.15);
+    }
+
+    :root:not([color-scheme]) .archive-container .article-item:hover {
+        background: rgba(45, 45, 65, 0.9);
+    }
+
+    :root:not([color-scheme]) .archive-container .article-time time {
+        color: #FF80AB;
+    }
+
+    :root:not([color-scheme]) .archive-container .article-title a {
+        color: #ccc;
+    }
+
+    :root:not([color-scheme]) .archive-container .article-title a:hover {
+        color: #FF80AB !important;
+    }
+
+    :root:not([color-scheme]) .archive-container .article-excerpt {
+        color: #999;
+    }
+}
+
+[color-scheme=dark] .archive-container .article-item {
+    background: rgba(35, 35, 55, 0.6);
+    border-color: rgba(255, 128, 171, 0.15);
+}
+
+[color-scheme=dark] .archive-container .article-item:hover {
+    background: rgba(45, 45, 65, 0.9);
+}
+
+[color-scheme=dark] .archive-container .article-time time {
+    color: #FF80AB;
+}
+
+[color-scheme=dark] .archive-container .article-title a {
+    color: #ccc;
+}
+
+[color-scheme=dark] .archive-container .article-title a:hover {
+    color: #FF80AB !important;
+}
+
+[color-scheme=dark] .archive-container .article-excerpt {
+    color: #999;
+}
+
 .articles {
 	position: relative;
 	box-sizing: border-box;
