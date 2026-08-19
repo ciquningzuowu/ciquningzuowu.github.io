@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, shrink-to-fit=no">
+    <meta name="referrer" content="origin">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="Cache-Control" content="no-transform">
+    <meta http-equiv="Cache-Control" content="no-siteapp">
+    <title>
+        
+            Agent 记忆管理策略：Mem0 项目
+        
+    </title>
+    <link rel="shortcut icon" href="#"/>
+    <!-- 字体预连接加速 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- 只加载必要字体 -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Playball&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <link type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/base.min.css">
+    <link type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/code.min.css">
+    <link type="text/css" rel="stylesheet" href="/css/archive-card.css">
+    <link rel="stylesheet" href="/css/custom.css">
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/js/jquery-3.4.1.min.js"></script>
+    <!-- 预加载关键JS -->
+    <link rel="preload" href="/js/index.js" as="script">
+<meta name="generator" content="Hexo 8.1.1"></head>
+<body>
+    <div id="page-cover"></div>
+
+    <link type="text/css" rel="stylesheet" href="/css/post.css">
+<div id="header" class="header">
+    <div class="vertical">
+        <div class="inner">
+            
+                <h1 class="header-subtitle">Agent 记忆管理策略：Mem0 项目</h1>
+                <div class="header-subinfo">
+                    <p class="article-info-text">
+                        <span>
+                            <i class="iconfont icon-time"></i> 发表时间：2026-07-10
+                        </span>
+                    </p>
+                    
+                        
+                            <span class="tag-color">Agent</span>
+                        
+                            <span class="tag-color">记忆系统</span>
+                        
+                    
+                </div>
+            
+        </div>
+    </div>
+    
+</div>
+
+<div id="container" class="non-home-container">
+    
+        <!-- 文章页面 -->
+        <div id="article">
+            <div class="toc"></div>
+            <div class="article-body">
+                <h1>Agent 记忆管理策略：Mem0 项目</h1>
+<h2 id="核心流程">核心流程</h2>
+<p>记忆系统的核心是从对话中提取稳定、有价值的信息，并在后续对话中持续检索、更新和淘汰这些信息。整体流程可以拆分为<strong>记忆提取</strong>和<strong>记忆更新</strong>两个阶段。</p>
+<h2 id="记忆提取">记忆提取</h2>
+<p>通过异步摘要模块对对话进行概括，并随着对话推进持续更新。提取模块需要配套的提示词，明确记忆类型、重要性判断、隐私边界和输出格式。</p>
+<p>一次对话结束后，可以先生成<strong>会话摘要</strong>，再将摘要与<strong>最近信息窗口</strong>组合为上下文，交给记忆提取函数。模型据此生成一组<strong>候选记忆</strong>，供后续写入记忆库。</p>
+<h2 id="记忆更新">记忆更新</h2>
+<p>将<strong>候选记忆</strong>与<strong>现有记忆</strong>进行语义检索和事实对比，确保记忆库的一致性与低冗余，然后执行以下操作：</p>
+<ul>
+<li><strong>添加</strong>：记忆库中不存在语义相似的记忆。</li>
+<li><strong>更新</strong>：新记忆补充或修正了已有记忆。</li>
+<li><strong>删除</strong>：已有记忆与新信息明确冲突，且新信息具有更高可信度。</li>
+<li><strong>无操作</strong>：新旧记忆表达一致，或新信息不足以改变已有记忆。</li>
+</ul>
+<h2 id="设计注意事项">设计注意事项</h2>
+<ul>
+<li>记忆提取应区分用户偏好、个人资料、任务事实、历史事件和临时上下文。</li>
+<li>记忆更新不能只依赖语义相似度，还应考虑时间、来源和可信度。</li>
+<li>涉及隐私、敏感信息和用户明确要求不保存的内容时，应禁止写入长期记忆。</li>
+<li>删除或覆盖记忆前应保留审计信息，便于追踪错误更新。</li>
+</ul>
+
+                
+                <p class="end">__END__</p>
+            </div>
+            <div class="article-footer">
+                <div class="suffix-box">
+    <div class="suffix-box-left">
+        <img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/星锑(1).jpg" alt="le">
+    </div>
+    <div class="suffix-box-right">
+        <span class="suffix-box-title">文章作者：</span>le
+        <br>
+        <span class="suffix-box-title">文章出处：</span><a href="/2026/07/10/Agent%20%E8%AE%B0%E5%BF%86%E7%AE%A1%E7%90%86%E7%AD%96%E7%95%A5%EF%BC%9AMem0%20%E9%A1%B9%E7%9B%AE/" target="_blank">Agent 记忆管理策略：Mem0 项目</a>
+        <br>
+        <span class="suffix-box-title">作者签名：</span>在代码中寻找意义，在文字中记录成长
+        <br>
+        <span class="suffix-box-title">关于主题：</span><a href="https://github.com/first19326/Hexo-LiveForCode" target="_blank">Hexo - Live For Code</a>
+        <br>
+        <span class="suffix-box-title">版权声明：</span>文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" title="BY-NC-SA" target="_blank">BY-NC-SA</a> 许可协议，转载请注明出处
+        <br>
+    </div>
+    <div style="clear: both;"></div>
+</div>
+                
+                
+                    <div class="tag">
+                        标签：
+                        
+                            <a href="/tags/Agent/">Agent</a>
+                        
+                            <a href="/tags/%E8%AE%B0%E5%BF%86%E7%B3%BB%E7%BB%9F/">记忆系统</a>
+                        
+                    </div>
+                
+                <div class="article-prev-next">
+                    
+                        <a href="/2026/07/16/%E6%8F%90%E7%A4%BA%E8%AF%8D%E5%B7%A5%E7%A8%8B%E7%AC%94%E8%AE%B0%EF%BC%9A%E5%9F%BA%E7%A1%80%E6%96%B9%E6%B3%95/" class="prev-prefix">« </a> 上一篇：    <a href="/2026/07/16/%E6%8F%90%E7%A4%BA%E8%AF%8D%E5%B7%A5%E7%A8%8B%E7%AC%94%E8%AE%B0%EF%BC%9A%E5%9F%BA%E7%A1%80%E6%96%B9%E6%B3%95/" title="发布于 2026-07-16 10:29">提示词工程笔记：基础方法</a>
+                        <br>
+                    
+                    
+                        <a href="/2026/06/24/Agent%20%E6%8E%A8%E7%90%86%E4%BC%98%E5%8C%96%EF%BC%9AKV%20Cache%E3%80%81%E9%87%8F%E5%8C%96%E4%B8%8E%E6%8A%95%E6%9C%BA%E8%A7%A3%E7%A0%81/" class="next-prefix">» </a> 下一篇：    <a href="/2026/06/24/Agent%20%E6%8E%A8%E7%90%86%E4%BC%98%E5%8C%96%EF%BC%9AKV%20Cache%E3%80%81%E9%87%8F%E5%8C%96%E4%B8%8E%E6%8A%95%E6%9C%BA%E8%A7%A3%E7%A0%81/" title="发布于 2026-06-24 06:02">Agent 推理优化：KV Cache、量化与投机解码</a>
+                    
+                </div>
+            </div>
+            
+        </div>
+    
+</div>
+    <div id="footer">
+    <div><span class='face'>ღゝ◡╹)ノ♡</span></div><div>le的避难所 - 用心记录每一次成长</div><div>&copy; 2020-<%= new Date().getFullYear() %> le. All Rights Reserved.</div>
+</div>
+    <div id="sidebar">
+    <div class="menu-wrap" style="display:none;">
+        
+            <div class="menu-notice">
+                <span class="iconfont icon-notice"></span>
+                <div class="notice">
+                    <span>技术笔记 | AI学习 | 随想杂谈</span>
+                </div>
+            </div>
+        
+        <nav class="menu">
+            <div class="menu-introduce"> 
+                <div class="introduce-avatar">
+                    <img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/星锑(1).jpg">
+                </div> 
+                <div class="introduce-info"> 
+                    <div class="introduce-user">
+                        
+                            <a href="https://github.com/ciquningzuowu" target="_blank"><span>le</span></a>
+                        
+                    </div>
+                </div> 
+            </div> 
+            <div class="menu-list">
+                <ul>
+                    
+                        <li class=""><a href="/" class="" target="_self"><span class="iconfont icon-home-fill"></span>首页</a></li>
+                    
+                        <li class=""><a href="/tag" class="" target="_self"><span class="iconfont icon-discount-fill"></span>标签</a></li>
+                    
+                        <li class=""><a href="/archive" class="" target="_self"><span class="iconfont icon-calendar-fill"></span>归档</a></li>
+                    
+                        <li class=""><a href="/about" class="" target="_self"><span class="iconfont icon-about-fill"></span>关于</a></li>
+                    
+                        <li class=""><a href="javascript:;" class="search" target="_self"><span class="iconfont icon-search-menu"></span>搜索</a></li>
+                    
+                        <li class=""><a href="/friend" class="" target="_self"><span class="iconfont icon-link"></span>友情链接</a></li>
+                    
+                </ul> 
+            </div> 
+            <div class="menu-link">
+                <div class="box">
+                    <div class="image-box"></div>
+                </div>
+                
+                    <a name="知乎" href="https://www.zhihu.com/people/68-21-24-64-57-17" class="" target="_blank" data=""><span class="iconfont icon-zhihu"></span></a>
+                
+                    <a name="QQ" href="javascript:;" class="image" target="_self" data="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/900cbf5ad084f3cc39ab371ba026d318.jpg"><span class="iconfont icon-qq"></span></a>
+                
+                    <a name="微信" href="javascript:;" class="" target="_self" data="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/5739108c740d75e5fc2a723c80efdadf.jpg"><span class="iconfont icon-wechat"></span></a>
+                
+                    <a name="GitHub" href="https://github.com/ciquningzuowu" class="" target="_blank" data=""><span class="iconfont icon-github"></span></a>
+                
+            </div> 
+        </nav>
+        <button class="menu-button-close"></button>
+        <div class="morph-shape" id="morph-shape" data-morph-open="M-7.312,0H15c0,0,66,113.339,66,399.5C81,664.006,15,800,15,800H-7.312V0z;M-7.312,0H100c0,0,0,113.839,0,400c0,264.506,0,400,0,400H-7.312V0z">
+            <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 100 800" preserveAspectRatio="none">
+                <path d="M-7.312,0H0c0,0,0,113.839,0,400c0,264.506,0,400,0,400h-7.312V0z"/>
+            </svg>
+        </div>
+    </div>
+    <button class="menu-button-open">MENU</button>
+    <div class="menu-cover"></div>
+</div>
+    <link type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/search.min.css">
+<script type="text/javascript" src="https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/js/iscroll.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/js/instantsearch.min.js"></script>
+<div class="search-window">
+    <div class="search-content">
+        <div class="search-content-icon">
+            <i class="iconfont icon-search"></i>
+        </div>
+        <div id="search-input" class="search-input"></div>
+    </div>
+
+    <div class="search-scroll">
+        <div class="search-result">
+            <div id="search-stats" class="search-stats"></div>
+            <div id="search-hits"></div>
+            <div id="search-pagination" class="search-pagination"></div>
+        </div>
+    </div>
+
+    <span class="search-close-icon">
+        <i class="iconfont icon-close"></i>
+    </span>
+</div>
+    <!-- 搜索悬浮按钮 -->
+    <div class="search-float-btn" onclick="document.querySelector('.search').click()">
+        <i class="iconfont icon-search-menu"></i>
+    </div>
+    <div id="tools">
+    <div class="progressbar-top"></div>
+    <div class="wrap-right">
+    <div class="wrap-right-hide">
+         <div class="wrap-right-button favorites">
+            <div class="iconbox" switch="false">
+                <span class="iconfont icon-favorites"></span>
+            </div>
+            <span class="icontext">关注</span>
+         </div>
+        <div class="wrap-right-button search">
+            <div class="iconbox">
+                <span class="iconfont icon-search-menu"></span>
+            </div>
+            <span class="icontext">搜索</span>
+        </div>
+        <div class="wrap-right-button menu-button">
+            <div class="iconbox">
+                <span class="iconfont icon-menu"></span>
+            </div>
+            <span class="icontext">菜单</span>
+        </div>
+        <div class="wrap-right-button mode">
+            <div class="light">
+                <div class="iconbox">
+                    <span class="iconfont icon-daymode"></span>
+                </div>
+                <span class="icontext">浅色模式</span>
+            </div>
+            <div class="dark">
+                <div class="iconbox">
+                    <span class="iconfont icon-nightmode-fill"></span>
+                </div>
+                <span class="icontext">深色模式</span>
+            </div>
+        </div>
+        <div class="wrap-right-button bottom">
+            <div class="iconbox">
+                <span class="iconfont icon-top"></span>
+            </div>
+            <span class="icontext">跳至底部</span>
+        </div>
+    </div>
+    <div class="wrap-right-show">
+        <div class="wrap-right-button set">
+            <div class="iconbox">
+                <span class="iconfont icon-setting"></span>
+            </div>
+            <span class="icontext">设置</span>
+        </div>
+        <div class="wrap-right-button top">
+            <div class="iconbox">
+                <span class="iconfont icon-top"></span>
+            </div>
+            <span class="icontext">返回顶部</span>
+        </div>
+    </div>
+</div>
+    <div class="loading"></div>
+</div>
+    <script>
+    window.config = {
+        GitHubUserName     : "ciquningzuowu",
+        GitHubRepositories : "Hexo-LiveForCode",
+
+        User             : "le",
+        UserAvatar       : "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/星锑(1).jpg",
+        WebsiteStartDate : "2020-01-01",
+        Home             : "https://github.com/ciquningzuowu",
+
+        WebsiteTitleBlur         : "le的避难所",
+        WebsiteTitleBlurTimeOut  : 500,
+        WebsiteTitleFocus        : "(*´∇｀*) 欢迎回来! le",
+        WebsiteTitleFocusTimeOut : 1000,
+        WebsiteFavicon           : {
+            light : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/image/website/logo/logo.png",
+            dark  : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/image/website/logo/logo-dark.png"
+        },
+
+        ProgressBar : {
+            id       : "topProgressBar",
+            color    : "#77B6FF",
+            height   : "2px",
+            duration : 0.2
+        },
+
+        Loading: {
+            rebound : {
+                tension  : 16,
+                friction : 5
+            },
+            spinner : {
+                id     : "spinner",
+                radius : 90,
+                sides  : 3,
+                depth  : 4,
+                colors : {
+                    background : "#F0F0F0",
+                    stroke     : "#272633",
+                    base       : "",
+                    child      : "#272633"
+                },
+                alwaysForward : true,
+                restAt        : 0.5,
+                renderBase    : false
+            }
+        },
+
+        HomeHeaderAnimationRendered : false,
+        HomeHeaderAnimation         : {
+            radius      : 15,
+            density     : 0.2,
+            color       : "rgba(255, 255, 255, .2)",
+            clearOffset : 0.3
+        },
+
+        BackAnimationRendered          : false,
+        IEBrowserBackAnimationRendered : false,
+        BackAnimation                  : {
+            colorSaturation  : "60%",
+            colorBrightness  : "50%",
+            colorAlpha       : 0.5,
+            colorCycleSpeed  : 5,
+            verticalPosition : "random",
+            horizontalSpeed  : 200,
+            ribbonCount      : 3,
+            strokeSize       : 0,
+            parallaxAmount   : -0.2,
+            animateSections  : true
+        },
+
+        HomeHeaderImage : [
+            
+                "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/a4863ae3f3a94c91a57a0ce7f964361c.png",
+            
+                "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/20260729144639240.png",
+            
+                "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/20260729145504803.png",
+            
+                "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/20260729145811449.png",
+            
+        ],
+        HomeBannerText  : "To sing for me and groove to my own cadence.",
+
+        IndexCardBackgroundImage : [
+            
+                
+                    "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/8dc25v1q3nh4lzaw4i3azwytoae2bdn.png",
+                
+                    "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/8dbefaub2fqvn9coimn4jap5z5z98mw.png",
+                
+                    "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/7hwiy10aphvpb5jbvl67fl495m55et8.png",
+                
+                    "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/5foths4ccbwrrrskjpl0oxsf0jn6ptl.png",
+                
+                    "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/5nmdub5b5znifahpjfkc7ad5yjbv3ns.png",
+                
+                    "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/2ri3630o2lnvfwlgo6flizdzsx7gwhq.png",
+                
+                    "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/4scsghgsxy3iysspvs881ugmdeuxu3y.png",
+                
+                    "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/8rx58ugj8b66avl7zsnym53qu24ap75.png",
+                
+                    "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/63t4wqsoq0kklvo6q9030l16ezmbaum.png",
+                
+                    "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/389np2x9f3vernzdpilw9ls8zqu69fv.png",
+                
+                    "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/450px-%E8%81%8A%E5%A4%A9%E8%A1%A8%E6%83%85-11-03.png",
+                
+                    "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/b5z68qjxh05dstd8wolk98s1mt0co62.png",
+                
+                    "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/dja6jfzg7b4pzzylhurp0dqj93l0gsl.png",
+                
+                    "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/dl5cezarq8uz21hhhdg5wunmdlvolo6.png",
+                
+                    "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/f368hv9eyv97bg8kul3628m69nisyp4.png",
+                
+                    "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/h4fom7ig2mtoyljiid80mgqwanc1sqc.png",
+                
+                    "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/hc2movo1u8mzc8723u882bik89ughuo.png",
+                
+                    "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/hoej1hghvpksyaa5bzajvu3f368ornu.png",
+                
+                    "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/i44x4j4ru867300c5nakky40ib9rjy3.png",
+                
+                    "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/igyaejibjxmpsgp2qf1xt343ih1wneb.png",
+                
+                    "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/ikekrnw3oa0sgslg87ch7hlk55o2jm3.png",
+                
+                    "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/ing29z4phvs1hsb6azcoiq4kxwhf3tg.png",
+                
+                    "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/k2715u1aeitk3n3jiw17dibguaw3nyb.png",
+                
+                    "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/mmad6ltme8ddlgm3uz0vl03m4c3m8cq.png",
+                
+                    "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/n5zuj4kbf9gi12n7fe7nks5zz8httc5.png",
+                
+                    "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/nueql6o2ou3uohajoyo7fgp9nnw3yn2.png",
+                
+                    "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/ouesgqm8i9u44l4e6cbkd84oaiwt7i5.png",
+                
+                    "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/p12qdwpjs3jioac9y2jp6vw4jo22nzd.png",
+                
+                    "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/pwdvlr6ifikuy3uv43nj43s1owyms35.png",
+                
+                    "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/rwq09th4vod8v6vcdns8eqjzmgh7sa5.png",
+                
+                    "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/rx3iygjms2c9zog2l6yqmr63htxxl67.png",
+                
+                    "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/srbaq6eltnli0zp6954dizdmp6ynwtv.png",
+                
+            
+        ],
+
+        ArticleHeaderImage : [
+            
+                "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/be363b330560be6bf3be34652df12416.png",
+            
+                "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/2000c499998b2d13ad5b1472d81a946d.jpg",
+            
+                "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/2083a4acab3ebf454002a766f5dff5dc.jpg",
+            
+                "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/20260729145213392.png",
+            
+        ],
+
+        OtherBannerText : "Grow on My Time",
+
+        Error : {
+            icon    : "icon-swimming",
+            title   : "PAGE NOT FOUND",
+            content : [
+                
+                    "很抱歉，您访问的页面不存在！",
+                
+                    "可能是输入地址有误或该地址已变更。",
+                
+            ],
+            buttons : [
+                
+                    {
+                        icon  : "icon-home",
+                        text  : "返回首页",
+                        href  : "/",
+                        class : ""
+                    },
+                
+            ]
+        },
+
+        MenuNotice : {
+            enable : true,
+            notice : "技术笔记 | AI学习 | 随想杂谈",
+            speed  : 20
+        },
+        MenuList : [
+            
+                {
+                    name   : "首页",
+                    icon   : "icon-home-fill",
+                    href   : "/",
+                    type   : "index",
+                    class  : "",
+                    target : "_self"
+                },
+            
+                {
+                    name   : "标签",
+                    icon   : "icon-discount-fill",
+                    href   : "/tag",
+                    type   : "tag",
+                    class  : "",
+                    target : "_self"
+                },
+            
+                {
+                    name   : "归档",
+                    icon   : "icon-calendar-fill",
+                    href   : "/archive",
+                    type   : "archive",
+                    class  : "",
+                    target : "_self"
+                },
+            
+                {
+                    name   : "关于",
+                    icon   : "icon-about-fill",
+                    href   : "/about",
+                    type   : "about",
+                    class  : "",
+                    target : "_self"
+                },
+            
+                {
+                    name   : "搜索",
+                    icon   : "icon-search-menu",
+                    href   : "javascript:;",
+                    type   : "",
+                    class  : "search",
+                    target : "_self"
+                },
+            
+                {
+                    name   : "友情链接",
+                    icon   : "icon-link",
+                    href   : "/friend",
+                    type   : "friend",
+                    class  : "",
+                    target : "_self"
+                },
+            
+        ],
+        MenuLink : [
+            
+                
+                    {
+                        name   : "知乎",
+                        icon   : "icon-zhihu",
+                        href   : "https://www.zhihu.com/people/68-21-24-64-57-17",
+                        class  : "",
+                        target : "_blank",
+                        image  : ""
+                    },
+                
+                    {
+                        name   : "QQ",
+                        icon   : "icon-qq",
+                        href   : "javascript:;",
+                        class  : "image",
+                        target : "_self",
+                        image  : "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/900cbf5ad084f3cc39ab371ba026d318.jpg"
+                    },
+                
+                    {
+                        name   : "微信",
+                        icon   : "icon-wechat",
+                        href   : "javascript:;",
+                        class  : "",
+                        target : "_self",
+                        image  : "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/5739108c740d75e5fc2a723c80efdadf.jpg"
+                    },
+                
+                    {
+                        name   : "GitHub",
+                        icon   : "icon-github",
+                        href   : "https://github.com/ciquningzuowu",
+                        class  : "",
+                        target : "_blank",
+                        image  : ""
+                    },
+                
+            
+        ],
+
+        FooterStyle : 2,
+        BottomText  : "<div><span class='face'>ღゝ◡╹)ノ♡</span></div><div>le的避难所 - 用心记录每一次成长</div><div>&copy; 2020-<%= new Date().getFullYear() %> le. All Rights Reserved.</div>",
+
+        ConsoleList : [
+            
+                
+                    [
+                        
+                            
+                                "Based on cnblogs theme SimpleMemory.",
+                            
+                                "",
+                            
+                        
+                    ],
+                
+                    [
+                        
+                            
+                                "SimpleMemory Author:",
+                            
+                                "BNDong",
+                            
+                        
+                    ],
+                
+                    [
+                        
+                            
+                                "Theme:",
+                            
+                                "LiveForCode",
+                            
+                        
+                    ],
+                
+            
+        ],
+
+        FontIconExtend : "",
+
+        Donate : {
+            paypal  : "",
+            bitcoin : "",
+            alipay  : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/image/donate/alipay.png",
+            wechat  : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/image/donate/wechat.png"
+        },
+
+        Search : {
+            applicationID : "010C3EANT8",
+            apiKey        : "c7abab9f11b79102b9aff7fe6d41447d",
+            indexName     : "Notes",
+            hits          : {
+                page : 10
+            },
+            labels        : {
+                placeholder : "搜索",
+                empty       : "未发现与 「${query}」 相关的内容",
+                stats       : "${hits} 条相关条目，使用了 ${time} 毫秒",
+            }
+        }, 
+
+        Comment : {
+            switch : false,
+            type   : "Valine",
+        },
+
+        Waline : {
+            el              : ".comments-content",
+            serverURL       : "",
+            path            : window.location.pathname,
+            meta            : "['nick', 'mail', 'link']",
+            requiredMeta    : "['nick', 'mail']",
+            pageSize        : 10,
+            lang            : "zh-cn",
+            locale: {
+                admin       : "博主",
+                anonymous   : "匿名用户",
+                sofa        : "快来做第一个评论的人吧 ~",
+                placeholder : "留下一丝足迹......",
+            },
+            dark            : "html[color-scheme='dark']",
+            search          : false,
+            pageview        : true,
+            comment         : true,
+            copyright       : false,
+        },
+
+        Valine : {
+            el             : ".comments-content",
+            appId          : "srhKtvWPQTWYKh3qX8G8M7v0-gzGzoHsz",
+            appKey         : "8uVSP1q6UlALVC5igYfIfv2h",
+            serverURLs     : "",
+            placeholder    : "留下一丝足迹......",
+            avatar         : "mm",
+            meta           : "nick,mail,link",
+            requiredFields : "nick,mail",
+            pageSize       : 5,
+            lang           : "zh-cn",
+            visitor        : true,
+            enableQQ       : true
+        },
+
+        Tocbot : {
+            switch                : true,
+            tocSelector           : ".toc",
+            contentSelector       : ".article-body",
+            headingSelector       : "h1, h2, h3, h4, h5",
+            headingsOffset        : 0,
+            scrollSmooth          : true,
+            scrollSmoothOffset    : -5,
+            positionFixedSelector : ".toc",
+            positionFixedClass    : "toc-fixed",
+            fixedSidebarOffset    : "",
+        },
+
+        Require : {
+            baseUrl     : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/js/",
+            waitSeconds : 100
+        },
+
+        Music : {
+            type : "APlayer"
+        },
+        APlayer : {
+            container : ".aplayer",
+            fixed     : true,
+            autoplay  : false,
+            loop      : "all",
+            order     : "random",
+            preload   : "auto",
+            volume    : 0.67,
+            mutex     : true,
+            lrcType   : 0,
+            audio     : [
+                
+                    {
+                        name   : "我的音乐1",
+                        artist : "艺术家",
+                        cover  : "/music/cover/default.jpg",
+                        url    : "/music/song/your-music.mp3",
+                        lrc    : ""
+                    },
+                
+                    {
+                        name   : "我的音乐2",
+                        artist : "艺术家",
+                        cover  : "/music/cover/default.jpg",
+                        url    : "/music/song/your-music2.mp3",
+                        lrc    : ""
+                    },
+                
+            ]
+        },
+        Meting : {
+            api      : "https://api.i-meto.com/meting/api",
+            id       : "18197301188", 
+            lrcshow  : false, 
+            server   : "netease", 
+            type     : "playlist", 
+            fixed    : true, 
+            autoplay : true, 
+            loop     : "all", 
+            order    : "random", 
+            preload  : "auto", 
+            volume   : 0.67, 
+            mutex    : true
+        },
+
+        Mouse : {
+            enable  : true,
+            options : {
+                size  : 6,
+                sizeF : 24
+            }
+        },
+
+        LazyLoad : {
+            default : "/image/website/lazyload.svg"
+        },
+  
+        Style : {
+            aplayer          : "",
+            archive          : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/archive.min.css",
+            base             : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/base.min.css",
+            clipboard        : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/clipboard.min.css",
+            code             : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/code.min.css",
+            donate           : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/donate.min.css",
+            fancybox         : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/jquery.fancybox.min.css",
+            footer           : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/footer.min.css",
+            iconfont         : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/iconfont/iconfont.min.css",
+            index            : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/index.min.css",
+            menuBubble       : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/menu-bubble.min.css",
+            mouse            : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/mouse.min.css",
+            page             : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/page.min.css",
+            post             : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/post.min.css",
+            search           : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/search.min.css",
+            tocbot           : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/tocbot.min.css",
+            valine           : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/valine.min.css",
+            waline           : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/waline.css",
+            walineCustom     : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/waline-custom.css"
+        },
+
+        Script: {
+            aplayer          : "",
+            config           : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/js/require.config.min.js",
+            index            : "/js/index.js",
+            instantSearch    : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/js/instantsearch.min.js",
+            iscroll          : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/js/iscroll.min.js",
+            jQuery           : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/js/jquery-3.4.1.min.js",
+            loading          : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/js/loading.min.js",
+            meting           : "",
+            require          : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/js/require.min.js",
+            waline           : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/js/waline.mjs",
+            pageview         : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/js/pageview.mjs",
+            comment          : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/js/comment.mjs",
+        },
+
+        Font: {
+            LongCang    : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/font/LongCang.min.css",
+            Monda       : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/font/Monda.min.css",
+            NotoSansSC  : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/font/NotoSansSC.min.css",
+            NotoSerifSC : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/font/NotoSerifSC.min.css",
+            Playball    : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/font/Playball.min.css",
+            PTMono      : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/font/PTMono.min.css",
+            Roboto      : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/font/Roboto.min.css",
+            RobotoSlab  : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/font/RobotoSlab.min.css",
+            Rosario     : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/font/Rosario.min.css",
+            UbuntuMono  : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/font/UbuntuMono.min.css"
+        },
+
+        Suffix : {
+            about : "在代码中寻找意义，在文字中记录成长"
+        },
+            
+        Theme : {
+            url  : "https://github.com/first19326/Hexo-LiveForCode",
+            name : "Hexo - Live For Code"
+        }  
+    };
+</script>
+    <script type="text/javascript" src="/js/index.js"></script>
+</body>
+</html>

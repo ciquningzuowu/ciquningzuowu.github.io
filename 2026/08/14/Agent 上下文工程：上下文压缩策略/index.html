@@ -1,0 +1,1593 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, shrink-to-fit=no">
+    <meta name="referrer" content="origin">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="Cache-Control" content="no-transform">
+    <meta http-equiv="Cache-Control" content="no-siteapp">
+    <title>
+        
+            Agent 上下文工程：上下文压缩策略
+        
+    </title>
+    <link rel="shortcut icon" href="#"/>
+    <!-- 字体预连接加速 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- 只加载必要字体 -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Playball&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <link type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/base.min.css">
+    <link type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/code.min.css">
+    <link type="text/css" rel="stylesheet" href="/css/archive-card.css">
+    <link rel="stylesheet" href="/css/custom.css">
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/js/jquery-3.4.1.min.js"></script>
+    <!-- 预加载关键JS -->
+    <link rel="preload" href="/js/index.js" as="script">
+<meta name="generator" content="Hexo 8.1.1"></head>
+<body>
+    <div id="page-cover"></div>
+
+    <link type="text/css" rel="stylesheet" href="/css/post.css">
+<div id="header" class="header">
+    <div class="vertical">
+        <div class="inner">
+            
+                <h1 class="header-subtitle">Agent 上下文工程：上下文压缩策略</h1>
+                <div class="header-subinfo">
+                    <p class="article-info-text">
+                        <span>
+                            <i class="iconfont icon-time"></i> 发表时间：2026-08-14
+                        </span>
+                    </p>
+                    
+                        
+                            <span class="tag-color">Agent</span>
+                        
+                            <span class="tag-color">上下文工程</span>
+                        
+                    
+                </div>
+            
+        </div>
+    </div>
+    
+</div>
+
+<div id="container" class="non-home-container">
+    
+        <!-- 文章页面 -->
+        <div id="article">
+            <div class="toc"></div>
+            <div class="article-body">
+                <h1>Agent 上下文工程：上下文压缩策略</h1>
+<h2 id="摘要">摘要</h2>
+<hr>
+<h2 id="一、内容类型分类体系">一、内容类型分类体系</h2>
+<h3 id="1-1-按功能角色分类（主维度）">1.1 按功能角色分类（主维度）</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">类型编号</th>
+<th style="text-align:left">类型名称</th>
+<th style="text-align:left">定义</th>
+<th style="text-align:left">典型内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">T1</td>
+<td style="text-align:left">指令性内容</td>
+<td style="text-align:left">规定模型&quot;该做什么、怎么做、不能做什么&quot;的框架性内容</td>
+<td style="text-align:left">System Prompt、任务描述、输出格式约束、Few-shot示例、工具定义</td>
+</tr>
+<tr>
+<td style="text-align:center">T2</td>
+<td style="text-align:left">事实性内容</td>
+<td style="text-align:left">为模型提供&quot;需要知道什么&quot;的外部知识素材</td>
+<td style="text-align:left">RAG检索结果、知识库查询、用户上传文件、实时数据、长期记忆召回</td>
+</tr>
+<tr>
+<td style="text-align:center">T3</td>
+<td style="text-align:left">状态性内容</td>
+<td style="text-align:left">记录&quot;当前进展到哪了&quot;的动态信息</td>
+<td style="text-align:left">已确认事实、任务进度、变量值、验证状态(pass/fail)、待办事项</td>
+</tr>
+<tr>
+<td style="text-align:center">T4</td>
+<td style="text-align:left">交互性内容</td>
+<td style="text-align:left">用户与模型之间的消息流</td>
+<td style="text-align:left">用户输入、历史对话、用户纠正/补充/追问、模型前几轮回复</td>
+</tr>
+<tr>
+<td style="text-align:center">T5</td>
+<td style="text-align:left">执行性内容</td>
+<td style="text-align:left">模型与外部世界交互的过程与结果</td>
+<td style="text-align:left">工具调用参数、工具返回结果、错误信息、子Agent返回、执行日志</td>
+</tr>
+<tr>
+<td style="text-align:center">T6</td>
+<td style="text-align:left">推理过程性内容</td>
+<td style="text-align:left">模型得出最终结论前的中间思考步骤</td>
+<td style="text-align:left">CoT推理链、分步分析、备选方案对比、自我纠错记录</td>
+</tr>
+<tr>
+<td style="text-align:center">T7</td>
+<td style="text-align:left">关系性内容</td>
+<td style="text-align:left">影响交互社交维度的隐含信息</td>
+<td style="text-align:left">用户情绪、权威关系暗示、文化背景、对话语气与风格偏好</td>
+</tr>
+</tbody>
+</table>
+<h3 id="1-2-按时效生命周期分类（第二维度）">1.2 按时效生命周期分类（第二维度）</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">生命周期层级</th>
+<th style="text-align:left">定义</th>
+<th style="text-align:left">典型内容</th>
+<th style="text-align:left">压缩策略方向</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">瞬时性</td>
+<td style="text-align:left">仅在当前推理步骤中存在，处理完即可丢弃</td>
+<td style="text-align:left">中间变量、临时计算、单次工具调用原始返回</td>
+<td style="text-align:left">推理完成后可安全丢弃，仅保留结论</td>
+</tr>
+<tr>
+<td style="text-align:left">会话性</td>
+<td style="text-align:left">贯穿单次对话全流程，会话结束后清空</td>
+<td style="text-align:left">当前任务目标、对话历史、会话级状态、工作记忆</td>
+<td style="text-align:left">随会话进展渐进压缩（摘要化）</td>
+</tr>
+<tr>
+<td style="text-align:left">跨会话持久性</td>
+<td style="text-align:left">超越单次会话，跨多轮交互持续存在</td>
+<td style="text-align:left">用户偏好、项目架构决策、已验证事实、长期记忆</td>
+<td style="text-align:left">外部存储 + 按需召回，不在上下文中常驻</td>
+</tr>
+</tbody>
+</table>
+<h3 id="1-3-按变动频率分类（第三维度）">1.3 按变动频率分类（第三维度）</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">变动频率</th>
+<th style="text-align:left">定义</th>
+<th style="text-align:left">典型内容</th>
+<th style="text-align:left">工程含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">静态</td>
+<td style="text-align:left">整个会话内不变</td>
+<td style="text-align:left">System Prompt、工具定义、Few-shot示例</td>
+<td style="text-align:left">可缓存（KV Cache），无需重复处理</td>
+</tr>
+<tr>
+<td style="text-align:left">缓变</td>
+<td style="text-align:left">随任务阶段推进偶尔更新</td>
+<td style="text-align:left">任务目标、全局约束、用户偏好</td>
+<td style="text-align:left">更新时替换旧版本</td>
+</tr>
+<tr>
+<td style="text-align:left">速变</td>
+<td style="text-align:left">每轮甚至每个推理步骤都在变化</td>
+<td style="text-align:left">对话历史、工具调用结果、中间状态、推理过程</td>
+<td style="text-align:left">压缩的主要目标</td>
+</tr>
+</tbody>
+</table>
+<h3 id="1-4-按来源分类（第四维度）">1.4 按来源分类（第四维度）</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">来源类型</th>
+<th style="text-align:left">说明</th>
+<th style="text-align:left">信任等级</th>
+<th style="text-align:left">典型内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">系统预设</td>
+<td style="text-align:left">开发者在部署时注入</td>
+<td style="text-align:left">最高（不可被用户覆盖）</td>
+<td style="text-align:left">System Prompt、工具定义、安全规则</td>
+</tr>
+<tr>
+<td style="text-align:left">用户输入</td>
+<td style="text-align:left">用户在对话中主动提供</td>
+<td style="text-align:left">中等（需校验合法性）</td>
+<td style="text-align:left">用户问题、上传文件、补充说明、纠正反馈</td>
+</tr>
+<tr>
+<td style="text-align:left">模型自生成</td>
+<td style="text-align:left">模型在前序轮次中产生</td>
+<td style="text-align:left">需验证（可能存在幻觉）</td>
+<td style="text-align:left">模型回复、推理过程、工具调用决策</td>
+</tr>
+<tr>
+<td style="text-align:left">外部检索</td>
+<td style="text-align:left">从外部系统动态获取</td>
+<td style="text-align:left">取决于来源权威性</td>
+<td style="text-align:left">RAG文档片段、API返回、数据库查询结果</td>
+</tr>
+<tr>
+<td style="text-align:left">记忆系统</td>
+<td style="text-align:left">从长期存储中按需召回</td>
+<td style="text-align:left">较高（经过验证的历史信息）</td>
+<td style="text-align:left">用户偏好、历史决策、项目知识</td>
+</tr>
+</tbody>
+</table>
+<h3 id="1-5-按结构形态分类（第五维度）">1.5 按结构形态分类（第五维度）</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">结构形态</th>
+<th style="text-align:left">特征</th>
+<th style="text-align:left">压缩适用技术</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">线性文本</td>
+<td style="text-align:left">自然语言段落、对话消息</td>
+<td style="text-align:left">摘要、提炼、滑动窗口</td>
+</tr>
+<tr>
+<td style="text-align:left">结构化数据</td>
+<td style="text-align:left">JSON、表格、键值对、代码</td>
+<td style="text-align:left">字段级筛选、去冗、Schema裁剪</td>
+</tr>
+<tr>
+<td style="text-align:left">关联信息组</td>
+<td style="text-align:left">具有内部引用关系的内容集合（如：问题→分析→结论链条、工具调用→参数→返回结果三元组）</td>
+<td style="text-align:left">需保持组内完整性，整体保留或整体压缩，不可拆散</td>
+</tr>
+<tr>
+<td style="text-align:left">层级结构</td>
+<td style="text-align:left">树形/图结构（如知识图谱、文档目录、代码AST）</td>
+<td style="text-align:left">层级裁剪、按需展开</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="二、全局压缩决策框架">二、全局压缩决策框架</h2>
+<h3 id="2-1-压缩触发机制（双阈值预警）">2.1 压缩触发机制（双阈值预警）</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">阈值层级</th>
+<th style="text-align:left">触发条件</th>
+<th style="text-align:left">行为</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">温和提醒</td>
+<td style="text-align:left">上下文占用达到窗口的 40-50%</td>
+<td style="text-align:left">启动对低优先级内容的渐进压缩</td>
+</tr>
+<tr>
+<td style="text-align:left">强力推送</td>
+<td style="text-align:left">上下文占用达到窗口的 65-75%</td>
+<td style="text-align:left">启动全类型压缩，执行摘要替换</td>
+</tr>
+<tr>
+<td style="text-align:left">硬阻断</td>
+<td style="text-align:left">上下文占用超过窗口的 85%</td>
+<td style="text-align:left">强制执行最激进压缩，必要时丢弃低优先级内容</td>
+</tr>
+</tbody>
+</table>
+<h3 id="2-2-压缩流水线分层（逐层触发，达标即止）">2.2 压缩流水线分层（逐层触发，达标即止）</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">层级</th>
+<th style="text-align:left">操作</th>
+<th style="text-align:center">语义损失</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">L0</td>
+<td style="text-align:left">去重与格式化清理</td>
+<td style="text-align:center">零损失</td>
+</tr>
+<tr>
+<td style="text-align:center">L1</td>
+<td style="text-align:left">工具输出裁剪（剥离原始数据，保留结论和引用）</td>
+<td style="text-align:center">极低</td>
+</tr>
+<tr>
+<td style="text-align:center">L2</td>
+<td style="text-align:left">远期对话摘要化（旧轮次 → 结构化摘要）</td>
+<td style="text-align:center">低</td>
+</tr>
+<tr>
+<td style="text-align:center">L3</td>
+<td style="text-align:left">推理过程丢弃（仅保留最终结论）</td>
+<td style="text-align:center">中低</td>
+</tr>
+<tr>
+<td style="text-align:center">L4</td>
+<td style="text-align:left">事实性内容重检索（丢弃旧RAG结果，按当前查询重新检索）</td>
+<td style="text-align:center">中</td>
+</tr>
+<tr>
+<td style="text-align:center">L5</td>
+<td style="text-align:left">极端截断（最后手段，按优先级硬截断）</td>
+<td style="text-align:center">高</td>
+</tr>
+</tbody>
+</table>
+<h3 id="2-3-全局优先级排序原则">2.3 全局优先级排序原则</h3>
+<p>当前任务直接相关的标识符和事实 &gt; 当前任务状态 &gt; 近期交互 &gt; 工具输出结论 &gt; 远期摘要 &gt; 推理过程 &gt; 冗余/重复内容</p>
+<p>核心约束：标识符保真 —— UUID、Hash、文件路径、URL等标识符在任何压缩层级中都不可改动。</p>
+<hr>
+<h2 id="三、各内容类型的情境化压缩策略">三、各内容类型的情境化压缩策略</h2>
+<h3 id="3-1-T1-指令性内容（Instructional-Context）">3.1 T1 指令性内容（Instructional Context）</h3>
+<p><strong>基本策略</strong>：近乎免疫压缩。完整保留，仅允许格式精简（去除冗余换行、空白行、注释）。置于上下文最前部以最大化KV Cache命中率。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">情境</th>
+<th style="text-align:center">重要性</th>
+<th style="text-align:left">处理策略</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">上下文窗口充裕</td>
+<td style="text-align:center">最高</td>
+<td style="text-align:left">不做任何修改</td>
+</tr>
+<tr>
+<td style="text-align:left">窗口紧张（&gt;65%占用）</td>
+<td style="text-align:center">仍然最高</td>
+<td style="text-align:left">仅做格式精简：去除冗余修饰语、合并重复规则、删除未使用的Few-shot示例</td>
+</tr>
+<tr>
+<td style="text-align:left">多System Prompt叠加（多Agent场景）</td>
+<td style="text-align:center">需要去重</td>
+<td style="text-align:left">合并冲突规则，以最新/最高优先级为准；子Agent不携带orchestrator级别的规则</td>
+</tr>
+<tr>
+<td style="text-align:left">工具定义过多</td>
+<td style="text-align:center">需要分层裁剪</td>
+<td style="text-align:left">上下文仅保留10-20个原子函数定义，其余以终端命令形式存在于沙盒中，按需<code>--help</code>查看</td>
+</tr>
+<tr>
+<td style="text-align:left">安全红线类指令</td>
+<td style="text-align:center">绝对不可压缩</td>
+<td style="text-align:left">无论窗口多紧张，安全约束、合规规则必须完整保留</td>
+</tr>
+</tbody>
+</table>
+<h3 id="3-2-T2-事实性内容（Factual-Knowledge-Context）">3.2 T2 事实性内容（Factual / Knowledge Context）</h3>
+<p><strong>基本策略</strong>：任务感知，按需保留。高相关原文保留，弱相关摘要化，不相关丢弃。采用&quot;压缩+引用&quot;双轨制。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">情境</th>
+<th style="text-align:center">重要性</th>
+<th style="text-align:left">处理策略</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">当前问题直接依赖的事实</td>
+<td style="text-align:center">最高</td>
+<td style="text-align:left">保留原文关键段落，标注来源和时间戳</td>
+</tr>
+<tr>
+<td style="text-align:left">多片段语义高度相似</td>
+<td style="text-align:center">需去重</td>
+<td style="text-align:left">合并为信息密度最高的单一版本，避免&quot;信息内卷&quot;</td>
+</tr>
+<tr>
+<td style="text-align:left">检索结果与当前问题仅弱相关</td>
+<td style="text-align:center">低</td>
+<td style="text-align:left">压缩为一句话摘要或直接丢弃</td>
+</tr>
+<tr>
+<td style="text-align:left">任务切换后</td>
+<td style="text-align:center">旧内容急剧贬值</td>
+<td style="text-align:left">清除上一任务的RAG结果，按新任务重新检索注入</td>
+</tr>
+<tr>
+<td style="text-align:left">用户上传的长文档</td>
+<td style="text-align:center">视当前操作而定</td>
+<td style="text-align:left">不涉及时仅保留文档摘要和文件路径引用</td>
+</tr>
+<tr>
+<td style="text-align:left">实时数据（股价/天气等）</td>
+<td style="text-align:center">强时效性</td>
+<td style="text-align:left">保留最新值，历史快照可丢弃</td>
+</tr>
+<tr>
+<td style="text-align:left">数据存在冲突</td>
+<td style="text-align:center">冲突本身是高价值信息</td>
+<td style="text-align:left">必须保留冲突点并标注各来源，不可擅自取舍</td>
+</tr>
+</tbody>
+</table>
+<h3 id="3-3-T3-状态性内容（State-Context）">3.3 T3 状态性内容（State Context）</h3>
+<p><strong>基本策略</strong>：始终保留最新版本，覆盖旧版本。上下文中仅保留最新快照，完整变更历史落盘到外部文件。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">情境</th>
+<th style="text-align:center">重要性</th>
+<th style="text-align:left">处理策略</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">当前正在执行的任务步骤</td>
+<td style="text-align:center">最高</td>
+<td style="text-align:left">完整保留，结构化呈现（TODO List/Scratchpad），每次工具调用后增量更新</td>
+</tr>
+<tr>
+<td style="text-align:left">已完成子任务的最终状态</td>
+<td style="text-align:center">中等</td>
+<td style="text-align:left">保留结论性状态，丢弃中间过程</td>
+</tr>
+<tr>
+<td style="text-align:left">已确认的关键决策</td>
+<td style="text-align:center">高</td>
+<td style="text-align:left">必须保留，后续推理依赖这些决策</td>
+</tr>
+<tr>
+<td style="text-align:left">已废弃的方案/被否决的决策</td>
+<td style="text-align:center">低但非零</td>
+<td style="text-align:left">保留一行摘要（&quot;曾考虑方案B，因X原因被否决&quot;），防止重复探索</td>
+</tr>
+<tr>
+<td style="text-align:left">验证状态（pass/fail）</td>
+<td style="text-align:center">高</td>
+<td style="text-align:left">必须保留，特别是失败的验证——定义了&quot;什么不能做&quot;的边界</td>
+</tr>
+<tr>
+<td style="text-align:left">多轮迭代中的中间状态</td>
+<td style="text-align:center">低</td>
+<td style="text-align:left">仅保留最终状态，中间修改可丢弃</td>
+</tr>
+</tbody>
+</table>
+<h3 id="3-4-T4-交互性内容（Conversational-Context）">3.4 T4 交互性内容（Conversational Context）</h3>
+<p><strong>基本策略</strong>：按时效分层，渐进压缩。最近消息完整保留，较早消息摘要化，最早消息极简提炼。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">情境</th>
+<th style="text-align:center">重要性</th>
+<th style="text-align:left">处理策略</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">最近3-5轮对话</td>
+<td style="text-align:center">最高</td>
+<td style="text-align:left">完整保留原始措辞，支撑指代消解和上下文连贯</td>
+</tr>
+<tr>
+<td style="text-align:left">5-20轮前的对话</td>
+<td style="text-align:center">中等</td>
+<td style="text-align:left">结构化摘要，保留关键决策、已确认事实、未解决问题</td>
+</tr>
+<tr>
+<td style="text-align:left">20轮以前的对话</td>
+<td style="text-align:center">低</td>
+<td style="text-align:left">极简提炼，仅保留对当前任务仍有影响的结论和约束</td>
+</tr>
+<tr>
+<td style="text-align:left">用户明确纠正/强调的内容</td>
+<td style="text-align:center">无论多早都必须保留</td>
+<td style="text-align:left">如&quot;不要用React，用Vue&quot;——跨越整个会话，不可被摘要稀释</td>
+</tr>
+<tr>
+<td style="text-align:left">用户情绪/语气变化</td>
+<td style="text-align:center">易丢失但影响体验</td>
+<td style="text-align:left">在摘要中以元数据标签保留（如<code>[用户情绪: 不满]</code>）</td>
+</tr>
+<tr>
+<td style="text-align:left">多任务切换场景</td>
+<td style="text-align:center">需要按任务分段</td>
+<td style="text-align:left">不同任务的对话历史应分段摘要，不可混在一起</td>
+</tr>
+<tr>
+<td style="text-align:left">闲聊/寒暄</td>
+<td style="text-align:center">最低</td>
+<td style="text-align:left">可安全丢弃，仅保留对话基调信息</td>
+</tr>
+</tbody>
+</table>
+<h3 id="3-5-T5-执行性内容（Execution-Context）">3.5 T5 执行性内容（Execution Context）</h3>
+<p><strong>基本策略</strong>：结论保留，原始数据剥离。工具返回后立即压缩——完整版存入沙盒文件系统，上下文中仅保留精简版（结论+文件路径引用）。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">情境</th>
+<th style="text-align:center">重要性</th>
+<th style="text-align:left">处理策略</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">当前正在调试的错误日志</td>
+<td style="text-align:center">最高</td>
+<td style="text-align:left">关键异常信息必须原样保留（错误码、堆栈跟踪、UUID等标识符），不可压缩</td>
+</tr>
+<tr>
+<td style="text-align:left">已解决问题的工具输出</td>
+<td style="text-align:center">低</td>
+<td style="text-align:left">仅保留结论性摘要，原始输出替换为<code>[compacted: tool output removed]</code></td>
+</tr>
+<tr>
+<td style="text-align:left">多步工具链的中间结果</td>
+<td style="text-align:center">低</td>
+<td style="text-align:left">仅保留最终步骤的输出，中间步骤保留步骤摘要</td>
+</tr>
+<tr>
+<td style="text-align:left">受保护的子Agent输出</td>
+<td style="text-align:center">高</td>
+<td style="text-align:left">标记为受保护的工具输出不参与压缩（压缩的是&quot;过程&quot;而非&quot;结果&quot;）</td>
+</tr>
+<tr>
+<td style="text-align:left">重复调用的工具结果</td>
+<td style="text-align:center">需去重</td>
+<td style="text-align:left">同一工具、同样参数的重复调用，仅保留最新一次</td>
+</tr>
+<tr>
+<td style="text-align:left">失败的工具调用</td>
+<td style="text-align:center">中等</td>
+<td style="text-align:left">保留错误原因和失败参数，丢弃输入体；3轮后自动清理详细内容</td>
+</tr>
+<tr>
+<td style="text-align:left">超长工具输出（&gt;18000 tokens）</td>
+<td style="text-align:center">需要分片</td>
+<td style="text-align:left">自动分割成多个part，分片间插入确认消息，最多8个part后截断</td>
+</tr>
+<tr>
+<td style="text-align:left">同一文件被多次编辑</td>
+<td style="text-align:center">需要智能合并</td>
+<td style="text-align:left">将操作时间线合并为&quot;文件开发故事&quot;——仅保留初始状态和最终状态</td>
+</tr>
+</tbody>
+</table>
+<h3 id="3-6-T6-推理过程性内容（Reasoning-Context）">3.6 T6 推理过程性内容（Reasoning Context）</h3>
+<p><strong>基本策略</strong>：当前轮次保留，跨轮次丢弃。当前轮次的推理链完整保留；轮次结束后仅保留最终结论。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">情境</th>
+<th style="text-align:center">重要性</th>
+<th style="text-align:left">处理策略</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">当前轮次的推理链</td>
+<td style="text-align:center">最高</td>
+<td style="text-align:left">完整保留，支持当前推理步骤的逻辑连贯</td>
+</tr>
+<tr>
+<td style="text-align:left">上一轮推理的结论</td>
+<td style="text-align:center">高</td>
+<td style="text-align:left">保留最终结论，丢弃推理过程</td>
+</tr>
+<tr>
+<td style="text-align:left">备选方案对比与淘汰理由</td>
+<td style="text-align:center">中等</td>
+<td style="text-align:left">保留最终选择和核心理由，丢弃详细对比过程</td>
+</tr>
+<tr>
+<td style="text-align:left">自我纠错记录</td>
+<td style="text-align:center">中等</td>
+<td style="text-align:left">保留&quot;发现了X错误并修正为Y&quot;这一事实，丢弃中间推理</td>
+</tr>
+<tr>
+<td style="text-align:left">复杂多步推理的中间变量</td>
+<td style="text-align:center">低</td>
+<td style="text-align:left">推理完成后可安全丢弃，仅保留最终结果</td>
+</tr>
+<tr>
+<td style="text-align:left">需要跨轮次引用的推理结论</td>
+<td style="text-align:center">高</td>
+<td style="text-align:left">将结论提升到状态性内容（T3）中保留</td>
+</tr>
+</tbody>
+</table>
+<h3 id="3-7-T7-关系性内容（Relational-Context）">3.7 T7 关系性内容（Relational Context）</h3>
+<p><strong>基本策略</strong>：元数据化，轻量常驻。不以原始对话形式保留，提取为元数据标签，以极低token成本常驻上下文。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">情境</th>
+<th style="text-align:center">重要性</th>
+<th style="text-align:left">处理策略</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">用户明确表达的情绪状态</td>
+<td style="text-align:center">高</td>
+<td style="text-align:left">提取为标签常驻（如<code>[用户状态: 焦虑，需要简洁回答]</code>）</td>
+</tr>
+<tr>
+<td style="text-align:left">用户明确声明的沟通偏好</td>
+<td style="text-align:center">高</td>
+<td style="text-align:left">作为状态性内容保留（如&quot;请用中文回答&quot;&quot;不要使用专业术语&quot;）</td>
+</tr>
+<tr>
+<td style="text-align:left">隐含的语气/风格信号</td>
+<td style="text-align:center">低</td>
+<td style="text-align:left">在对话摘要中以元数据形式保留（如<code>[对话基调: 非正式]</code>）</td>
+</tr>
+<tr>
+<td style="text-align:left">文化背景暗示</td>
+<td style="text-align:center">视任务而定</td>
+<td style="text-align:left">涉及跨文化沟通时保留，否则可丢弃</td>
+</tr>
+<tr>
+<td style="text-align:left">权威关系暗示</td>
+<td style="text-align:center">视任务而定</td>
+<td style="text-align:left">影响回复专业程度时保留（如医患场景），否则可丢弃</td>
+</tr>
+<tr>
+<td style="text-align:left">多轮交互中逐渐建立的理解</td>
+<td style="text-align:center">易丢失</td>
+<td style="text-align:left">提炼为&quot;用户画像&quot;标签保留，防止模型在后续轮次认知水平倒退</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="四、跨类型的情境化优先级矩阵">四、跨类型的情境化优先级矩阵</h2>
+<p>不同任务情境下，七种内容类型的相对优先级（5=最高，1=最低）：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">内容类型</th>
+<th style="text-align:center">调试/Bug修复</th>
+<th style="text-align:center">调研/分析</th>
+<th style="text-align:center">创作/写作</th>
+<th style="text-align:center">多步工具链执行</th>
+<th style="text-align:center">长程对话陪伴</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">T1 指令性</td>
+<td style="text-align:center">5</td>
+<td style="text-align:center">5</td>
+<td style="text-align:center">5</td>
+<td style="text-align:center">5</td>
+<td style="text-align:center">4</td>
+</tr>
+<tr>
+<td style="text-align:left">T2 事实性</td>
+<td style="text-align:center">3</td>
+<td style="text-align:center"><strong>5</strong></td>
+<td style="text-align:center">4</td>
+<td style="text-align:center">3</td>
+<td style="text-align:center">2</td>
+</tr>
+<tr>
+<td style="text-align:left">T3 状态性</td>
+<td style="text-align:center">4</td>
+<td style="text-align:center">4</td>
+<td style="text-align:center">3</td>
+<td style="text-align:center"><strong>5</strong></td>
+<td style="text-align:center">3</td>
+</tr>
+<tr>
+<td style="text-align:left">T4 交互性</td>
+<td style="text-align:center">3</td>
+<td style="text-align:center">3</td>
+<td style="text-align:center">3</td>
+<td style="text-align:center">2</td>
+<td style="text-align:center"><strong>5</strong></td>
+</tr>
+<tr>
+<td style="text-align:left">T5 执行性</td>
+<td style="text-align:center"><strong>5</strong></td>
+<td style="text-align:center">2</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center"><strong>5</strong></td>
+<td style="text-align:center">1</td>
+</tr>
+<tr>
+<td style="text-align:left">T6 推理过程性</td>
+<td style="text-align:center">4</td>
+<td style="text-align:center">3</td>
+<td style="text-align:center">2</td>
+<td style="text-align:center">3</td>
+<td style="text-align:center">2</td>
+</tr>
+<tr>
+<td style="text-align:left">T7 关系性</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">3</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center"><strong>5</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>矩阵解读</strong>：</p>
+<ul>
+<li>调试情境：T5执行性跃升最高（错误日志是唯一证据），T7关系性最低</li>
+<li>调研情境：T2事实性成为核心（多来源信息是分析基础）</li>
+<li>多步工具链：T3状态性+T5执行性并列最高（&quot;做到哪了&quot;+&quot;每步做了什么&quot;）</li>
+<li>长程陪伴：T4交互性+T7关系性成为核心（用户需要情感连接和对话连贯）</li>
+</ul>
+<hr>
+<h2 id="五、工程约束与红线">五、工程约束与红线</h2>
+<h3 id="5-1-不可触碰的红线">5.1 不可触碰的红线</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">红线</th>
+<th style="text-align:left">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">标识符保真</td>
+<td style="text-align:left">UUID、Hash、文件路径、URL、IP等在任何压缩层级中不可修改、截断或&quot;美化&quot;</td>
+</tr>
+<tr>
+<td style="text-align:left">安全规则不可压缩</td>
+<td style="text-align:left">安全约束、合规规则、权限边界属于T1中的绝对保留项</td>
+</tr>
+<tr>
+<td style="text-align:left">用户显式约束不可稀释</td>
+<td style="text-align:left">用户明确说&quot;不要用X&quot;&quot;必须用Y&quot;的约束，无论出现在多早的轮次，都必须完整保留</td>
+</tr>
+<tr>
+<td style="text-align:left">压缩前落盘</td>
+<td style="text-align:left">触发压缩前，主动将重要信息从瞬时上下文落到持久存储</td>
+</tr>
+</tbody>
+</table>
+<h3 id="5-2-压缩质量保障机制">5.2 压缩质量保障机制</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">机制</th>
+<th style="text-align:left">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">断路器</td>
+<td style="text-align:left">连续压缩失败超过阈值（如3次）时停止压缩并告警，避免无限循环</td>
+</tr>
+<tr>
+<td style="text-align:left">可追溯性</td>
+<td style="text-align:left">每次压缩记录：压缩前token数、压缩后token数、被压缩内容的引用路径</td>
+</tr>
+<tr>
+<td style="text-align:left">压缩后验证</td>
+<td style="text-align:left">对比压缩前后的关键实体/标识符列表，检查关键信息是否丢失</td>
+</tr>
+<tr>
+<td style="text-align:left">单条消息上限</td>
+<td style="text-align:left">单条工具结果不超过上下文的50%，总工具输出预算不超过75%</td>
+</tr>
+</tbody>
+</table>
+<h3 id="5-3-信息层与计算层的区分">5.3 信息层与计算层的区分</h3>
+<ul>
+<li><strong>信息层</strong>：决定保留什么内容（上述七种类型的差异化策略）</li>
+<li><strong>计算层</strong>：决定如何高效处理（KV Cache优化、Prompt Caching、前缀稳定性）</li>
+<li>两者互补而非替代。固定系统提示前缀交给Prompt Caching（计算层），对话历史和工具输出的压缩属于信息层策略。</li>
+</ul>
+<hr>
+<h2 id="六、内容类型与工程组件映射">六、内容类型与工程组件映射</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">内容类型</th>
+<th style="text-align:left">推荐存储位置</th>
+<th style="text-align:left">在上下文中的存在形式</th>
+<th style="text-align:left">压缩触发条件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">T1 指令性</td>
+<td style="text-align:left">配置文件/模板</td>
+<td style="text-align:left">始终位于上下文头部</td>
+<td style="text-align:left">仅在极端窗口压力下做格式精简</td>
+</tr>
+<tr>
+<td style="text-align:left">T2 事实性</td>
+<td style="text-align:left">向量数据库/知识库</td>
+<td style="text-align:left">按需检索注入</td>
+<td style="text-align:left">任务切换时清除，按相关性重检索</td>
+</tr>
+<tr>
+<td style="text-align:left">T3 状态性</td>
+<td style="text-align:left">运行时状态对象/Scratchpad</td>
+<td style="text-align:left">结构化摘要常驻</td>
+<td style="text-align:left">随任务进展增量更新，旧状态覆盖</td>
+</tr>
+<tr>
+<td style="text-align:left">T4 交互性</td>
+<td style="text-align:left">对话缓冲区</td>
+<td style="text-align:left">线性消息序列</td>
+<td style="text-align:left">超出阈值时从最早消息开始摘要化</td>
+</tr>
+<tr>
+<td style="text-align:left">T5 执行性</td>
+<td style="text-align:left">日志系统/文件系统</td>
+<td style="text-align:left">仅保留结论和文件引用</td>
+<td style="text-align:left">工具返回后立即压缩，原始结果落盘</td>
+</tr>
+<tr>
+<td style="text-align:left">T6 推理过程性</td>
+<td style="text-align:left">不持久化</td>
+<td style="text-align:left">仅在当前轮次存在</td>
+<td style="text-align:left">推理完成后即丢弃，保留最终结论</td>
+</tr>
+<tr>
+<td style="text-align:left">T7 关系性</td>
+<td style="text-align:left">用户画像缓存</td>
+<td style="text-align:left">元数据标签形式</td>
+<td style="text-align:left">随交互更新，衰减周期较长</td>
+</tr>
+</tbody>
+</table>
+
+                
+                <p class="end">__END__</p>
+            </div>
+            <div class="article-footer">
+                <div class="suffix-box">
+    <div class="suffix-box-left">
+        <img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/星锑(1).jpg" alt="le">
+    </div>
+    <div class="suffix-box-right">
+        <span class="suffix-box-title">文章作者：</span>le
+        <br>
+        <span class="suffix-box-title">文章出处：</span><a href="/2026/08/14/Agent%20%E4%B8%8A%E4%B8%8B%E6%96%87%E5%B7%A5%E7%A8%8B%EF%BC%9A%E4%B8%8A%E4%B8%8B%E6%96%87%E5%8E%8B%E7%BC%A9%E7%AD%96%E7%95%A5/" target="_blank">Agent 上下文工程：上下文压缩策略</a>
+        <br>
+        <span class="suffix-box-title">作者签名：</span>在代码中寻找意义，在文字中记录成长
+        <br>
+        <span class="suffix-box-title">关于主题：</span><a href="https://github.com/first19326/Hexo-LiveForCode" target="_blank">Hexo - Live For Code</a>
+        <br>
+        <span class="suffix-box-title">版权声明：</span>文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" title="BY-NC-SA" target="_blank">BY-NC-SA</a> 许可协议，转载请注明出处
+        <br>
+    </div>
+    <div style="clear: both;"></div>
+</div>
+                
+                
+                    <div class="tag">
+                        标签：
+                        
+                            <a href="/tags/Agent/">Agent</a>
+                        
+                            <a href="/tags/%E4%B8%8A%E4%B8%8B%E6%96%87%E5%B7%A5%E7%A8%8B/">上下文工程</a>
+                        
+                    </div>
+                
+                <div class="article-prev-next">
+                    
+                        <a href="/2026/08/15/%E6%8F%90%E7%A4%BA%E8%AF%8D%E5%B7%A5%E7%A8%8B%E7%AC%94%E8%AE%B0%EF%BC%9A%E7%BB%BC%E5%90%88%E6%96%B9%E6%B3%95/" class="prev-prefix">« </a> 上一篇：    <a href="/2026/08/15/%E6%8F%90%E7%A4%BA%E8%AF%8D%E5%B7%A5%E7%A8%8B%E7%AC%94%E8%AE%B0%EF%BC%9A%E7%BB%BC%E5%90%88%E6%96%B9%E6%B3%95/" title="发布于 2026-08-15 03:15">提示词工程笔记：综合方法</a>
+                        <br>
+                    
+                    
+                        <a href="/2026/08/14/Context%20Engineering%20%E7%AC%94%E8%AE%B0%EF%BC%9A%E4%BC%98%E5%8C%96%E7%AD%96%E7%95%A5/" class="next-prefix">» </a> 下一篇：    <a href="/2026/08/14/Context%20Engineering%20%E7%AC%94%E8%AE%B0%EF%BC%9A%E4%BC%98%E5%8C%96%E7%AD%96%E7%95%A5/" title="发布于 2026-08-14 09:49">Context Engineering 笔记：优化策略</a>
+                    
+                </div>
+            </div>
+            
+        </div>
+    
+</div>
+    <div id="footer">
+    <div><span class='face'>ღゝ◡╹)ノ♡</span></div><div>le的避难所 - 用心记录每一次成长</div><div>&copy; 2020-<%= new Date().getFullYear() %> le. All Rights Reserved.</div>
+</div>
+    <div id="sidebar">
+    <div class="menu-wrap" style="display:none;">
+        
+            <div class="menu-notice">
+                <span class="iconfont icon-notice"></span>
+                <div class="notice">
+                    <span>技术笔记 | AI学习 | 随想杂谈</span>
+                </div>
+            </div>
+        
+        <nav class="menu">
+            <div class="menu-introduce"> 
+                <div class="introduce-avatar">
+                    <img src="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/星锑(1).jpg">
+                </div> 
+                <div class="introduce-info"> 
+                    <div class="introduce-user">
+                        
+                            <a href="https://github.com/ciquningzuowu" target="_blank"><span>le</span></a>
+                        
+                    </div>
+                </div> 
+            </div> 
+            <div class="menu-list">
+                <ul>
+                    
+                        <li class=""><a href="/" class="" target="_self"><span class="iconfont icon-home-fill"></span>首页</a></li>
+                    
+                        <li class=""><a href="/tag" class="" target="_self"><span class="iconfont icon-discount-fill"></span>标签</a></li>
+                    
+                        <li class=""><a href="/archive" class="" target="_self"><span class="iconfont icon-calendar-fill"></span>归档</a></li>
+                    
+                        <li class=""><a href="/about" class="" target="_self"><span class="iconfont icon-about-fill"></span>关于</a></li>
+                    
+                        <li class=""><a href="javascript:;" class="search" target="_self"><span class="iconfont icon-search-menu"></span>搜索</a></li>
+                    
+                        <li class=""><a href="/friend" class="" target="_self"><span class="iconfont icon-link"></span>友情链接</a></li>
+                    
+                </ul> 
+            </div> 
+            <div class="menu-link">
+                <div class="box">
+                    <div class="image-box"></div>
+                </div>
+                
+                    <a name="知乎" href="https://www.zhihu.com/people/68-21-24-64-57-17" class="" target="_blank" data=""><span class="iconfont icon-zhihu"></span></a>
+                
+                    <a name="QQ" href="javascript:;" class="image" target="_self" data="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/900cbf5ad084f3cc39ab371ba026d318.jpg"><span class="iconfont icon-qq"></span></a>
+                
+                    <a name="微信" href="javascript:;" class="" target="_self" data="https://raw.githubusercontent.com/ciquningzuowu/picgo/main/5739108c740d75e5fc2a723c80efdadf.jpg"><span class="iconfont icon-wechat"></span></a>
+                
+                    <a name="GitHub" href="https://github.com/ciquningzuowu" class="" target="_blank" data=""><span class="iconfont icon-github"></span></a>
+                
+            </div> 
+        </nav>
+        <button class="menu-button-close"></button>
+        <div class="morph-shape" id="morph-shape" data-morph-open="M-7.312,0H15c0,0,66,113.339,66,399.5C81,664.006,15,800,15,800H-7.312V0z;M-7.312,0H100c0,0,0,113.839,0,400c0,264.506,0,400,0,400H-7.312V0z">
+            <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 100 800" preserveAspectRatio="none">
+                <path d="M-7.312,0H0c0,0,0,113.839,0,400c0,264.506,0,400,0,400h-7.312V0z"/>
+            </svg>
+        </div>
+    </div>
+    <button class="menu-button-open">MENU</button>
+    <div class="menu-cover"></div>
+</div>
+    <link type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/search.min.css">
+<script type="text/javascript" src="https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/js/iscroll.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/js/instantsearch.min.js"></script>
+<div class="search-window">
+    <div class="search-content">
+        <div class="search-content-icon">
+            <i class="iconfont icon-search"></i>
+        </div>
+        <div id="search-input" class="search-input"></div>
+    </div>
+
+    <div class="search-scroll">
+        <div class="search-result">
+            <div id="search-stats" class="search-stats"></div>
+            <div id="search-hits"></div>
+            <div id="search-pagination" class="search-pagination"></div>
+        </div>
+    </div>
+
+    <span class="search-close-icon">
+        <i class="iconfont icon-close"></i>
+    </span>
+</div>
+    <!-- 搜索悬浮按钮 -->
+    <div class="search-float-btn" onclick="document.querySelector('.search').click()">
+        <i class="iconfont icon-search-menu"></i>
+    </div>
+    <div id="tools">
+    <div class="progressbar-top"></div>
+    <div class="wrap-right">
+    <div class="wrap-right-hide">
+         <div class="wrap-right-button favorites">
+            <div class="iconbox" switch="false">
+                <span class="iconfont icon-favorites"></span>
+            </div>
+            <span class="icontext">关注</span>
+         </div>
+        <div class="wrap-right-button search">
+            <div class="iconbox">
+                <span class="iconfont icon-search-menu"></span>
+            </div>
+            <span class="icontext">搜索</span>
+        </div>
+        <div class="wrap-right-button menu-button">
+            <div class="iconbox">
+                <span class="iconfont icon-menu"></span>
+            </div>
+            <span class="icontext">菜单</span>
+        </div>
+        <div class="wrap-right-button mode">
+            <div class="light">
+                <div class="iconbox">
+                    <span class="iconfont icon-daymode"></span>
+                </div>
+                <span class="icontext">浅色模式</span>
+            </div>
+            <div class="dark">
+                <div class="iconbox">
+                    <span class="iconfont icon-nightmode-fill"></span>
+                </div>
+                <span class="icontext">深色模式</span>
+            </div>
+        </div>
+        <div class="wrap-right-button bottom">
+            <div class="iconbox">
+                <span class="iconfont icon-top"></span>
+            </div>
+            <span class="icontext">跳至底部</span>
+        </div>
+    </div>
+    <div class="wrap-right-show">
+        <div class="wrap-right-button set">
+            <div class="iconbox">
+                <span class="iconfont icon-setting"></span>
+            </div>
+            <span class="icontext">设置</span>
+        </div>
+        <div class="wrap-right-button top">
+            <div class="iconbox">
+                <span class="iconfont icon-top"></span>
+            </div>
+            <span class="icontext">返回顶部</span>
+        </div>
+    </div>
+</div>
+    <div class="loading"></div>
+</div>
+    <script>
+    window.config = {
+        GitHubUserName     : "ciquningzuowu",
+        GitHubRepositories : "Hexo-LiveForCode",
+
+        User             : "le",
+        UserAvatar       : "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/星锑(1).jpg",
+        WebsiteStartDate : "2020-01-01",
+        Home             : "https://github.com/ciquningzuowu",
+
+        WebsiteTitleBlur         : "le的避难所",
+        WebsiteTitleBlurTimeOut  : 500,
+        WebsiteTitleFocus        : "(*´∇｀*) 欢迎回来! le",
+        WebsiteTitleFocusTimeOut : 1000,
+        WebsiteFavicon           : {
+            light : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/image/website/logo/logo.png",
+            dark  : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/image/website/logo/logo-dark.png"
+        },
+
+        ProgressBar : {
+            id       : "topProgressBar",
+            color    : "#77B6FF",
+            height   : "2px",
+            duration : 0.2
+        },
+
+        Loading: {
+            rebound : {
+                tension  : 16,
+                friction : 5
+            },
+            spinner : {
+                id     : "spinner",
+                radius : 90,
+                sides  : 3,
+                depth  : 4,
+                colors : {
+                    background : "#F0F0F0",
+                    stroke     : "#272633",
+                    base       : "",
+                    child      : "#272633"
+                },
+                alwaysForward : true,
+                restAt        : 0.5,
+                renderBase    : false
+            }
+        },
+
+        HomeHeaderAnimationRendered : false,
+        HomeHeaderAnimation         : {
+            radius      : 15,
+            density     : 0.2,
+            color       : "rgba(255, 255, 255, .2)",
+            clearOffset : 0.3
+        },
+
+        BackAnimationRendered          : false,
+        IEBrowserBackAnimationRendered : false,
+        BackAnimation                  : {
+            colorSaturation  : "60%",
+            colorBrightness  : "50%",
+            colorAlpha       : 0.5,
+            colorCycleSpeed  : 5,
+            verticalPosition : "random",
+            horizontalSpeed  : 200,
+            ribbonCount      : 3,
+            strokeSize       : 0,
+            parallaxAmount   : -0.2,
+            animateSections  : true
+        },
+
+        HomeHeaderImage : [
+            
+                "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/a4863ae3f3a94c91a57a0ce7f964361c.png",
+            
+                "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/20260729144639240.png",
+            
+                "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/20260729145504803.png",
+            
+                "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/20260729145811449.png",
+            
+        ],
+        HomeBannerText  : "To sing for me and groove to my own cadence.",
+
+        IndexCardBackgroundImage : [
+            
+                
+                    "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/8dc25v1q3nh4lzaw4i3azwytoae2bdn.png",
+                
+                    "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/8dbefaub2fqvn9coimn4jap5z5z98mw.png",
+                
+                    "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/7hwiy10aphvpb5jbvl67fl495m55et8.png",
+                
+                    "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/5foths4ccbwrrrskjpl0oxsf0jn6ptl.png",
+                
+                    "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/5nmdub5b5znifahpjfkc7ad5yjbv3ns.png",
+                
+                    "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/2ri3630o2lnvfwlgo6flizdzsx7gwhq.png",
+                
+                    "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/4scsghgsxy3iysspvs881ugmdeuxu3y.png",
+                
+                    "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/8rx58ugj8b66avl7zsnym53qu24ap75.png",
+                
+                    "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/63t4wqsoq0kklvo6q9030l16ezmbaum.png",
+                
+                    "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/389np2x9f3vernzdpilw9ls8zqu69fv.png",
+                
+                    "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/450px-%E8%81%8A%E5%A4%A9%E8%A1%A8%E6%83%85-11-03.png",
+                
+                    "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/b5z68qjxh05dstd8wolk98s1mt0co62.png",
+                
+                    "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/dja6jfzg7b4pzzylhurp0dqj93l0gsl.png",
+                
+                    "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/dl5cezarq8uz21hhhdg5wunmdlvolo6.png",
+                
+                    "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/f368hv9eyv97bg8kul3628m69nisyp4.png",
+                
+                    "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/h4fom7ig2mtoyljiid80mgqwanc1sqc.png",
+                
+                    "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/hc2movo1u8mzc8723u882bik89ughuo.png",
+                
+                    "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/hoej1hghvpksyaa5bzajvu3f368ornu.png",
+                
+                    "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/i44x4j4ru867300c5nakky40ib9rjy3.png",
+                
+                    "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/igyaejibjxmpsgp2qf1xt343ih1wneb.png",
+                
+                    "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/ikekrnw3oa0sgslg87ch7hlk55o2jm3.png",
+                
+                    "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/ing29z4phvs1hsb6azcoiq4kxwhf3tg.png",
+                
+                    "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/k2715u1aeitk3n3jiw17dibguaw3nyb.png",
+                
+                    "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/mmad6ltme8ddlgm3uz0vl03m4c3m8cq.png",
+                
+                    "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/n5zuj4kbf9gi12n7fe7nks5zz8httc5.png",
+                
+                    "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/nueql6o2ou3uohajoyo7fgp9nnw3yn2.png",
+                
+                    "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/ouesgqm8i9u44l4e6cbkd84oaiwt7i5.png",
+                
+                    "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/p12qdwpjs3jioac9y2jp6vw4jo22nzd.png",
+                
+                    "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/pwdvlr6ifikuy3uv43nj43s1owyms35.png",
+                
+                    "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/rwq09th4vod8v6vcdns8eqjzmgh7sa5.png",
+                
+                    "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/rx3iygjms2c9zog2l6yqmr63htxxl67.png",
+                
+                    "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/srbaq6eltnli0zp6954dizdmp6ynwtv.png",
+                
+            
+        ],
+
+        ArticleHeaderImage : [
+            
+                "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/be363b330560be6bf3be34652df12416.png",
+            
+                "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/2000c499998b2d13ad5b1472d81a946d.jpg",
+            
+                "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/2083a4acab3ebf454002a766f5dff5dc.jpg",
+            
+                "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/20260729145213392.png",
+            
+        ],
+
+        OtherBannerText : "Grow on My Time",
+
+        Error : {
+            icon    : "icon-swimming",
+            title   : "PAGE NOT FOUND",
+            content : [
+                
+                    "很抱歉，您访问的页面不存在！",
+                
+                    "可能是输入地址有误或该地址已变更。",
+                
+            ],
+            buttons : [
+                
+                    {
+                        icon  : "icon-home",
+                        text  : "返回首页",
+                        href  : "/",
+                        class : ""
+                    },
+                
+            ]
+        },
+
+        MenuNotice : {
+            enable : true,
+            notice : "技术笔记 | AI学习 | 随想杂谈",
+            speed  : 20
+        },
+        MenuList : [
+            
+                {
+                    name   : "首页",
+                    icon   : "icon-home-fill",
+                    href   : "/",
+                    type   : "index",
+                    class  : "",
+                    target : "_self"
+                },
+            
+                {
+                    name   : "标签",
+                    icon   : "icon-discount-fill",
+                    href   : "/tag",
+                    type   : "tag",
+                    class  : "",
+                    target : "_self"
+                },
+            
+                {
+                    name   : "归档",
+                    icon   : "icon-calendar-fill",
+                    href   : "/archive",
+                    type   : "archive",
+                    class  : "",
+                    target : "_self"
+                },
+            
+                {
+                    name   : "关于",
+                    icon   : "icon-about-fill",
+                    href   : "/about",
+                    type   : "about",
+                    class  : "",
+                    target : "_self"
+                },
+            
+                {
+                    name   : "搜索",
+                    icon   : "icon-search-menu",
+                    href   : "javascript:;",
+                    type   : "",
+                    class  : "search",
+                    target : "_self"
+                },
+            
+                {
+                    name   : "友情链接",
+                    icon   : "icon-link",
+                    href   : "/friend",
+                    type   : "friend",
+                    class  : "",
+                    target : "_self"
+                },
+            
+        ],
+        MenuLink : [
+            
+                
+                    {
+                        name   : "知乎",
+                        icon   : "icon-zhihu",
+                        href   : "https://www.zhihu.com/people/68-21-24-64-57-17",
+                        class  : "",
+                        target : "_blank",
+                        image  : ""
+                    },
+                
+                    {
+                        name   : "QQ",
+                        icon   : "icon-qq",
+                        href   : "javascript:;",
+                        class  : "image",
+                        target : "_self",
+                        image  : "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/900cbf5ad084f3cc39ab371ba026d318.jpg"
+                    },
+                
+                    {
+                        name   : "微信",
+                        icon   : "icon-wechat",
+                        href   : "javascript:;",
+                        class  : "",
+                        target : "_self",
+                        image  : "https://raw.githubusercontent.com/ciquningzuowu/picgo/main/5739108c740d75e5fc2a723c80efdadf.jpg"
+                    },
+                
+                    {
+                        name   : "GitHub",
+                        icon   : "icon-github",
+                        href   : "https://github.com/ciquningzuowu",
+                        class  : "",
+                        target : "_blank",
+                        image  : ""
+                    },
+                
+            
+        ],
+
+        FooterStyle : 2,
+        BottomText  : "<div><span class='face'>ღゝ◡╹)ノ♡</span></div><div>le的避难所 - 用心记录每一次成长</div><div>&copy; 2020-<%= new Date().getFullYear() %> le. All Rights Reserved.</div>",
+
+        ConsoleList : [
+            
+                
+                    [
+                        
+                            
+                                "Based on cnblogs theme SimpleMemory.",
+                            
+                                "",
+                            
+                        
+                    ],
+                
+                    [
+                        
+                            
+                                "SimpleMemory Author:",
+                            
+                                "BNDong",
+                            
+                        
+                    ],
+                
+                    [
+                        
+                            
+                                "Theme:",
+                            
+                                "LiveForCode",
+                            
+                        
+                    ],
+                
+            
+        ],
+
+        FontIconExtend : "",
+
+        Donate : {
+            paypal  : "",
+            bitcoin : "",
+            alipay  : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/image/donate/alipay.png",
+            wechat  : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/image/donate/wechat.png"
+        },
+
+        Search : {
+            applicationID : "010C3EANT8",
+            apiKey        : "c7abab9f11b79102b9aff7fe6d41447d",
+            indexName     : "Notes",
+            hits          : {
+                page : 10
+            },
+            labels        : {
+                placeholder : "搜索",
+                empty       : "未发现与 「${query}」 相关的内容",
+                stats       : "${hits} 条相关条目，使用了 ${time} 毫秒",
+            }
+        }, 
+
+        Comment : {
+            switch : false,
+            type   : "Valine",
+        },
+
+        Waline : {
+            el              : ".comments-content",
+            serverURL       : "",
+            path            : window.location.pathname,
+            meta            : "['nick', 'mail', 'link']",
+            requiredMeta    : "['nick', 'mail']",
+            pageSize        : 10,
+            lang            : "zh-cn",
+            locale: {
+                admin       : "博主",
+                anonymous   : "匿名用户",
+                sofa        : "快来做第一个评论的人吧 ~",
+                placeholder : "留下一丝足迹......",
+            },
+            dark            : "html[color-scheme='dark']",
+            search          : false,
+            pageview        : true,
+            comment         : true,
+            copyright       : false,
+        },
+
+        Valine : {
+            el             : ".comments-content",
+            appId          : "srhKtvWPQTWYKh3qX8G8M7v0-gzGzoHsz",
+            appKey         : "8uVSP1q6UlALVC5igYfIfv2h",
+            serverURLs     : "",
+            placeholder    : "留下一丝足迹......",
+            avatar         : "mm",
+            meta           : "nick,mail,link",
+            requiredFields : "nick,mail",
+            pageSize       : 5,
+            lang           : "zh-cn",
+            visitor        : true,
+            enableQQ       : true
+        },
+
+        Tocbot : {
+            switch                : true,
+            tocSelector           : ".toc",
+            contentSelector       : ".article-body",
+            headingSelector       : "h1, h2, h3, h4, h5",
+            headingsOffset        : 0,
+            scrollSmooth          : true,
+            scrollSmoothOffset    : -5,
+            positionFixedSelector : ".toc",
+            positionFixedClass    : "toc-fixed",
+            fixedSidebarOffset    : "",
+        },
+
+        Require : {
+            baseUrl     : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/js/",
+            waitSeconds : 100
+        },
+
+        Music : {
+            type : "APlayer"
+        },
+        APlayer : {
+            container : ".aplayer",
+            fixed     : true,
+            autoplay  : false,
+            loop      : "all",
+            order     : "random",
+            preload   : "auto",
+            volume    : 0.67,
+            mutex     : true,
+            lrcType   : 0,
+            audio     : [
+                
+                    {
+                        name   : "我的音乐1",
+                        artist : "艺术家",
+                        cover  : "/music/cover/default.jpg",
+                        url    : "/music/song/your-music.mp3",
+                        lrc    : ""
+                    },
+                
+                    {
+                        name   : "我的音乐2",
+                        artist : "艺术家",
+                        cover  : "/music/cover/default.jpg",
+                        url    : "/music/song/your-music2.mp3",
+                        lrc    : ""
+                    },
+                
+            ]
+        },
+        Meting : {
+            api      : "https://api.i-meto.com/meting/api",
+            id       : "18197301188", 
+            lrcshow  : false, 
+            server   : "netease", 
+            type     : "playlist", 
+            fixed    : true, 
+            autoplay : true, 
+            loop     : "all", 
+            order    : "random", 
+            preload  : "auto", 
+            volume   : 0.67, 
+            mutex    : true
+        },
+
+        Mouse : {
+            enable  : true,
+            options : {
+                size  : 6,
+                sizeF : 24
+            }
+        },
+
+        LazyLoad : {
+            default : "/image/website/lazyload.svg"
+        },
+  
+        Style : {
+            aplayer          : "",
+            archive          : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/archive.min.css",
+            base             : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/base.min.css",
+            clipboard        : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/clipboard.min.css",
+            code             : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/code.min.css",
+            donate           : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/donate.min.css",
+            fancybox         : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/jquery.fancybox.min.css",
+            footer           : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/footer.min.css",
+            iconfont         : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/iconfont/iconfont.min.css",
+            index            : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/index.min.css",
+            menuBubble       : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/menu-bubble.min.css",
+            mouse            : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/mouse.min.css",
+            page             : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/page.min.css",
+            post             : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/post.min.css",
+            search           : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/search.min.css",
+            tocbot           : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/tocbot.min.css",
+            valine           : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/valine.min.css",
+            waline           : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/waline.css",
+            walineCustom     : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/waline-custom.css"
+        },
+
+        Script: {
+            aplayer          : "",
+            config           : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/js/require.config.min.js",
+            index            : "/js/index.js",
+            instantSearch    : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/js/instantsearch.min.js",
+            iscroll          : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/js/iscroll.min.js",
+            jQuery           : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/js/jquery-3.4.1.min.js",
+            loading          : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/js/loading.min.js",
+            meting           : "",
+            require          : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/js/require.min.js",
+            waline           : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/js/waline.mjs",
+            pageview         : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/js/pageview.mjs",
+            comment          : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/js/comment.mjs",
+        },
+
+        Font: {
+            LongCang    : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/font/LongCang.min.css",
+            Monda       : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/font/Monda.min.css",
+            NotoSansSC  : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/font/NotoSansSC.min.css",
+            NotoSerifSC : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/font/NotoSerifSC.min.css",
+            Playball    : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/font/Playball.min.css",
+            PTMono      : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/font/PTMono.min.css",
+            Roboto      : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/font/Roboto.min.css",
+            RobotoSlab  : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/font/RobotoSlab.min.css",
+            Rosario     : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/font/Rosario.min.css",
+            UbuntuMono  : "https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/font/UbuntuMono.min.css"
+        },
+
+        Suffix : {
+            about : "在代码中寻找意义，在文字中记录成长"
+        },
+            
+        Theme : {
+            url  : "https://github.com/first19326/Hexo-LiveForCode",
+            name : "Hexo - Live For Code"
+        }  
+    };
+</script>
+    <script type="text/javascript" src="/js/index.js"></script>
+</body>
+</html>
